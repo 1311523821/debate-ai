@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DebateAI — 双模型对抗辩论平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+              600: '#475569',
+              400: '#94a3b8',
+              300: '#cbd5e1',
+              200: '#e2e8f0',
+            },
+            agentA: { DEFAULT: '#3b82f6', bubble: '#1e3a5f', light: '#60a5fa' },
+            agentB: { DEFAULT: '#ef4444', bubble: '#5f1e1e', light: '#f87171' },
+            consensus: { DEFAULT: '#22c55e', bg: '#14532d' },
+          }
+        }
+      }
+    }
+  </script>
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Marked.js -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up {
+      animation: fadeInUp 0.4s ease-out forwards;
+    }
+    @keyframes pulse-dot {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+    .typing-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #94a3b8;
+      margin: 0 2px;
+      animation: pulse-dot 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    .typing-dot:nth-child(3) { animation-delay: 0s; }
+
+    .upload-zone.drag-over {
+      border-color: #3b82f6 !important;
+      background: rgba(59, 130, 246, 0.1) !important;
+    }
+
+    /* Markdown rendered content styling */
+    .md-content h1, .md-content h2, .md-content h3 {
+      font-weight: 700;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+    }
+    .md-content h1 { font-size: 1.5em; }
+    .md-content h2 { font-size: 1.25em; }
+    .md-content h3 { font-size: 1.1em; }
+    .md-content p { margin-bottom: 0.75em; line-height: 1.7; }
+    .md-content ul, .md-content ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+    .md-content li { margin-bottom: 0.25em; }
+    .md-content code {
+      background: rgba(255,255,255,0.1);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .md-content pre {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: 1em;
+      overflow-x: auto;
+      margin: 0.75em 0;
+    }
+    .md-content pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.85em;
+      line-height: 1.6;
+    }
+    .md-content blockquote {
+      border-left: 3px solid #475569;
+      padding-left: 1em;
+      color: #94a3b8;
+      margin: 0.75em 0;
+    }
+    .md-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.75em 0;
+    }
+    .md-content th, .md-content td {
+      border: 1px solid #334155;
+      padding: 0.5em 0.75em;
+      text-align: left;
+    }
+    .md-content th {
+      background: #1e293b;
+      font-weight: 600;
+    }
+    .md-content strong { color: #f1f5f9; }
+    .md-content a { color: #60a5fa; text-decoration: underline; }
+    .md-content a:hover { color: #93bbfd; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+
+<body class="bg-slate-900 text-slate-200 min-h-screen" x-data="debateApp()" x-init="init()">
+
+  <!-- Header -->
+  <header class="border-b border-slate-700 bg-slate-800/80 backdrop-blur-sm sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center">
+      <h1 class="text-2xl md:text-3xl font-bold">
+        🥊 DebateAI — 双模型对抗辩论平台
+      </h1>
+      <p class="text-slate-400 mt-1 text-sm">让两个 AI 互相挑刺，找到最优解</p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Error banner -->
+    <div x-show="error" x-cloak
+         class="bg-red-900/50 border border-red-500 rounded-lg px-4 py-3 flex items-center justify-between">
+      <span class="text-red-200">⚠️ <span x-text="error"></span></span>
+      <button @click="error = ''" class="text-red-300 hover:text-white text-xl leading-none">&times;</button>
+    </div>
+
+    <!-- Upload Zone -->
+    <section
+      class="upload-zone border-2 border-dashed border-slate-600 rounded-xl p-8 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-500/5"
+      @click="$refs.fileInput.click()"
+      @dragover.prevent="$el.classList.add('drag-over')"
+      @dragleave.prevent="$el.classList.remove('drag-over')"
+      @drop.prevent="$el.classList.remove('drag-over'); handleFileDrop($event)"
+    >
+      <input type="file" x-ref="fileInput" class="hidden"
+             accept=".pdf,.py,.txt" @change="handleFileSelect($event)">
+      <div x-show="!fileName">
+        <div class="text-4xl mb-3">📎</div>
+        <p class="text-lg font-medium text-slate-300">拖拽或点击上传文件</p>
+        <p class="text-sm text-slate-500 mt-1">支持: PDF / .py / .txt</p>
+      </div>
+      <div x-show="fileName" x-cloak>
+        <div class="text-3xl mb-2">📄</div>
+        <p class="text-lg font-medium text-blue-400" x-text="fileName"></p>
+        <p class="text-sm text-slate-400" x-text="formatSize(fileSize)"></p>
+        <p class="text-xs text-slate-500 mt-2">点击或拖拽替换文件</p>
+      </div>
+    </section>
+
+    <!-- Config Section -->
+    <section class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <button
+        @click="showConfig = !showConfig"
+        class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/50 transition-colors"
+      >
+        <span class="font-semibold text-slate-200">⚙️ LLM 配置</span>
+        <svg class="w-5 h-5 text-slate-400 transition-transform" :class="showConfig && 'rotate-180'"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+
+      <div x-show="showConfig" x-collapse class="px-5 pb-5 space-y-5">
+        <!-- Agent A -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-semibold text-agentA-light flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-agentA inline-block"></span>
+            Agent A（建议者）
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
+              <input type="text" x-model="configA.baseUrl"
+                     placeholder="https://api.openai.com/v1"
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">API Key</label>
+              <input type="password" x-model="configA.apiKey"
+                     placeholder="sk-..."
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">Model</label>
+              <input type="text" x-model="configA.model"
+                     placeholder="gpt-4o"
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Agent B -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-semibold text-agentB-light flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-agentB inline-block"></span>
+            Agent B（批评者）
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
+              <input type="text" x-model="configB.baseUrl"
+                     placeholder="https://api.deepseek.com/v1"
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">API Key</label>
+              <input type="password" x-model="configB.apiKey"
+                     placeholder="sk-..."
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 mb-1 block">Model</label>
+              <input type="text" x-model="configB.model"
+                     placeholder="deepseek-chat"
+                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Max Rounds + Save -->
+        <div class="flex items-end gap-4 flex-wrap">
+          <div>
+            <label class="text-xs text-slate-400 mb-1 block">最大轮次</label>
+            <input type="number" x-model.number="maxRounds" min="2" max="20"
+                   class="w-24 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+          </div>
+          <button @click="saveConfig()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors">
+            💾 保存配置
+          </button>
+          <p x-show="configSaved" x-transition
+             class="text-green-400 text-sm self-center">✓ 已保存</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Start / Stop Button -->
+    <div class="flex justify-center">
+      <button
+        x-show="!isDebating"
+        @click="startDebate()"
+        :disabled="!canStart"
+        class="px-8 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-lg font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
+      >
+        🚀 开始辩论
+      </button>
+      <button
+        x-show="isDebating"
+        @click="abortDebate()"
+        class="px-8 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-lg font-semibold transition-all shadow-lg shadow-red-500/20"
+      >
+        ⏹ 停止辩论
+      </button>
+    </div>
+
+    <!-- Debate Area -->
+    <section x-show="messages.length > 0" x-cloak class="space-y-4">
+      <!-- Round indicator -->
+      <div x-show="currentRound > 0" class="text-center text-sm text-slate-400">
+        第 <span x-text="currentRound" class="text-slate-200 font-semibold"></span> 轮
+        <span x-show="isDebating" class="inline-block ml-2">
+          <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+        </span>
+      </div>
+
+      <!-- Two-column debate -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Agent A column -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-3 h-3 rounded-full bg-agentA"></span>
+            <h3 class="font-semibold text-agentA-light">🟦 Agent A（建议者）</h3>
+          </div>
+          <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
+            <div class="fade-in-up bg-agentA-bubble border-l-2 border-agentA rounded-lg rounded-l-none p-4 md-content"
+                 x-html="renderMarkdown(msg.content)"></div>
+          </template>
+        </div>
+
+        <!-- Agent B column -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-3 h-3 rounded-full bg-agentB"></span>
+            <h3 class="font-semibold text-agentB-light">🟥 Agent B（批评者）</h3>
+          </div>
+          <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
+            <div class="fade-in-up bg-agentB-bubble border-r-2 border-agentB rounded-lg rounded-r-none p-4 md-content"
+                 x-html="renderMarkdown(msg.content)"></div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- Consensus Section -->
+    <section x-show="consensus" x-cloak
+             class="fade-in-up bg-consensus-bg border-2 border-consensus rounded-xl p-6">
+      <h2 class="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
+        🤝 共识结论
+      </h2>
+      <div class="md-content" x-html="renderMarkdown(consensus)"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-600 py-6 border-t border-slate-800 mt-8">
+      DebateAI — 纯前端，无需后端。API Key 仅存储在浏览器本地。
+    </footer>
+
+  </main>
+
+  <script>
+    // Configure PDF.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // Configure marked with highlight.js
+    if (typeof marked !== 'undefined') {
+      marked.setOptions({
+        highlight: function(code, lang) {
+          if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+          }
+          return typeof hljs !== 'undefined' ? hljs.highlightAuto(code).value : code;
+        },
+        breaks: true,
+        gfm: true,
+      });
+    }
+
+    function debateApp() {
+      return {
+        // File state
+        fileName: '',
+        fileSize: 0,
+        fileContent: '',
+
+        // Config
+        configA: { baseUrl: '', apiKey: '', model: '' },
+        configB: { baseUrl: '', apiKey: '', model: '' },
+        maxRounds: 6,
+        showConfig: true,
+        configSaved: false,
+
+        // Debate state
+        isDebating: false,
+        messages: [],
+        consensus: '',
+        currentRound: 0,
+        error: '',
+        abortController: null,
+
+        // Computed
+        get canStart() {
+          return this.fileContent && this.configA.baseUrl && this.configA.apiKey && this.configA.model &&
+                 this.configB.baseUrl && this.configB.apiKey && this.configB.model;
+        },
+        get agentAMessages() {
+          return this.messages.filter(m => m.agent === 'A');
+        },
+        get agentBMessages() {
+          return this.messages.filter(m => m.agent === 'B');
+        },
+
+        // Init
+        init() {
+          this.loadConfig();
+        },
+
+        // File handling
+        async handleFileDrop(e) {
+          const file = e.dataTransfer.files[0];
+          if (file) await this.processFile(file);
+        },
+        async handleFileSelect(e) {
+          const file = e.target.files[0];
+          if (file) await this.processFile(file);
+        },
+        async processFile(file) {
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (!['pdf', 'py', 'txt'].includes(ext)) {
+            this.error = '不支持的文件格式，请上传 PDF / .py / .txt 文件';
+            return;
+          }
+          this.fileName = file.name;
+          this.fileSize = file.size;
+          this.error = '';
+
+          if (ext === 'pdf') {
+            this.fileContent = await this.parsePDF(file);
+          } else {
+            this.fileContent = await this.readAsText(file);
+          }
+        },
+        readAsText(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('文件读取失败'));
+            reader.readAsText(file);
+          });
+        },
+        async parsePDF(file) {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let text = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(item => item.str).join(' ') + '\n\n';
+          }
+          return text.trim();
+        },
+        formatSize(bytes) {
+          if (bytes < 1024) return bytes + ' B';
+          if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+          return (bytes / 1048576).toFixed(1) + ' MB';
+        },
+
+        // Config persistence
+        saveConfig() {
+          const data = {
+            configA: this.configA,
+            configB: this.configB,
+            maxRounds: this.maxRounds,
+          };
+          localStorage.setItem('debateai_config', JSON.stringify(data));
+          this.configSaved = true;
+          setTimeout(() => this.configSaved = false, 2000);
+        },
+        loadConfig() {
+          try {
+            const raw = localStorage.getItem('debateai_config');
+            if (raw) {
+              const data = JSON.parse(raw);
+              if (data.configA) this.configA = { ...this.configA, ...data.configA };
+              if (data.configB) this.configB = { ...this.configB, ...data.configB };
+              if (data.maxRounds) this.maxRounds = data.maxRounds;
+            }
+          } catch (e) { /* ignore */ }
+        },
+
+        // Markdown rendering
+        renderMarkdown(text) {
+          if (!text) return '';
+          try {
+            const html = marked.parse(text);
+            // Post-process: highlight code blocks that marked didn't catch
+            return html;
+          } catch (e) {
+            return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          }
+        },
+
+        // Debate orchestrator
+        async startDebate() {
+          if (!this.canStart) return;
+
+          this.isDebating = true;
+          this.messages = [];
+          this.consensus = '';
+          this.currentRound = 0;
+          this.error = '';
+          this.abortController = new AbortController();
+
+          const systemPromptA = `你是一个专业的分析专家（建议者）。你的职责是：
+1. 仔细分析用户提供的材料（论文/代码/文本）
+2. 提出具体、可操作的改进建议
+3. 如果涉及代码，提供改进后的代码
+4. 输出结构化的分析，包含：问题分析、改进建议、代码示例
+5. 用中文回答`;
+
+          const systemPromptB = `你是一个严格的审查者（批评者）。你的职责是：
+1. 仔细审查 Agent A 的建议，找出逻辑漏洞、技术错误、遗漏点
+2. 提出你的替代方案或补充建议
+3. 不要无理由反对——如果 A 的建议确实好，可以表示认可
+4. 如果发现问题，详细说明问题所在并给出你的方案
+5. 用中文回答`;
+
+          try {
+            // Round 1: Agent A analyzes material
+            this.currentRound = 1;
+            const historyA = [
+              { role: 'system', content: systemPromptA },
+              { role: 'user', content: `请分析以下材料并提出改进建议：\n\n${this.fileContent}` }
+            ];
+            const msgA1 = this.addMessage('A', '', 1);
+            await this.callLLM(this.configA, historyA, (chunk) => this.appendToMessage(msgA1, chunk));
+
+            // Round 1: Agent B reviews
+            const historyB = [
+              { role: 'system', content: systemPromptB },
+              { role: 'user', content: `以下是一份材料和 Agent A 的分析建议。请审查并指出问题：\n\n材料：${this.fileContent}\n\nAgent A 的建议：${msgA1.content}` }
+            ];
+            const msgB1 = this.addMessage('B', '', 1);
+            await this.callLLM(this.configB, historyB, (chunk) => this.appendToMessage(msgB1, chunk));
+
+            // Check early consensus
+            if (this.detectConsensus(msgB1.content)) {
+              await this.extractConsensus(systemPromptA, systemPromptB);
+              return;
+            }
+
+            // Subsequent rounds
+            let prevA = msgA1;
+            let prevB = msgB1;
+            let histA = [...historyA];
+            let histB = [...historyB];
+
+            for (let round = 2; round <= this.maxRounds; round++) {
+              this.currentRound = round;
+
+              // Agent A responds to B's criticism
+              histA.push({ role: 'assistant', content: prevA.content });
+              histA.push({ role: 'user', content: `Agent B 对你的建议提出了以下批评，请回应：\n\n${prevB.content}` });
+              const msgA = this.addMessage('A', '', round);
+              await this.callLLM(this.configA, histA, (chunk) => this.appendToMessage(msgA, chunk));
+              prevA = msgA;
+
+              // Agent B responds
+              histB.push({ role: 'assistant', content: prevB.content });
+              histB.push({ role: 'user', content: `Agent A 回应了你的批评：\n\n${prevA.content}\n\n请继续审查或表示同意。` });
+              const msgB = this.addMessage('B', '', round);
+              await this.callLLM(this.configB, histB, (chunk) => this.appendToMessage(msgB, chunk));
+              prevB = msgB;
+
+              // Check consensus
+              if (this.detectConsensus(msgB.content)) break;
+            }
+
+            // Extract final consensus
+            await this.extractConsensus(systemPromptA, systemPromptB);
+
+          } catch (e) {
+            if (e.name === 'AbortError') {
+              this.error = '辩论已中止';
+            } else {
+              this.error = `辩论出错: ${e.message}`;
+            }
+          } finally {
+            this.isDebating = false;
+            this.abortController = null;
+          }
+        },
+
+        async extractConsensus(systemPromptA, systemPromptB) {
+          const summary = this.buildDebateSummary();
+          const consensusMsg = this.addMessage('consensus', '', 0);
+          await this.callLLM(this.configA, [
+            { role: 'system', content: '你是总结者。根据以下辩论记录，提炼双方共识，输出最终结论和改进代码。用 Markdown 格式。' },
+            { role: 'user', content: summary }
+          ], (chunk) => this.appendToMessage(consensusMsg, chunk));
+          this.consensus = consensusMsg.content;
+        },
+
+        buildDebateSummary() {
+          let summary = '辩论记录：\n\n';
+          for (const msg of this.messages) {
+            const role = msg.agent === 'A' ? 'Agent A（建议者）' : 'Agent B（批评者）';
+            summary += `## 第 ${msg.round} 轮 - ${role}\n\n${msg.content}\n\n---\n\n`;
+          }
+          return summary;
+        },
+
+        // Message management
+        addMessage(agent, content, round) {
+          const msg = { agent, content, round, id: Date.now() + Math.random() };
+          this.messages.push(msg);
+          this.$nextTick(() => this.scrollToBottom());
+          return msg;
+        },
+        appendToMessage(msg, chunk) {
+          msg.content += chunk;
+          // Auto-scroll periodically (throttled)
+          if (!this._scrollThrottle) {
+            this._scrollThrottle = true;
+            requestAnimationFrame(() => {
+              this.scrollToBottom();
+              this._scrollThrottle = false;
+            });
+          }
+        },
+        scrollToBottom() {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        },
+
+        // LLM API call with SSE streaming
+        async callLLM(config, messages, onChunk) {
+          const signal = this.abortController ? this.abortController.signal : undefined;
+          const url = config.baseUrl.replace(/\/+$/, '') + '/chat/completions';
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${config.apiKey}`,
+            },
+            body: JSON.stringify({
+              model: config.model,
+              messages: messages,
+              stream: true,
+            }),
+            signal,
+          });
+
+          if (!response.ok) {
+            const errText = await response.text().catch(() => '');
+            throw new Error(`API 请求失败 (${response.status}): ${errText.slice(0, 200)}`);
+          }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data:')) continue;
+              const data = trimmed.slice(5).trim();
+              if (data === '[DONE]') return;
+
+              try {
+                const json = JSON.parse(data);
+                const delta = json.choices && json.choices[0] && json.choices[0].delta;
+                if (delta && delta.content) {
+                  onChunk(delta.content);
+                }
+              } catch (e) {
+                // skip malformed JSON
+              }
+            }
+          }
+        },
+
+        // Consensus detection
+        detectConsensus(text) {
+          const keywords = ['同意', '认可', '达成共识', '没有异议', '你说得对', '有道理', 'agree', 'consensus', '我同意', '完全同意', '基本同意'];
+          return keywords.some(k => text.toLowerCase().includes(k));
+        },
+
+        // Abort
+        abortDebate() {
+          if (this.abortController) {
+            this.abortController.abort();
+          }
+        },
+      };
+    }
+  </script>
+</body>
+</html>

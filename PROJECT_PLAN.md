@@ -11,17 +11,52 @@
 
 本项目将这一流程产品化为一个可视化 Web 应用。
 
+## 技术架构（纯前端）
+
+```
+┌─────────────────────────────────────────────┐
+│            Browser (纯前端 SPA)             │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  HTML + Tailwind CSS + Alpine.js    │    │
+│  │  PDF.js (文件解析)                   │    │
+│  │  marked.js + highlight.js (渲染)    │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  ┌──────────────┬──────────────────────┐    │
+│  │  Agent A 面板 │  Agent B 面板        │    │
+│  │  (左侧/蓝色) │  (右侧/红色)         │    │
+│  └──────────────┴──────────────────────┘    │
+│  ┌──────────────────────────────────────┐   │
+│  │  共识结论 + 代码输出区                │   │
+│  └──────────────────────────────────────┘   │
+│                                             │
+│         fetch + SSE (流式请求)               │
+└─────────────────────┬───────────────────────┘
+                      │ 直接调用
+                      ▼
+          任意 OpenAI 兼容 API
+       (OpenAI / DeepSeek / Gemini / 本地模型)
+```
+
+**关键设计决策：纯前端，零后端。**
+
+- 文件解析在浏览器完成（PDF.js + FileReader）
+- LLM 调用直接从浏览器发起（fetch + SSE 流式解析）
+- 配置存储在 localStorage
+- 部署：GitHub Pages 自动部署，单 HTML 文件
+
 ## 核心功能
 
 ### 1. 材料上传
 - 支持 PDF（论文）、Python 代码（.py）、纯文本
-- 自动解析内容，提取关键信息作为辩论素材
+- 浏览器端解析，无需上传到服务器
 
 ### 2. 双 Agent 辩论
 - 左右分栏实时展示两个 Agent 的对话
 - Agent A（建议者）：分析材料，提出改进建议
 - Agent B（批评者）：审查建议，指出漏洞，提出替代方案
-- 多轮交替辩论，流式输出
+- 多轮交替辩论，SSE 流式输出
 
 ### 3. 共识判定
 - 当双方不再有实质性分歧时，自动结束辩论
@@ -31,52 +66,19 @@
 ### 4. 可配置性
 - 支持选择不同的 LLM provider（OpenAI / DeepSeek / Gemini / 本地模型等）
 - 可调节辩论轮次上限（默认 6 轮）
-- 可自定义 Agent 角色 prompt
-
-## 技术架构
-
-```
-┌─────────────────────────────────────────────┐
-│                Frontend (SPA)               │
-│         HTML + Tailwind + Alpine.js         │
-│  ┌──────────────┬──────────────────────┐    │
-│  │  Agent A 面板 │  Agent B 面板        │    │
-│  │  (左侧)      │  (右侧)              │    │
-│  └──────────────┴──────────────────────┘    │
-│  ┌──────────────────────────────────────┐   │
-│  │  共识结论 + 代码输出区                │   │
-│  └──────────────────────────────────────┘   │
-└─────────────────────┬───────────────────────┘
-                      │ SSE (Server-Sent Events)
-                      ▼
-┌─────────────────────────────────────────────┐
-│             Backend (FastAPI)               │
-│                                             │
-│  ┌─────────────┐  ┌──────────────────────┐  │
-│  │ File Parser  │  │  Debate Orchestrator │  │
-│  │ PDF/Code/Text│  │  轮次控制 + 共识判定  │  │
-│  └─────────────┘  └──────────────────────┘  │
-│                     │                       │
-│         ┌───────────┴───────────┐           │
-│         ▼                       ▼           │
-│  ┌─────────────┐        ┌─────────────┐    │
-│  │  LLM Client │        │  LLM Client │    │
-│  │  (Agent A)  │        │  (Agent B)  │    │
-│  └─────────────┘        └─────────────┘    │
-│                                             │
-│  OpenAI 兼容 API，支持多 Provider           │
-└─────────────────────────────────────────────┘
-```
+- 配置自动持久化到 localStorage
 
 ## 技术栈
 
 | 层级 | 技术 | 说明 |
 |------|------|------|
-| 前端 | HTML + Tailwind CSS + Alpine.js | 零构建，单文件部署 |
-| 后端 | Python + FastAPI + SSE | 轻量高效 |
-| LLM | OpenAI 兼容 API | 支持 OpenAI / DeepSeek / Gemini / 任意兼容 provider |
-| 文件解析 | PyMuPDF (PDF) + AST (Python) + 标准库 | 纯 Python，无重依赖 |
-| 部署 | 本地运行 / Docker | 开发阶段本地，后续可容器化 |
+| 框架 | Alpine.js | 轻量响应式，零构建 |
+| 样式 | Tailwind CSS (CDN) | 原子化 CSS，暗色主题 |
+| 文件解析 | PDF.js | 浏览器端 PDF 文本提取 |
+| Markdown | marked.js | Markdown → HTML |
+| 代码高亮 | highlight.js | 语法高亮 |
+| LLM 调用 | fetch + SSE | 浏览器原生流式请求 |
+| 部署 | GitHub Pages | 自动部署，零运维 |
 
 ## 项目结构
 
@@ -84,75 +86,41 @@
 debate-ai/
 ├── README.md                # 项目说明
 ├── PROJECT_PLAN.md          # 本文件
-├── requirements.txt         # Python 依赖
-├── .env.example             # 环境变量模板
-├── backend/
-│   ├── main.py              # FastAPI 入口
-│   ├── config.py            # 配置管理
-│   ├── debate/
-│   │   ├── orchestrator.py  # 辩论编排器（核心）
-│   │   ├── prompts.py       # Agent prompt 模板
-│   │   └── consensus.py     # 共识判定逻辑
-│   ├── llm/
-│   │   ├── client.py        # 统一 LLM 客户端
-│   │   └── providers.py     # 多 provider 适配
-│   └── parsers/
-│       ├── pdf_parser.py    # PDF 解析
-│       ├── code_parser.py   # 代码解析
-│       └── text_parser.py   # 纯文本处理
 ├── frontend/
-│   └── index.html           # 单页应用（含所有 CSS/JS）
-└── docs/
-    └── screenshots/         # 截图（上线后补充）
+│   └── index.html           # 完整单页应用（含所有 CSS/JS）
+└── .github/
+    └── workflows/
+        └── deploy.yml       # GitHub Pages 自动部署
 ```
 
 ## 开发阶段
 
-### Phase 1 — MVP（当前）
+### Phase 1 — MVP（已完成）
 - [x] 项目计划书
-- [ ] 后端：FastAPI 框架 + 辩论编排器
-- [ ] 后端：OpenAI 兼容 LLM 客户端
-- [ ] 后端：PDF / 代码文件解析
-- [ ] 前端：左右分栏辩论 UI + SSE 实时流
-- [ ] 前端：文件上传 + 共识结论展示
-- [ ] 本地可运行，README 含使用说明
+- [x] 前端：完整单页应用（文件上传 + 配置 + 辩论 UI + 共识展示）
+- [x] 浏览器端 PDF 解析
+- [x] SSE 流式 LLM 调用
+- [x] GitHub Pages 自动部署
 
 ### Phase 2 — 增强
 - [ ] 辩论历史记录 / 导出
-- [ ] 多语言支持（中英文）
 - [ ] Agent 角色自定义（prompt 编辑器）
 - [ ] 辩论质量评分
-- [ ] Docker 一键部署
+- [ ] 多语言支持（中英文）
 
 ### Phase 3 — 平台化
-- [ ] 用户系统 + 历史管理
 - [ ] 预设辩论模板（论文审稿 / 代码 review / 方案对比）
 - [ ] 支持更多文件格式（Word、Jupyter Notebook）
-- [ ] API 开放接口
+- [ ] 辩论历史云端同步
 
 ## 使用流程
 
-1. 启动后端 `python backend/main.py`
-2. 浏览器打开 `http://localhost:8000`
-3. 配置两个 LLM 的 API Key 和模型名
-4. 上传材料（PDF / .py / 文本）
-5. 点击「开始辩论」
-6. 观察左右两个 Agent 实时辩论
-7. 阅读底部共识结论和改进代码
-
-## 环境变量
-
-```bash
-# Agent A 的 LLM 配置
-LLM_A_BASE_URL=https://api.openai.com/v1
-LLM_A_API_KEY=sk-xxx
-LLM_A_MODEL=gpt-4o
-
-# Agent B 的 LLM 配置
-LLM_B_BASE_URL=https://api.deepseek.com/v1
-LLM_B_API_KEY=sk-xxx
-LLM_B_MODEL=deepseek-chat
-```
+1. 打开 `frontend/index.html` 或访问 GitHub Pages 地址
+2. 配置两个 LLM 的 API Key、Base URL 和模型名
+3. 上传材料（PDF / .py / 文本）
+4. 点击「开始辩论」
+5. 观察左右两个 Agent 实时辩论
+6. 阅读底部共识结论和改进代码
 
 ## License
 

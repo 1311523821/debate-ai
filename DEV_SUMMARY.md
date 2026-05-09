@@ -1,8 +1,8 @@
 # DebateAI 开发总结
 
-> **最后更新**: 2026-05-08  
-> **当前分支**: main  
-> **最新 commit**: `3b7dbde` — feat: 添加完整后端代码
+> **最后更新**: 2026-05-09
+> **当前分支**: main
+> **最新 commit**: Phase 2 功能完成
 
 ---
 
@@ -13,125 +13,87 @@
 | 后端核心框架 | ✅ 完成 | FastAPI + SSE 流式输出 |
 | LLM 客户端 | ✅ 完成 | httpx 异步，支持流式 |
 | 辩论编排器 | ✅ 完成 | 多轮对话 + 共识判定 |
-| Prompt 模板 | ✅ 完成 | 中文结构化 Prompt |
+| Prompt 模板 | ✅ 完成 | 中英文结构化 Prompt |
 | 文件解析器 | ✅ 完成 | PDF / Python / 纯文本 |
 | 配置管理 | ✅ 完成 | .env 双 LLM 配置 |
-| 前端页面 | ⬜ 待开发 | 需要完整的 UI |
+| 前端页面 | ✅ 完成 | Alpine.js + Tailwind 暗色主题 |
+| 辩论历史记录 | ✅ 完成 | localStorage 存储 + 侧边栏浏览 |
+| 历史导出 | ✅ 完成 | Markdown / JSON 导出 |
+| Agent Prompt 编辑器 | ✅ 完成 | 可自定义三个 Prompt |
+| 多语言支持 | ✅ 完成 | 中英文一键切换 |
+| 更多文件格式 | ✅ 完成 | 支持 20+ 种代码/文本格式 |
+| 直接文本输入 | ✅ 完成 | 可跳过文件上传直接粘贴 |
 | 集成测试 | ⬜ 待开发 | 端到端测试 |
 | 部署配置 | ⬜ 待开发 | Docker / 生产环境 |
 
 ---
 
-## ✅ 已完成内容
+## ✅ Phase 2 完成内容 (2026-05-09)
+
+### 辩论历史记录 / 导出
+- 辩论结束后自动保存到 localStorage（最近 50 条）
+- 侧边栏历史面板，显示文件名、日期、模型、轮次
+- 支持 Markdown 和 JSON 两种导出格式
+- 单条删除和清空全部
+
+### Agent 角色自定义（Prompt 编辑器）
+- 配置面板新增 "Prompt 编辑器" 标签页
+- 可自定义 Agent A（建议者）、Agent B（批评者）、共识总结 三个系统提示词
+- 支持重置为默认值
+- Prompt 随配置一起持久化到 localStorage
+
+### 多语言支持
+- 右上角中英文切换按钮
+- 所有 UI 文本支持中英文
+- 语言偏好持久化
+- 默认 Prompt 也随语言切换
+
+### 更多文件格式
+- 支持 20+ 种格式：PDF, Python, JS, TS, Java, C/C++, Go, Rust, Ruby, PHP, HTML, CSS, YAML, TOML, XML, Shell, SQL, Markdown, CSV, JSON
+
+### 直接文本输入
+- 新增可折叠的文本输入区，可跳过文件上传直接粘贴内容
+- 适合快速测试或粘贴代码片段
+
+---
+
+## ✅ Phase 1 完成内容
 
 ### 后端 API (`backend/main.py`)
-- `POST /api/upload` — 文件上传，支持 `.pdf .py .txt .md .csv .json`
-- `POST /api/debate` — SSE 流式辩论接口
+- `POST /api/upload` — 文件上传
+- `POST /api/debate` — SSE 流式辩论
 - `GET /` — 前端入口
-- CORS 全开，静态文件服务
+- CORS + 静态文件服务
 
 ### LLM 客户端 (`backend/llm/client.py`)
-- httpx 异步调用 OpenAI 兼容 API
-- 流式 / 非流式两种模式
-- 统一接口：`async def chat(messages, stream=True)`
+- httpx 异步 OpenAI 兼容 API
+- 流式 / 非流式统一接口
 
 ### 辩论引擎 (`backend/debate/`)
-- **orchestrator.py** — 编排多轮辩论，yield 每条消息
-- **prompts.py** — 5 个中文 Prompt 模板（A 初始分析 / B 审查 / A 回应 / B 回应 / 共识总结）
-- **consensus.py** — 基于关键词的共识判定（连续 2 轮无新反对意见即达成共识）
+- orchestrator.py — 多轮编排
+- prompts.py — 5 个 Prompt 模板
+- consensus.py — 关键词共识判定
 
 ### 文件解析 (`backend/parsers/`)
-- `pdf_parser.py` — PyMuPDF 提取文本，支持多页
-- `code_parser.py` — AST 提取函数/类结构摘要
-- `text_parser.py` — UTF-8 文本读取
+- pdf_parser.py — PyMuPDF
+- code_parser.py — AST 摘要
+- text_parser.py — UTF-8 文本
 
-### 配置 (`backend/config.py`)
-- 从 `.env` 读取 `LLM_A_*` 和 `LLM_B_*` 两组配置
-- `MAX_ROUNDS` 默认 6 轮
+### 前端 (`frontend/index.html`)
+- 单 HTML 完整 SPA
+- Alpine.js + Tailwind CSS 暗色主题
+- PDF.js 浏览器端 PDF 解析
+- marked.js + highlight.js 渲染
+- SSE 流式辩论可视化（左右分栏）
+- 配置持久化到 localStorage
 
 ---
 
 ## 🔜 后续开发计划
 
-### Phase 1: 前端 UI（优先级最高）
-**目标**: 用户可上传文件、观看辩论、查看共识结果
-
-需要实现：
-1. **文件上传区** — 拖拽上传 + 文件类型识别
-2. **辩论展示区** — SSE 实时渲染 Agent A/B 的对话气泡
-3. **共识展示区** — Markdown 渲染最终结论
-4. **配置面板** — 可选：调整轮次、选择模型
-
-技术选型建议：
-- 纯 HTML + CSS + JS（无框架，轻量）
-- 或 Vue 3 单文件（如果需要复杂交互）
-- 使用 `EventSource` API 接收 SSE
-- Markdown 渲染用 `marked.js`
-
-### Phase 2: 功能增强
-- [ ] 支持更多文件格式（Word、Jupyter Notebook）
-- [ ] 辩论历史保存 / 回放
-- [ ] 多语言支持（英文 Prompt 切换）
-- [ ] Agent 角色自定义（用户可指定 Agent 的专业领域）
-
-### Phase 3: 部署与优化
-- [ ] Docker 化（Dockerfile + docker-compose）
-- [ ] 生产环境配置（Gunicorn + Uvicorn workers）
+### Phase 3 — 平台化
+- [ ] 预设辩论模板（论文审稿 / 代码 review / 方案对比）
+- [ ] 辩论质量评分
+- [ ] 辩论历史云端同步
+- [ ] Docker 化部署
 - [ ] API 限流与鉴权
-- [ ] 日志与监控
-
----
-
-## 🏗️ 技术架构
-
-```
-用户浏览器
-    │
-    ▼
-┌─────────────────────────┐
-│   FastAPI (main.py)     │
-│   ├─ /api/upload        │  ← 文件上传
-│   ├─ /api/debate (SSE)  │  ← 流式辩论
-│   └─ / (静态文件)        │  ← 前端
-└─────────┬───────────────┘
-          │
-    ┌─────┴─────┐
-    ▼           ▼
-┌────────┐ ┌────────┐
-│ LLM A  │ │ LLM B  │  ← 两个独立 LLM 实例
-│(建议者) │ │(批评者) │
-└────────┘ └────────┘
-    │           │
-    └─────┬─────┘
-          ▼
-  ┌──────────────┐
-  │  Orchestrator │  ← 辩论编排
-  │  + Consensus  │  ← 共识判定
-  └──────────────┘
-```
-
----
-
-## ⚙️ 启动方式
-
-```bash
-# 1. 安装依赖
-pip install -r requirements.txt
-
-# 2. 配置环境变量
-cp .env.example .env
-# 编辑 .env 填入 LLM API Key
-
-# 3. 启动
-cd debate-ai
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
-```
-
----
-
-## 📝 开发注意事项
-
-1. **两个 LLM 可以是同一个**：`LLM_A_*` 和 `LLM_B_*` 可以指向同一个 API，只是角色不同
-2. **SSE 格式**：事件类型为 `message`（辩论消息）和 `consensus`（共识结论）
-3. **共识判定逻辑**：当前是基于关键词的简单策略，后续可改为 LLM 自判断
-4. **import 路径**：所有 import 使用 `backend.xxx` 绝对路径，确保从项目根目录运行

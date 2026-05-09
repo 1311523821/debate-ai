@@ -78,6 +78,8 @@
 | Markdown | marked.js | Markdown → HTML |
 | 代码高亮 | highlight.js | 语法高亮 |
 | LLM 调用 | fetch + SSE | 浏览器原生流式请求 |
+| 历史存储 | localStorage | 最近 50 条辩论记录 |
+| 国际化 | 内置 i18n | 中英文切换 |
 | 部署 | GitHub Pages | 自动部署，零运维 |
 
 ## 项目结构
@@ -103,10 +105,10 @@ debate-ai/
 - [x] GitHub Pages 自动部署
 
 ### Phase 2 — 增强
-- [ ] 辩论历史记录 / 导出
-- [ ] Agent 角色自定义（prompt 编辑器）
+- [x] 辩论历史记录 / 导出（localStorage + Markdown/JSON 导出）
+- [x] Agent 角色自定义（prompt 编辑器，三个 Prompt 可编辑）
 - [ ] 辩论质量评分
-- [ ] 多语言支持（中英文）
+- [x] 多语言支持（中英文一键切换）
 
 ### Phase 3 — 平台化
 - [ ] 预设辩论模板（论文审稿 / 代码 review / 方案对比）

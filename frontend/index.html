@@ -12,13 +12,8 @@
         extend: {
           colors: {
             slate: {
-              900: '#0f172a',
-              800: '#1e293b',
-              700: '#334155',
-              600: '#475569',
-              400: '#94a3b8',
-              300: '#cbd5e1',
-              200: '#e2e8f0',
+              900: '#0f172a', 800: '#1e293b', 700: '#334155',
+              600: '#475569', 400: '#94a3b8', 300: '#cbd5e1', 200: '#e2e8f0',
             },
             agentA: { DEFAULT: '#3b82f6', bubble: '#1e3a5f', light: '#60a5fa' },
             agentB: { DEFAULT: '#ef4444', bubble: '#5f1e1e', light: '#f87171' },
@@ -28,105 +23,41 @@
       }
     }
   </script>
-  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- Marked.js -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- highlight.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 
   <style>
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .fade-in-up {
-      animation: fadeInUp 0.4s ease-out forwards;
-    }
-    @keyframes pulse-dot {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-    .typing-dot {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #94a3b8;
-      margin: 0 2px;
-      animation: pulse-dot 1.4s infinite ease-in-out both;
-    }
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-    .typing-dot:nth-child(3) { animation-delay: 0s; }
-
-    .upload-zone.drag-over {
-      border-color: #3b82f6 !important;
-      background: rgba(59, 130, 246, 0.1) !important;
-    }
-
-    /* Markdown rendered content styling */
-    .md-content h1, .md-content h2, .md-content h3 {
-      font-weight: 700;
-      margin-top: 1em;
-      margin-bottom: 0.5em;
-    }
-    .md-content h1 { font-size: 1.5em; }
-    .md-content h2 { font-size: 1.25em; }
-    .md-content h3 { font-size: 1.1em; }
-    .md-content p { margin-bottom: 0.75em; line-height: 1.7; }
-    .md-content ul, .md-content ol { margin-left: 1.5em; margin-bottom: 0.75em; }
-    .md-content li { margin-bottom: 0.25em; }
-    .md-content code {
-      background: rgba(255,255,255,0.1);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      font-size: 0.9em;
-    }
-    .md-content pre {
-      background: #0d1117;
-      border-radius: 8px;
-      padding: 1em;
-      overflow-x: auto;
-      margin: 0.75em 0;
-    }
-    .md-content pre code {
-      background: transparent;
-      padding: 0;
-      font-size: 0.85em;
-      line-height: 1.6;
-    }
-    .md-content blockquote {
-      border-left: 3px solid #475569;
-      padding-left: 1em;
-      color: #94a3b8;
-      margin: 0.75em 0;
-    }
-    .md-content table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 0.75em 0;
-    }
-    .md-content th, .md-content td {
-      border: 1px solid #334155;
-      padding: 0.5em 0.75em;
-      text-align: left;
-    }
-    .md-content th {
-      background: #1e293b;
-      font-weight: 600;
-    }
-    .md-content strong { color: #f1f5f9; }
-    .md-content a { color: #60a5fa; text-decoration: underline; }
-    .md-content a:hover { color: #93bbfd; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
+    .fade-in-up { animation: fadeInUp .4s ease-out forwards }
+    @keyframes pulse-dot { 0%,80%,100% { opacity:.3; transform:scale(.8) } 40% { opacity:1; transform:scale(1) } }
+    .typing-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#94a3b8; margin:0 2px; animation:pulse-dot 1.4s infinite ease-in-out both }
+    .typing-dot:nth-child(1) { animation-delay:-.32s }
+    .typing-dot:nth-child(2) { animation-delay:-.16s }
+    .upload-zone.drag-over { border-color:#3b82f6!important; background:rgba(59,130,246,.1)!important }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:1em; margin-bottom:.5em }
+    .md-content h1 { font-size:1.5em } .md-content h2 { font-size:1.25em } .md-content h3 { font-size:1.1em }
+    .md-content p { margin-bottom:.75em; line-height:1.7 }
+    .md-content ul,.md-content ol { margin-left:1.5em; margin-bottom:.75em }
+    .md-content li { margin-bottom:.25em }
+    .md-content code { background:rgba(255,255,255,.1); padding:.15em .4em; border-radius:4px; font-size:.9em }
+    .md-content pre { background:#0d1117; border-radius:8px; padding:1em; overflow-x:auto; margin:.75em 0 }
+    .md-content pre code { background:transparent; padding:0; font-size:.85em; line-height:1.6 }
+    .md-content blockquote { border-left:3px solid #475569; padding-left:1em; color:#94a3b8; margin:.75em 0 }
+    .md-content table { border-collapse:collapse; width:100%; margin:.75em 0 }
+    .md-content th,.md-content td { border:1px solid #334155; padding:.5em .75em; text-align:left }
+    .md-content th { background:#1e293b; font-weight:600 }
+    .md-content strong { color:#f1f5f9 }
+    .md-content a { color:#60a5fa; text-decoration:underline }
+    ::-webkit-scrollbar { width:6px } ::-webkit-scrollbar-track { background:transparent }
+    ::-webkit-scrollbar-thumb { background:#334155; border-radius:3px }
+    .prompt-textarea { font-family: 'Courier New', monospace; font-size: 0.8rem; line-height: 1.5; tab-size: 2; }
+    .history-item:hover { background: rgba(59,130,246,.08) }
+    .tab-active { border-bottom: 2px solid #3b82f6; color: #e2e8f0 }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #94a3b8 }
+    .tab-inactive:hover { color: #cbd5e1; border-bottom-color: #475569 }
   </style>
 </head>
 
@@ -134,149 +65,252 @@
 
   <!-- Header -->
   <header class="border-b border-slate-700 bg-slate-800/80 backdrop-blur-sm sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-center">
-      <h1 class="text-2xl md:text-3xl font-bold">
-        🥊 DebateAI — 双模型对抗辩论平台
-      </h1>
-      <p class="text-slate-400 mt-1 text-sm">让两个 AI 互相挑刺，找到最优解</p>
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="text-center flex-1">
+        <h1 class="text-2xl md:text-3xl font-bold">🥊 DebateAI</h1>
+        <p class="text-slate-400 mt-0.5 text-sm" x-text="t('subtitle')"></p>
+      </div>
+      <div class="flex items-center gap-2 absolute right-4 top-1/2 -translate-y-1/2">
+        <!-- Language toggle -->
+        <button @click="toggleLang()" class="px-2 py-1 text-xs rounded-md bg-slate-700 hover:bg-slate-600 transition-colors border border-slate-600"
+                x-text="lang === 'zh' ? 'EN' : '中文'"></button>
+        <!-- History button -->
+        <button @click="showHistory = !showHistory" class="relative px-2 py-1 text-xs rounded-md bg-slate-700 hover:bg-slate-600 transition-colors border border-slate-600">
+          📜 <span x-text="t('history')"></span>
+          <span x-show="historyList.length > 0" class="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full text-[10px] flex items-center justify-center" x-text="historyList.length"></span>
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- History Sidebar -->
+  <div x-show="showHistory" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       class="fixed inset-0 z-40 bg-black/50" @click.self="showHistory = false">
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-slate-800 border-l border-slate-700 overflow-y-auto shadow-2xl"
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+      <div class="p-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
+        <h2 class="text-lg font-bold" x-text="t('debateHistory')"></h2>
+        <button @click="showHistory = false" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <div x-show="historyList.length === 0" class="p-8 text-center text-slate-500">
+        <div class="text-4xl mb-3">📭</div>
+        <p x-text="t('noHistory')"></p>
+      </div>
+      <div class="divide-y divide-slate-700">
+        <template x-for="(h, idx) in historyList" :key="h.id">
+          <div class="history-item p-4 cursor-pointer transition-colors" @click="loadHistory(h)">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-slate-200 truncate max-w-[200px]" x-text="h.fileName || t('textInput')"></span>
+              <span class="text-xs text-slate-500" x-text="formatDate(h.timestamp)"></span>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-slate-400">
+              <span x-text="h.rounds + ' ' + t('rounds')"></span>
+              <span>•</span>
+              <span x-text="h.agentA.model + ' vs ' + h.agentB.model"></span>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+              <button @click.stop="exportHistory(h, 'md')" class="px-2 py-0.5 text-xs rounded bg-slate-700 hover:bg-slate-600 border border-slate-600">📄 MD</button>
+              <button @click.stop="exportHistory(h, 'json')" class="px-2 py-0.5 text-xs rounded bg-slate-700 hover:bg-slate-600 border border-slate-600">{ } JSON</button>
+              <button @click.stop="deleteHistory(h.id)" class="px-2 py-0.5 text-xs rounded bg-red-900/50 hover:bg-red-800/50 border border-red-800 text-red-300 ml-auto">🗑</button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div x-show="historyList.length > 0" class="p-4 border-t border-slate-700 sticky bottom-0 bg-slate-800">
+        <button @click="clearAllHistory()" class="w-full px-3 py-2 text-sm rounded-lg bg-red-900/40 hover:bg-red-900/60 border border-red-800 text-red-300 transition-colors" x-text="t('clearAll')"></button>
+      </div>
+    </div>
+  </div>
 
   <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
     <!-- Error banner -->
-    <div x-show="error" x-cloak
-         class="bg-red-900/50 border border-red-500 rounded-lg px-4 py-3 flex items-center justify-between">
+    <div x-show="error" x-cloak class="bg-red-900/50 border border-red-500 rounded-lg px-4 py-3 flex items-center justify-between">
       <span class="text-red-200">⚠️ <span x-text="error"></span></span>
       <button @click="error = ''" class="text-red-300 hover:text-white text-xl leading-none">&times;</button>
     </div>
 
     <!-- Upload Zone -->
-    <section
-      class="upload-zone border-2 border-dashed border-slate-600 rounded-xl p-8 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-500/5"
-      @click="$refs.fileInput.click()"
-      @dragover.prevent="$el.classList.add('drag-over')"
-      @dragleave.prevent="$el.classList.remove('drag-over')"
-      @drop.prevent="$el.classList.remove('drag-over'); handleFileDrop($event)"
-    >
-      <input type="file" x-ref="fileInput" class="hidden"
-             accept=".pdf,.py,.txt" @change="handleFileSelect($event)">
+    <section class="upload-zone border-2 border-dashed border-slate-600 rounded-xl p-8 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-500/5"
+      @click="$refs.fileInput.click()" @dragover.prevent="$el.classList.add('drag-over')" @dragleave.prevent="$el.classList.remove('drag-over')"
+      @drop.prevent="$el.classList.remove('drag-over'); handleFileDrop($event)">
+      <input type="file" x-ref="fileInput" class="hidden" accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFileSelect($event)">
       <div x-show="!fileName">
         <div class="text-4xl mb-3">📎</div>
-        <p class="text-lg font-medium text-slate-300">拖拽或点击上传文件</p>
-        <p class="text-sm text-slate-500 mt-1">支持: PDF / .py / .txt</p>
+        <p class="text-lg font-medium text-slate-300" x-text="t('dragDrop')"></p>
+        <p class="text-sm text-slate-500 mt-1" x-text="t('supportedFormats')"></p>
       </div>
       <div x-show="fileName" x-cloak>
         <div class="text-3xl mb-2">📄</div>
         <p class="text-lg font-medium text-blue-400" x-text="fileName"></p>
         <p class="text-sm text-slate-400" x-text="formatSize(fileSize)"></p>
-        <p class="text-xs text-slate-500 mt-2">点击或拖拽替换文件</p>
+        <p class="text-xs text-slate-500 mt-2" x-text="t('clickReplace')"></p>
       </div>
     </section>
 
     <!-- Config Section -->
     <section class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-      <button
-        @click="showConfig = !showConfig"
-        class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/50 transition-colors"
-      >
-        <span class="font-semibold text-slate-200">⚙️ LLM 配置</span>
-        <svg class="w-5 h-5 text-slate-400 transition-transform" :class="showConfig && 'rotate-180'"
-             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="showConfig = !showConfig" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/50 transition-colors">
+        <span class="font-semibold text-slate-200">⚙️ <span x-text="t('llmConfig')"></span></span>
+        <svg class="w-5 h-5 text-slate-400 transition-transform" :class="showConfig && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
 
       <div x-show="showConfig" x-collapse class="px-5 pb-5 space-y-5">
-        <!-- Agent A -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-agentA-light flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-agentA inline-block"></span>
-            Agent A（建议者）
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
-              <input type="text" x-model="configA.baseUrl"
-                     placeholder="https://api.openai.com/v1"
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+        <!-- Config tabs: API | Prompts -->
+        <div class="flex gap-4 border-b border-slate-700 -mx-5 px-5 mb-2">
+          <button @click="configTab = 'api'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'api' ? 'tab-active' : 'tab-inactive'" x-text="t('apiSettings')"></button>
+          <button @click="configTab = 'prompts'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'prompts' ? 'tab-active' : 'tab-inactive'" x-text="t('promptEditor')"></button>
+        </div>
+
+        <!-- API Settings Tab -->
+        <div x-show="configTab === 'api'" class="space-y-5">
+          <!-- Agent A -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-semibold text-agentA-light flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-agentA inline-block"></span>
+              Agent A（<span x-text="t('suggester')"></span>）
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
+                <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1"
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+              </div>
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">API Key</label>
+                <input type="password" x-model="configA.apiKey" placeholder="sk-..."
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+              </div>
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">Model</label>
+                <input type="text" x-model="configA.model" placeholder="gpt-4o"
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+              </div>
             </div>
-            <div>
-              <label class="text-xs text-slate-400 mb-1 block">API Key</label>
-              <input type="password" x-model="configA.apiKey"
-                     placeholder="sk-..."
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+          </div>
+
+          <!-- Agent B -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-semibold text-agentB-light flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-agentB inline-block"></span>
+              Agent B（<span x-text="t('critic')"></span>）
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
+                <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1"
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+              </div>
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">API Key</label>
+                <input type="password" x-model="configB.apiKey" placeholder="sk-..."
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+              </div>
+              <div>
+                <label class="text-xs text-slate-400 mb-1 block">Model</label>
+                <input type="text" x-model="configB.model" placeholder="deepseek-chat"
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+              </div>
             </div>
+          </div>
+
+          <!-- Max Rounds -->
+          <div class="flex items-end gap-4 flex-wrap">
             <div>
-              <label class="text-xs text-slate-400 mb-1 block">Model</label>
-              <input type="text" x-model="configA.model"
-                     placeholder="gpt-4o"
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+              <label class="text-xs text-slate-400 mb-1 block" x-text="t('maxRounds')"></label>
+              <input type="number" x-model.number="maxRounds" min="2" max="20"
+                     class="w-24 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
             </div>
+            <button @click="saveConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors">
+              💾 <span x-text="t('saveConfig')"></span>
+            </button>
+            <p x-show="configSaved" x-transition class="text-green-400 text-sm self-center">✓ <span x-text="t('saved')"></span></p>
           </div>
         </div>
 
-        <!-- Agent B -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-agentB-light flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-agentB inline-block"></span>
-            Agent B（批评者）
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label class="text-xs text-slate-400 mb-1 block">Base URL</label>
-              <input type="text" x-model="configB.baseUrl"
-                     placeholder="https://api.deepseek.com/v1"
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
-            </div>
-            <div>
-              <label class="text-xs text-slate-400 mb-1 block">API Key</label>
-              <input type="password" x-model="configB.apiKey"
-                     placeholder="sk-..."
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
-            </div>
-            <div>
-              <label class="text-xs text-slate-400 mb-1 block">Model</label>
-              <input type="text" x-model="configB.model"
-                     placeholder="deepseek-chat"
-                     class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
-            </div>
-          </div>
-        </div>
+        <!-- Prompt Editor Tab -->
+        <div x-show="configTab === 'prompts'" class="space-y-4">
+          <p class="text-xs text-slate-400" x-text="t('promptHint')"></p>
 
-        <!-- Max Rounds + Save -->
-        <div class="flex items-end gap-4 flex-wrap">
-          <div>
-            <label class="text-xs text-slate-400 mb-1 block">最大轮次</label>
-            <input type="number" x-model.number="maxRounds" min="2" max="20"
-                   class="w-24 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+          <!-- Agent A Prompt -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-semibold text-agentA-light flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-agentA inline-block"></span>
+                Agent A — <span x-text="t('suggester')"></span>
+              </label>
+              <button @click="promptA = defaultPromptA()" class="text-xs text-slate-500 hover:text-slate-300" x-text="t('reset')"></button>
+            </div>
+            <textarea x-model="promptA" rows="6" class="prompt-textarea w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y"></textarea>
           </div>
-          <button @click="saveConfig()"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors">
-            💾 保存配置
-          </button>
-          <p x-show="configSaved" x-transition
-             class="text-green-400 text-sm self-center">✓ 已保存</p>
+
+          <!-- Agent B Prompt -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-semibold text-agentB-light flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-agentB inline-block"></span>
+                Agent B — <span x-text="t('critic')"></span>
+              </label>
+              <button @click="promptB = defaultPromptB()" class="text-xs text-slate-500 hover:text-slate-300" x-text="t('reset')"></button>
+            </div>
+            <textarea x-model="promptB" rows="6" class="prompt-textarea w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none resize-y"></textarea>
+          </div>
+
+          <!-- Consensus Prompt -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-semibold text-consensus flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-consensus inline-block"></span>
+                <span x-text="t('consensusPrompt')"></span>
+              </label>
+              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-slate-500 hover:text-slate-300" x-text="t('reset')"></button>
+            </div>
+            <textarea x-model="promptConsensus" rows="4" class="prompt-textarea w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none resize-y"></textarea>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button @click="saveConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors">
+              💾 <span x-text="t('savePrompts')"></span>
+            </button>
+            <button @click="resetAllPrompts()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors border border-slate-600">
+              ↩ <span x-text="t('resetAll')"></span>
+            </button>
+            <p x-show="configSaved" x-transition class="text-green-400 text-sm">✓ <span x-text="t('saved')"></span></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Start / Stop Button -->
-    <div class="flex justify-center">
-      <button
-        x-show="!isDebating"
-        @click="startDebate()"
-        :disabled="!canStart"
-        class="px-8 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-lg font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
-      >
-        🚀 开始辩论
+    <!-- Text input alternative -->
+    <section class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <button @click="showTextInput = !showTextInput" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/50 transition-colors">
+        <span class="font-semibold text-slate-200">✏️ <span x-text="t('directInput')"></span></span>
+        <svg class="w-5 h-5 text-slate-400 transition-transform" :class="showTextInput && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
       </button>
-      <button
-        x-show="isDebating"
-        @click="abortDebate()"
-        class="px-8 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-lg font-semibold transition-all shadow-lg shadow-red-500/20"
-      >
-        ⏹ 停止辩论
+      <div x-show="showTextInput" x-collapse class="px-5 pb-5">
+        <textarea x-model="directText" rows="6" :placeholder="t('directInputHint')"
+                  class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y"></textarea>
+        <button @click="applyDirectText()" class="mt-2 px-4 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm border border-slate-600 transition-colors" x-text="t('applyText')"></button>
+      </div>
+    </section>
+
+    <!-- Start / Stop Button -->
+    <div class="flex justify-center gap-3">
+      <button x-show="!isDebating" @click="startDebate()" :disabled="!canStart"
+        class="px-8 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-lg font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40">
+        🚀 <span x-text="t('startDebate')"></span>
+      </button>
+      <button x-show="isDebating" @click="abortDebate()"
+        class="px-8 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-lg font-semibold transition-all shadow-lg shadow-red-500/20">
+        ⏹ <span x-text="t('stopDebate')"></span>
+      </button>
+      <button x-show="!isDebating && messages.length > 0 && consensus" @click="exportCurrentDebate()"
+        class="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-lg font-semibold transition-all border border-slate-600">
+        📥 <span x-text="t('export')"></span>
       </button>
     </div>
 
@@ -284,7 +318,7 @@
     <section x-show="messages.length > 0" x-cloak class="space-y-4">
       <!-- Round indicator -->
       <div x-show="currentRound > 0" class="text-center text-sm text-slate-400">
-        第 <span x-text="currentRound" class="text-slate-200 font-semibold"></span> 轮
+        <span x-text="t('round')"></span> <span x-text="currentRound" class="text-slate-200 font-semibold"></span>
         <span x-show="isDebating" class="inline-block ml-2">
           <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
         </span>
@@ -296,7 +330,7 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2 mb-2">
             <span class="w-3 h-3 rounded-full bg-agentA"></span>
-            <h3 class="font-semibold text-agentA-light">🟦 Agent A（建议者）</h3>
+            <h3 class="font-semibold text-agentA-light">🟦 Agent A（<span x-text="t('suggester')"></span>）</h3>
           </div>
           <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
             <div class="fade-in-up bg-agentA-bubble border-l-2 border-agentA rounded-lg rounded-l-none p-4 md-content"
@@ -308,7 +342,7 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2 mb-2">
             <span class="w-3 h-3 rounded-full bg-agentB"></span>
-            <h3 class="font-semibold text-agentB-light">🟥 Agent B（批评者）</h3>
+            <h3 class="font-semibold text-agentB-light">🟥 Agent B（<span x-text="t('critic')"></span>）</h3>
           </div>
           <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
             <div class="fade-in-up bg-agentB-bubble border-r-2 border-agentB rounded-lg rounded-r-none p-4 md-content"
@@ -319,121 +353,158 @@
     </section>
 
     <!-- Consensus Section -->
-    <section x-show="consensus" x-cloak
-             class="fade-in-up bg-consensus-bg border-2 border-consensus rounded-xl p-6">
-      <h2 class="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
-        🤝 共识结论
-      </h2>
+    <section x-show="consensus" x-cloak class="fade-in-up bg-consensus-bg border-2 border-consensus rounded-xl p-6">
+      <h2 class="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">🤝 <span x-text="t('consensusResult')"></span></h2>
       <div class="md-content" x-html="renderMarkdown(consensus)"></div>
     </section>
 
-    <!-- Footer -->
     <footer class="text-center text-xs text-slate-600 py-6 border-t border-slate-800 mt-8">
-      DebateAI — 纯前端，无需后端。API Key 仅存储在浏览器本地。
+      DebateAI — <span x-text="t('footerNote')"></span>
     </footer>
-
   </main>
 
   <script>
+    // === i18n ===
+    const I18N = {
+      zh: {
+        subtitle: '让两个 AI 互相挑刺，找到最优解',
+        history: '历史', debateHistory: '📜 辩论历史', noHistory: '暂无历史记录',
+        clearAll: '🗑 清空所有历史', textInput: '文本输入', rounds: '轮',
+        dragDrop: '拖拽或点击上传文件', supportedFormats: '支持: PDF / 代码 / 文本 / Markdown 等',
+        clickReplace: '点击或拖拽替换文件',
+        llmConfig: 'LLM 配置', apiSettings: 'API 设置', promptEditor: 'Prompt 编辑器',
+        suggester: '建议者', critic: '批评者', maxRounds: '最大轮次',
+        saveConfig: '保存配置', saved: '已保存', savePrompts: '保存 Prompt',
+        promptHint: '自定义 Agent 的系统提示词，控制辩论风格和角色行为。',
+        reset: '重置', resetAll: '全部重置',
+        consensusPrompt: '共识总结 Prompt',
+        directInput: '直接输入文本', directInputHint: '粘贴论文摘要、代码片段或任何文本...',
+        applyText: '✅ 使用此文本',
+        startDebate: '开始辩论', stopDebate: '停止辩论', export: '导出',
+        round: '第', consensusResult: '共识结论',
+        footerNote: '纯前端，无需后端。API Key 仅存储在浏览器本地。',
+        exportMarkdown: '导出 Markdown', exportJSON: '导出 JSON',
+        debateExported: '已导出', confirmClearHistory: '确定清空所有历史记录？',
+        confirmDeleteItem: '确定删除此记录？',
+      },
+      en: {
+        subtitle: 'Two AIs debate to find the best solution',
+        history: 'History', debateHistory: '📜 Debate History', noHistory: 'No history yet',
+        clearAll: '🗑 Clear All', textInput: 'Text Input', rounds: 'rounds',
+        dragDrop: 'Drag & drop or click to upload', supportedFormats: 'Supports: PDF / Code / Text / Markdown etc.',
+        clickReplace: 'Click or drag to replace',
+        llmConfig: 'LLM Config', apiSettings: 'API Settings', promptEditor: 'Prompt Editor',
+        suggester: 'Suggester', critic: 'Critic', maxRounds: 'Max Rounds',
+        saveConfig: 'Save Config', saved: 'Saved', savePrompts: 'Save Prompts',
+        promptHint: 'Customize agent system prompts to control debate style and role behavior.',
+        reset: 'Reset', resetAll: 'Reset All',
+        consensusPrompt: 'Consensus Summary Prompt',
+        directInput: 'Direct Text Input', directInputHint: 'Paste an abstract, code snippet, or any text...',
+        applyText: '✅ Use This Text',
+        startDebate: 'Start Debate', stopDebate: 'Stop Debate', export: 'Export',
+        round: 'Round', consensusResult: 'Consensus',
+        footerNote: 'Pure frontend, no backend needed. API keys stored locally only.',
+        exportMarkdown: 'Export Markdown', exportJSON: 'Export JSON',
+        debateExported: 'Exported', confirmClearHistory: 'Clear all history?',
+        confirmDeleteItem: 'Delete this record?',
+      }
+    };
+
     // Configure PDF.js worker
     if (typeof pdfjsLib !== 'undefined') {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-
-    // Configure marked with highlight.js
     if (typeof marked !== 'undefined') {
       marked.setOptions({
         highlight: function(code, lang) {
-          if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) {
-            return hljs.highlight(code, { language: lang }).value;
-          }
+          if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
           return typeof hljs !== 'undefined' ? hljs.highlightAuto(code).value : code;
         },
-        breaks: true,
-        gfm: true,
+        breaks: true, gfm: true,
       });
     }
 
+    // Code extensions that should be parsed
+    const CODE_EXTS = ['py','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql','json','md'];
+
     function debateApp() {
       return {
-        // File state
-        fileName: '',
-        fileSize: 0,
-        fileContent: '',
+        // i18n
+        lang: 'zh',
+        t(key) { return (I18N[this.lang] || I18N.zh)[key] || key; },
+        toggleLang() { this.lang = this.lang === 'zh' ? 'en' : 'zh'; localStorage.setItem('debateai_lang', this.lang); },
+
+        // File
+        fileName: '', fileSize: 0, fileContent: '',
+        directText: '', showTextInput: false,
 
         // Config
         configA: { baseUrl: '', apiKey: '', model: '' },
         configB: { baseUrl: '', apiKey: '', model: '' },
-        maxRounds: 6,
-        showConfig: true,
-        configSaved: false,
+        maxRounds: 6, showConfig: true, configSaved: false, configTab: 'api',
 
-        // Debate state
-        isDebating: false,
-        messages: [],
-        consensus: '',
-        currentRound: 0,
-        error: '',
-        abortController: null,
+        // Prompts
+        promptA: '', promptB: '', promptConsensus: '',
+        defaultPromptA() {
+          return this.lang === 'zh'
+            ? `你是一个专业的分析专家（建议者）。你的职责是：\n1. 仔细分析用户提供的材料（论文/代码/文本）\n2. 提出具体、可操作的改进建议\n3. 如果涉及代码，提供改进后的代码\n4. 输出结构化的分析，包含：问题分析、改进建议、代码示例\n5. 用中文回答`
+            : `You are a professional analyst (Suggester). Your responsibilities:\n1. Carefully analyze the user's material (paper/code/text)\n2. Propose specific, actionable improvements\n3. If code is involved, provide improved code\n4. Output structured analysis: problem analysis, improvement suggestions, code examples`;
+        },
+        defaultPromptB() {
+          return this.lang === 'zh'
+            ? `你是一个严格的审查者（批评者）。你的职责是：\n1. 仔细审查 Agent A 的建议，找出逻辑漏洞、技术错误、遗漏点\n2. 提出你的替代方案或补充建议\n3. 不要无理由反对——如果 A 的建议确实好，可以表示认可\n4. 如果发现问题，详细说明问题所在并给出你的方案\n5. 用中文回答`
+            : `You are a rigorous reviewer (Critic). Your responsibilities:\n1. Carefully review Agent A's suggestions, finding logical flaws, technical errors, and omissions\n2. Propose alternatives or supplementary suggestions\n3. Don't disagree without reason — if A's suggestion is good, acknowledge it\n4. If you find issues, explain them in detail and provide your solution`;
+        },
+        defaultPromptConsensus() {
+          return this.lang === 'zh'
+            ? `你是总结者。根据以下辩论记录，提炼双方共识，输出最终结论和改进代码。用 Markdown 格式。`
+            : `You are a summarizer. Based on the debate record below, extract the consensus between both parties, output final conclusions and improved code. Use Markdown format.`;
+        },
 
-        // Computed
+        // Debate
+        isDebating: false, messages: [], consensus: '', currentRound: 0, error: '', abortController: null,
+
+        // History
+        showHistory: false, historyList: [],
+
         get canStart() {
-          return this.fileContent && this.configA.baseUrl && this.configA.apiKey && this.configA.model &&
+          return (this.fileContent || this.directText) && this.configA.baseUrl && this.configA.apiKey && this.configA.model &&
                  this.configB.baseUrl && this.configB.apiKey && this.configB.model;
         },
-        get agentAMessages() {
-          return this.messages.filter(m => m.agent === 'A');
-        },
-        get agentBMessages() {
-          return this.messages.filter(m => m.agent === 'B');
-        },
+        get agentAMessages() { return this.messages.filter(m => m.agent === 'A'); },
+        get agentBMessages() { return this.messages.filter(m => m.agent === 'B'); },
 
-        // Init
         init() {
+          this.lang = localStorage.getItem('debateai_lang') || 'zh';
           this.loadConfig();
+          this.loadHistoryList();
+          // Init prompts if empty
+          if (!this.promptA) this.promptA = this.defaultPromptA();
+          if (!this.promptB) this.promptB = this.defaultPromptB();
+          if (!this.promptConsensus) this.promptConsensus = this.defaultPromptConsensus();
         },
 
         // File handling
-        async handleFileDrop(e) {
-          const file = e.dataTransfer.files[0];
-          if (file) await this.processFile(file);
-        },
-        async handleFileSelect(e) {
-          const file = e.target.files[0];
-          if (file) await this.processFile(file);
-        },
+        async handleFileDrop(e) { const f = e.dataTransfer.files[0]; if (f) await this.processFile(f); },
+        async handleFileSelect(e) { const f = e.target.files[0]; if (f) await this.processFile(f); },
         async processFile(file) {
           const ext = file.name.split('.').pop().toLowerCase();
-          if (!['pdf', 'py', 'txt'].includes(ext)) {
-            this.error = '不支持的文件格式，请上传 PDF / .py / .txt 文件';
-            return;
-          }
-          this.fileName = file.name;
-          this.fileSize = file.size;
-          this.error = '';
-
-          if (ext === 'pdf') {
-            this.fileContent = await this.parsePDF(file);
-          } else {
-            this.fileContent = await this.readAsText(file);
-          }
+          const allExts = ['pdf','py','txt','md','csv','json','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql'];
+          if (!allExts.includes(ext)) { this.error = this.lang === 'zh' ? '不支持的文件格式' : 'Unsupported file format'; return; }
+          this.fileName = file.name; this.fileSize = file.size; this.error = '';
+          this.directText = '';
+          if (ext === 'pdf') { this.fileContent = await this.parsePDF(file); }
+          else { this.fileContent = await this.readText(file); }
         },
-        readAsText(file) {
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('文件读取失败'));
-            reader.readAsText(file);
-          });
-        },
+        readText(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('Read failed')); r.readAsText(file); }); },
         async parsePDF(file) {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
           let text = '';
           for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
-            text += content.items.map(item => item.str).join(' ') + '\n\n';
+            text += content.items.map(it => it.str).join(' ') + '\n\n';
           }
           return text.trim();
         },
@@ -442,153 +513,131 @@
           if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
           return (bytes / 1048576).toFixed(1) + ' MB';
         },
+        applyDirectText() {
+          if (this.directText.trim()) {
+            this.fileContent = this.directText.trim();
+            this.fileName = this.lang === 'zh' ? '直接输入文本' : 'Direct text input';
+            this.fileSize = this.fileContent.length;
+          }
+        },
 
         // Config persistence
         saveConfig() {
           const data = {
-            configA: this.configA,
-            configB: this.configB,
-            maxRounds: this.maxRounds,
+            configA: this.configA, configB: this.configB, maxRounds: this.maxRounds,
+            promptA: this.promptA, promptB: this.promptB, promptConsensus: this.promptConsensus,
           };
           localStorage.setItem('debateai_config', JSON.stringify(data));
-          this.configSaved = true;
-          setTimeout(() => this.configSaved = false, 2000);
+          this.configSaved = true; setTimeout(() => this.configSaved = false, 2000);
         },
         loadConfig() {
           try {
             const raw = localStorage.getItem('debateai_config');
             if (raw) {
-              const data = JSON.parse(raw);
-              if (data.configA) this.configA = { ...this.configA, ...data.configA };
-              if (data.configB) this.configB = { ...this.configB, ...data.configB };
-              if (data.maxRounds) this.maxRounds = data.maxRounds;
+              const d = JSON.parse(raw);
+              if (d.configA) this.configA = { ...this.configA, ...d.configA };
+              if (d.configB) this.configB = { ...this.configB, ...d.configB };
+              if (d.maxRounds) this.maxRounds = d.maxRounds;
+              if (d.promptA) this.promptA = d.promptA;
+              if (d.promptB) this.promptB = d.promptB;
+              if (d.promptConsensus) this.promptConsensus = d.promptConsensus;
             }
-          } catch (e) { /* ignore */ }
+          } catch (e) {}
+        },
+        resetAllPrompts() {
+          this.promptA = this.defaultPromptA();
+          this.promptB = this.defaultPromptB();
+          this.promptConsensus = this.defaultPromptConsensus();
         },
 
-        // Markdown rendering
+        // Markdown
         renderMarkdown(text) {
           if (!text) return '';
-          try {
-            const html = marked.parse(text);
-            // Post-process: highlight code blocks that marked didn't catch
-            return html;
-          } catch (e) {
-            return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          }
+          try { return marked.parse(text); } catch (e) { return text.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
         },
 
-        // Debate orchestrator
+        // Debate
         async startDebate() {
           if (!this.canStart) return;
+          const content = this.fileContent;
+          if (!content) return;
 
-          this.isDebating = true;
-          this.messages = [];
-          this.consensus = '';
-          this.currentRound = 0;
-          this.error = '';
-          this.abortController = new AbortController();
-
-          const systemPromptA = `你是一个专业的分析专家（建议者）。你的职责是：
-1. 仔细分析用户提供的材料（论文/代码/文本）
-2. 提出具体、可操作的改进建议
-3. 如果涉及代码，提供改进后的代码
-4. 输出结构化的分析，包含：问题分析、改进建议、代码示例
-5. 用中文回答`;
-
-          const systemPromptB = `你是一个严格的审查者（批评者）。你的职责是：
-1. 仔细审查 Agent A 的建议，找出逻辑漏洞、技术错误、遗漏点
-2. 提出你的替代方案或补充建议
-3. 不要无理由反对——如果 A 的建议确实好，可以表示认可
-4. 如果发现问题，详细说明问题所在并给出你的方案
-5. 用中文回答`;
+          this.isDebating = true; this.messages = []; this.consensus = '';
+          this.currentRound = 0; this.error = ''; this.abortController = new AbortController();
 
           try {
-            // Round 1: Agent A analyzes material
+            // Round 1: Agent A
             this.currentRound = 1;
-            const historyA = [
-              { role: 'system', content: systemPromptA },
-              { role: 'user', content: `请分析以下材料并提出改进建议：\n\n${this.fileContent}` }
+            const histA = [
+              { role: 'system', content: this.promptA },
+              { role: 'user', content: (this.lang === 'zh' ? '请分析以下材料并提出改进建议：\n\n' : 'Please analyze the following material and suggest improvements:\n\n') + content }
             ];
             const msgA1 = this.addMessage('A', '', 1);
-            await this.callLLM(this.configA, historyA, (chunk) => this.appendToMessage(msgA1, chunk));
+            await this.callLLM(this.configA, histA, ch => this.appendToMessage(msgA1, ch));
 
-            // Round 1: Agent B reviews
-            const historyB = [
-              { role: 'system', content: systemPromptB },
-              { role: 'user', content: `以下是一份材料和 Agent A 的分析建议。请审查并指出问题：\n\n材料：${this.fileContent}\n\nAgent A 的建议：${msgA1.content}` }
+            // Round 1: Agent B
+            const histB = [
+              { role: 'system', content: this.promptB },
+              { role: 'user', content: (this.lang === 'zh'
+                ? '以下是一份材料和 Agent A 的分析建议。请审查并指出问题：\n\n材料：'
+                : 'Here is a material and Agent A\'s analysis. Please review and point out issues:\n\nMaterial: ') + content + (this.lang === 'zh' ? '\n\nAgent A 的建议：' : '\n\nAgent A\'s suggestions: ') + msgA1.content }
             ];
             const msgB1 = this.addMessage('B', '', 1);
-            await this.callLLM(this.configB, historyB, (chunk) => this.appendToMessage(msgB1, chunk));
+            await this.callLLM(this.configB, histB, ch => this.appendToMessage(msgB1, ch));
 
-            // Check early consensus
-            if (this.detectConsensus(msgB1.content)) {
-              await this.extractConsensus(systemPromptA, systemPromptB);
-              return;
-            }
+            if (this.detectConsensus(msgB1.content)) { await this.extractConsensus(); return; }
 
-            // Subsequent rounds
-            let prevA = msgA1;
-            let prevB = msgB1;
-            let histA = [...historyA];
-            let histB = [...historyB];
+            let prevA = msgA1, prevB = msgB1;
+            let hA = [...histA], hB = [...histB];
 
             for (let round = 2; round <= this.maxRounds; round++) {
               this.currentRound = round;
-
-              // Agent A responds to B's criticism
-              histA.push({ role: 'assistant', content: prevA.content });
-              histA.push({ role: 'user', content: `Agent B 对你的建议提出了以下批评，请回应：\n\n${prevB.content}` });
+              hA.push({ role: 'assistant', content: prevA.content });
+              hA.push({ role: 'user', content: (this.lang === 'zh' ? 'Agent B 对你的建议提出了以下批评，请回应：\n\n' : 'Agent B criticized your suggestions. Please respond:\n\n') + prevB.content });
               const msgA = this.addMessage('A', '', round);
-              await this.callLLM(this.configA, histA, (chunk) => this.appendToMessage(msgA, chunk));
+              await this.callLLM(this.configA, hA, ch => this.appendToMessage(msgA, ch));
               prevA = msgA;
 
-              // Agent B responds
-              histB.push({ role: 'assistant', content: prevB.content });
-              histB.push({ role: 'user', content: `Agent A 回应了你的批评：\n\n${prevA.content}\n\n请继续审查或表示同意。` });
+              hB.push({ role: 'assistant', content: prevB.content });
+              hB.push({ role: 'user', content: (this.lang === 'zh' ? 'Agent A 回应了你的批评：\n\n' : 'Agent A responded to your criticism:\n\n') + prevA.content + (this.lang === 'zh' ? '\n\n请继续审查或表示同意。' : '\n\nPlease continue reviewing or express agreement.') });
               const msgB = this.addMessage('B', '', round);
-              await this.callLLM(this.configB, histB, (chunk) => this.appendToMessage(msgB, chunk));
+              await this.callLLM(this.configB, hB, ch => this.appendToMessage(msgB, ch));
               prevB = msgB;
 
-              // Check consensus
               if (this.detectConsensus(msgB.content)) break;
             }
 
-            // Extract final consensus
-            await this.extractConsensus(systemPromptA, systemPromptB);
+            await this.extractConsensus();
 
           } catch (e) {
-            if (e.name === 'AbortError') {
-              this.error = '辩论已中止';
-            } else {
-              this.error = `辩论出错: ${e.message}`;
-            }
+            this.error = e.name === 'AbortError' ? (this.lang === 'zh' ? '辩论已中止' : 'Debate aborted') : `Error: ${e.message}`;
           } finally {
-            this.isDebating = false;
-            this.abortController = null;
+            this.isDebating = false; this.abortController = null;
           }
         },
 
-        async extractConsensus(systemPromptA, systemPromptB) {
+        async extractConsensus() {
           const summary = this.buildDebateSummary();
-          const consensusMsg = this.addMessage('consensus', '', 0);
+          const cMsg = this.addMessage('consensus', '', 0);
           await this.callLLM(this.configA, [
-            { role: 'system', content: '你是总结者。根据以下辩论记录，提炼双方共识，输出最终结论和改进代码。用 Markdown 格式。' },
+            { role: 'system', content: this.promptConsensus },
             { role: 'user', content: summary }
-          ], (chunk) => this.appendToMessage(consensusMsg, chunk));
-          this.consensus = consensusMsg.content;
+          ], ch => this.appendToMessage(cMsg, ch));
+          this.consensus = cMsg.content;
+          // Auto-save to history
+          this.saveToHistory();
         },
 
         buildDebateSummary() {
-          let summary = '辩论记录：\n\n';
-          for (const msg of this.messages) {
-            const role = msg.agent === 'A' ? 'Agent A（建议者）' : 'Agent B（批评者）';
-            summary += `## 第 ${msg.round} 轮 - ${role}\n\n${msg.content}\n\n---\n\n`;
+          let s = (this.lang === 'zh' ? '辩论记录：\n\n' : 'Debate Record:\n\n');
+          for (const m of this.messages) {
+            const role = m.agent === 'A' ? 'Agent A' : m.agent === 'B' ? 'Agent B' : 'Consensus';
+            s += `## ${this.lang === 'zh' ? '第' : 'Round '}${m.round}${this.lang === 'zh' ? '轮' : ''} - ${role}\n\n${m.content}\n\n---\n\n`;
           }
-          return summary;
+          return s;
         },
 
-        // Message management
+        // Messages
         addMessage(agent, content, round) {
           const msg = { agent, content, round, id: Date.now() + Math.random() };
           this.messages.push(msg);
@@ -597,85 +646,141 @@
         },
         appendToMessage(msg, chunk) {
           msg.content += chunk;
-          // Auto-scroll periodically (throttled)
           if (!this._scrollThrottle) {
             this._scrollThrottle = true;
-            requestAnimationFrame(() => {
-              this.scrollToBottom();
-              this._scrollThrottle = false;
-            });
+            requestAnimationFrame(() => { this.scrollToBottom(); this._scrollThrottle = false; });
           }
         },
-        scrollToBottom() {
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        },
+        scrollToBottom() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); },
 
-        // LLM API call with SSE streaming
+        // LLM call
         async callLLM(config, messages, onChunk) {
           const signal = this.abortController ? this.abortController.signal : undefined;
           const url = config.baseUrl.replace(/\/+$/, '') + '/chat/completions';
-
-          const response = await fetch(url, {
+          const resp = await fetch(url, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${config.apiKey}`,
-            },
-            body: JSON.stringify({
-              model: config.model,
-              messages: messages,
-              stream: true,
-            }),
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` },
+            body: JSON.stringify({ model: config.model, messages, stream: true }),
             signal,
           });
-
-          if (!response.ok) {
-            const errText = await response.text().catch(() => '');
-            throw new Error(`API 请求失败 (${response.status}): ${errText.slice(0, 200)}`);
-          }
-
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-
+          if (!resp.ok) { const t = await resp.text().catch(() => ''); throw new Error(`API ${resp.status}: ${t.slice(0, 200)}`); }
+          const reader = resp.body.getReader(), decoder = new TextDecoder();
+          let buf = '';
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
-
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split('\n'); buf = lines.pop() || '';
             for (const line of lines) {
               const trimmed = line.trim();
               if (!trimmed || !trimmed.startsWith('data:')) continue;
               const data = trimmed.slice(5).trim();
               if (data === '[DONE]') return;
-
               try {
                 const json = JSON.parse(data);
                 const delta = json.choices && json.choices[0] && json.choices[0].delta;
-                if (delta && delta.content) {
-                  onChunk(delta.content);
-                }
-              } catch (e) {
-                // skip malformed JSON
-              }
+                if (delta && delta.content) onChunk(delta.content);
+              } catch (e) {}
             }
           }
         },
 
-        // Consensus detection
         detectConsensus(text) {
-          const keywords = ['同意', '认可', '达成共识', '没有异议', '你说得对', '有道理', 'agree', 'consensus', '我同意', '完全同意', '基本同意'];
-          return keywords.some(k => text.toLowerCase().includes(k));
+          const kw = ['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','I agree','no objections','common ground'];
+          return kw.some(k => text.toLowerCase().includes(k.toLowerCase()));
+        },
+        abortDebate() { if (this.abortController) this.abortController.abort(); },
+
+        // === History ===
+        loadHistoryList() {
+          try {
+            const raw = localStorage.getItem('debateai_history');
+            this.historyList = raw ? JSON.parse(raw) : [];
+          } catch (e) { this.historyList = []; }
+        },
+        saveToHistory() {
+          const record = {
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+            fileName: this.fileName,
+            fileSize: this.fileSize,
+            agentA: { model: this.configA.model, baseUrl: this.configA.baseUrl },
+            agentB: { model: this.configB.model, baseUrl: this.configB.baseUrl },
+            rounds: this.currentRound,
+            messages: JSON.parse(JSON.stringify(this.messages)),
+            consensus: this.consensus,
+            contentPreview: this.fileContent.slice(0, 500),
+          };
+          this.historyList.unshift(record);
+          // Keep last 50
+          if (this.historyList.length > 50) this.historyList = this.historyList.slice(0, 50);
+          localStorage.setItem('debateai_history', JSON.stringify(this.historyList));
+        },
+        loadHistory(h) {
+          this.messages = h.messages || [];
+          this.consensus = h.consensus || '';
+          this.currentRound = h.rounds || 0;
+          this.fileName = h.fileName || '';
+          this.showHistory = false;
+          this.$nextTick(() => this.scrollToBottom());
+        },
+        deleteHistory(id) {
+          if (!confirm(this.t('confirmDeleteItem'))) return;
+          this.historyList = this.historyList.filter(h => h.id !== id);
+          localStorage.setItem('debateai_history', JSON.stringify(this.historyList));
+        },
+        clearAllHistory() {
+          if (!confirm(this.t('confirmClearHistory'))) return;
+          this.historyList = [];
+          localStorage.removeItem('debateai_history');
+        },
+        formatDate(iso) {
+          if (!iso) return '';
+          const d = new Date(iso);
+          return d.toLocaleDateString(this.lang === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         },
 
-        // Abort
-        abortDebate() {
-          if (this.abortController) {
-            this.abortController.abort();
+        // Export
+        exportCurrentDebate() {
+          if (!this.messages.length) return;
+          this.exportHistory({
+            fileName: this.fileName,
+            timestamp: new Date().toISOString(),
+            agentA: { model: this.configA.model },
+            agentB: { model: this.configB.model },
+            rounds: this.currentRound,
+            messages: this.messages,
+            consensus: this.consensus,
+          }, 'md');
+        },
+        exportHistory(h, format) {
+          let content, mime, ext;
+          if (format === 'json') {
+            content = JSON.stringify(h, null, 2);
+            mime = 'application/json'; ext = 'json';
+          } else {
+            content = this.buildExportMarkdown(h);
+            mime = 'text/markdown'; ext = 'md';
           }
+          const blob = new Blob([content], { type: mime });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `debate-${h.fileName || 'text'}-${h.id || Date.now()}.${ext}`;
+          a.click(); URL.revokeObjectURL(url);
+        },
+        buildExportMarkdown(h) {
+          let md = `# DebateAI ${this.lang === 'zh' ? '辩论记录' : 'Debate Record'}\n\n`;
+          md += `- **${this.lang === 'zh' ? '文件' : 'File'}**: ${h.fileName || 'N/A'}\n`;
+          md += `- **${this.lang === 'zh' ? '日期' : 'Date'}**: ${new Date(h.timestamp).toLocaleString()}\n`;
+          md += `- **Agent A**: ${h.agentA?.model || 'N/A'}\n`;
+          md += `- **Agent B**: ${h.agentB?.model || 'N/A'}\n`;
+          md += `- **${this.lang === 'zh' ? '轮次' : 'Rounds'}**: ${h.rounds}\n\n---\n\n`;
+          for (const m of (h.messages || [])) {
+            const role = m.agent === 'A' ? '🟦 Agent A' : m.agent === 'B' ? '🟥 Agent B' : '🤝 Consensus';
+            md += `## ${role} — ${this.lang === 'zh' ? '第' : 'Round '}${m.round}${this.lang === 'zh' ? '轮' : ''}\n\n${m.content}\n\n---\n\n`;
+          }
+          if (h.consensus) md += `## 🤝 ${this.lang === 'zh' ? '共识结论' : 'Consensus'}\n\n${h.consensus}\n`;
+          return md;
         },
       };
     }

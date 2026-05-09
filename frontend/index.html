@@ -10,11 +10,16 @@
       theme: {
         extend: {
           colors: {
-            surface: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
-            accent: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5', glow: 'rgba(99,102,241,0.12)' },
-            agentA: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb', surface: '#eff6ff', border: '#bfdbfe', glow: 'rgba(59,130,246,0.08)' },
-            agentB: { DEFAULT: '#f43f5e', light: '#fb7185', dark: '#e11d48', surface: '#fff1f2', border: '#fecdd3', glow: 'rgba(244,63,94,0.08)' },
-            consensus: { DEFAULT: '#10b981', light: '#34d399', dark: '#059669', surface: '#ecfdf5', border: '#a7f3d0' },
+            bg: '#fafafa',
+            card: '#ffffff',
+            border: '#e5e7eb',
+            subtle: '#f3f4f6',
+            txt: { 1: '#111827', 2: '#374151', 3: '#6b7280', 4: '#9ca3af' },
+            blue: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+            rose: { 50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 400: '#fb7185', 500: '#f43f5e', 600: '#e11d48' },
+            green: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 400: '#34d399', 500: '#10b981', 600: '#059669' },
+            violet: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed' },
+            amber: { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 400: '#fbbf24', 500: '#f59e0b' },
           }
         }
       }
@@ -22,550 +27,385 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body { background: #0f172a; color: #e2e8f0; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    * { font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif; }
+    body { background: #fafafa; color: #111827; }
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-    /* ── Animations ── */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes slideInRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
-    @keyframes typing-bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
-    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-    @keyframes glow-pulse { 0%, 100% { box-shadow: 0 0 20px rgba(99,102,241,0.15); } 50% { box-shadow: 0 0 40px rgba(99,102,241,0.3); } }
-    @keyframes progress-stripe { 0% { background-position: 0 0; } 100% { background-position: 40px 0; } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+    @keyframes slideL { from { opacity:0; transform:translateX(-16px) } to { opacity:1; transform:translateX(0) } }
+    @keyframes slideR { from { opacity:0; transform:translateX(16px) } to { opacity:1; transform:translateX(0) } }
+    @keyframes typingBounce { 0%,80%,100% { transform:translateY(0) } 40% { transform:translateY(-5px) } }
+    @keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
 
-    .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
-    .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-    .slide-in-left { animation: slideInLeft 0.4s ease-out forwards; }
-    .slide-in-right { animation: slideInRight 0.4s ease-out forwards; }
-    .scale-in { animation: scaleIn 0.3s ease-out forwards; }
+    .fade-up { animation: fadeUp .35s ease-out forwards; }
+    .slide-l { animation: slideL .4s ease-out forwards; }
+    .slide-r { animation: slideR .4s ease-out forwards; }
 
-    .typing-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #6366f1; margin: 0 3px; animation: typing-bounce 1.4s infinite ease-in-out both; }
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-    .typing-dot:nth-child(3) { animation-delay: 0s; }
+    .typing-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#9ca3af; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
+    .typing-dot:nth-child(1) { animation-delay:-.32s }
+    .typing-dot:nth-child(2) { animation-delay:-.16s }
 
-    /* ── Upload Zone ── */
-    .upload-zone {
-      border: 2px dashed #334155;
-      background: linear-gradient(135deg, rgba(99,102,241,0.03), rgba(59,130,246,0.03));
-      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: #6366f1;
-      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(59,130,246,0.06));
-      box-shadow: 0 0 30px rgba(99,102,241,0.1);
-      transform: translateY(-2px);
-    }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; }
+    .card:hover { border-color:#d1d5db; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
 
-    /* ── Cards ── */
-    .glass-card {
-      background: rgba(30,41,59,0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(51,65,85,0.5);
-      border-radius: 16px;
-      transition: all 0.25s ease;
-    }
-    .glass-card:hover { border-color: rgba(99,102,241,0.3); }
+    .input-box { background:#fff; border:1px solid #e5e7eb; border-radius:8px; color:#111827; transition: all .15s; }
+    .input-box::placeholder { color:#9ca3af; }
+    .input-box:focus { border-color:#3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); outline:none; }
 
-    /* ── Buttons ── */
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1, #818cf8);
-      box-shadow: 0 4px 14px rgba(99,102,241,0.35);
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-primary:hover { box-shadow: 0 6px 20px rgba(99,102,241,0.5); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0) scale(0.98); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn { border-radius:8px; font-weight:600; font-size:.875rem; transition:all .15s; cursor:pointer; }
+    .btn:active { transform:scale(.97) }
 
-    .btn-ghost {
-      background: rgba(51,65,85,0.4);
-      border: 1px solid rgba(51,65,85,0.6);
-      color: #94a3b8;
-      transition: all 0.2s ease;
-    }
-    .btn-ghost:hover { background: rgba(51,65,85,0.6); color: #e2e8f0; border-color: #64748b; }
+    .btn-blue { background:#3b82f6; color:#fff; }
+    .btn-blue:hover { background:#2563eb; }
+    .btn-blue:disabled { background:#dbeafe; color:#93c5fd; cursor:not-allowed; }
 
-    .btn-danger {
-      background: rgba(244,63,94,0.1);
-      border: 1px solid rgba(244,63,94,0.3);
-      color: #fb7185;
-      transition: all 0.2s ease;
-    }
-    .btn-danger:hover { background: rgba(244,63,94,0.2); border-color: #f43f5e; }
+    .btn-ghost { background:#f3f4f6; border:1px solid #e5e7eb; color:#374151; }
+    .btn-ghost:hover { background:#e5e7eb; }
 
-    /* ── Inputs ── */
-    .input-field {
-      background: rgba(15,23,42,0.5);
-      border: 1px solid #334155;
-      color: #e2e8f0;
-      transition: all 0.2s ease;
-    }
-    .input-field::placeholder { color: #475569; }
-    .input-field:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); outline: none; }
+    .btn-red { background:#fef2f2; border:1px solid #fecaca; color:#ef4444; }
+    .btn-red:hover { background:#fee2e2; }
 
-    /* ── Tabs ── */
-    .tab-active { color: #e2e8f0; border-bottom: 2px solid #6366f1; }
-    .tab-inactive { color: #64748b; border-bottom: 2px solid transparent; }
-    .tab-inactive:hover { color: #94a3b8; }
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:9999px; font-size:.75rem; font-weight:600; }
 
-    /* ── Debate bubbles ── */
-    .bubble-a {
-      background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04));
-      border: 1px solid rgba(59,130,246,0.2);
-      border-left: 3px solid #3b82f6;
-    }
-    .bubble-b {
-      background: linear-gradient(135deg, rgba(244,63,94,0.08), rgba(244,63,94,0.04));
-      border: 1px solid rgba(244,63,94,0.2);
-      border-left: 3px solid #f43f5e;
-    }
-    .bubble-consensus {
-      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.04));
-      border: 1px solid rgba(16,185,129,0.3);
-    }
+    .bubble { border-radius:12px; padding:16px; font-size:.875rem; line-height:1.7; }
+    .bubble-a { background:#eff6ff; border:1px solid #bfdbfe; }
+    .bubble-b { background:#fff1f2; border:1px solid #fecdd3; }
+    .bubble-consensus { background:#ecfdf5; border:1px solid #a7f3d0; }
 
-    /* ── Round badge ── */
-    .round-badge {
-      background: linear-gradient(135deg, #1e293b, #334155);
-      border: 1px solid #475569;
-      font-variant-numeric: tabular-nums;
-    }
+    .md-content { color:#374151; }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.8em; margin-bottom:.4em; color:#111827; }
+    .md-content h1 { font-size:1.3em } .md-content h2 { font-size:1.1em } .md-content h3 { font-size:1em }
+    .md-content p { margin-bottom:.6em; }
+    .md-content ul,.md-content ol { margin-left:1.5em; margin-bottom:.6em }
+    .md-content li { margin-bottom:.2em }
+    .md-content code { background:#f3f4f6; padding:.1em .3em; border-radius:4px; font-size:.85em; color:#7c3aed; }
+    .md-content pre { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:.8em; overflow-x:auto; margin:.6em 0 }
+    .md-content pre code { background:transparent; padding:0; font-size:.82em; line-height:1.6; color:#111827 }
+    .md-content blockquote { border-left:3px solid #3b82f6; padding-left:.8em; color:#6b7280; margin:.6em 0 }
+    .md-content table { border-collapse:collapse; width:100%; margin:.6em 0 }
+    .md-content th,.md-content td { border:1px solid #e5e7eb; padding:.4em .6em; text-align:left }
+    .md-content th { background:#f3f4f6; font-weight:600; color:#374151 }
+    .md-content strong { color:#111827; }
+    .md-content a { color:#3b82f6; text-decoration:underline }
 
-    /* ── Progress bar ── */
-    .progress-bar {
-      background: linear-gradient(90deg, #6366f1, #818cf8, #6366f1);
-      background-size: 200% 100%;
-      animation: shimmer 2s linear infinite;
-      border-radius: 999px;
-      height: 3px;
-    }
+    .prompt-textarea { font-family:'Courier New',monospace; font-size:.8rem; line-height:1.5; tab-size:2 }
 
-    /* ── Markdown content ── */
-    .md-content { color: #cbd5e1; line-height: 1.75; }
-    .md-content h1,.md-content h2,.md-content h3 { font-weight: 700; margin-top: 1em; margin-bottom: 0.5em; color: #f1f5f9; }
-    .md-content h1 { font-size: 1.35em; } .md-content h2 { font-size: 1.15em; } .md-content h3 { font-size: 1.05em; }
-    .md-content p { margin-bottom: 0.7em; }
-    .md-content ul,.md-content ol { margin-left: 1.5em; margin-bottom: 0.7em; }
-    .md-content li { margin-bottom: 0.3em; }
-    .md-content code { background: rgba(99,102,241,0.15); padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.88em; color: #a5b4fc; }
-    .md-content pre { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 1em; overflow-x: auto; margin: 0.8em 0; }
-    .md-content pre code { background: transparent; padding: 0; font-size: 0.83em; line-height: 1.6; color: #e2e8f0; }
-    .md-content blockquote { border-left: 3px solid #6366f1; padding-left: 1em; color: #94a3b8; margin: 0.8em 0; }
-    .md-content table { border-collapse: collapse; width: 100%; margin: 0.8em 0; }
-    .md-content th,.md-content td { border: 1px solid #334155; padding: 0.5em 0.8em; text-align: left; }
-    .md-content th { background: rgba(99,102,241,0.1); font-weight: 600; color: #a5b4fc; }
-    .md-content strong { color: #f1f5f9; }
-    .md-content a { color: #818cf8; text-decoration: underline; }
+    .header-bar { background:#fff; border-bottom:1px solid #e5e7eb; }
 
-    /* ── History sidebar ── */
-    .history-item { transition: background 0.15s ease; }
-    .history-item:hover { background: rgba(99,102,241,0.06); }
-
-    /* ── Pulse ring for active debate ── */
-    .pulse-ring { position: relative; }
-    .pulse-ring::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 2px solid #6366f1;
-      animation: pulse-ring 2s cubic-bezier(0,0,0.2,1) infinite;
-    }
-
-    /* ── Prompt textarea ── */
-    .prompt-textarea { font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; tab-size: 2; }
-
-    /* ── Smooth collapse ── */
-    [x-collapse] { overflow: hidden; }
-
-    /* ── Header glass ── */
-    .header-glass {
-      background: rgba(15,23,42,0.85);
-      backdrop-filter: blur(16px) saturate(1.8);
-      border-bottom: 1px solid rgba(51,65,85,0.4);
-    }
+    .progress-shimmer { background:linear-gradient(90deg,#3b82f6,#60a5fa,#3b82f6); background-size:200% 100%; animation:shimmer 2s linear infinite; height:3px; border-radius:999px; }
   </style>
 </head>
 
 <body class="min-h-screen" x-data="debateApp()" x-init="init()">
 
-  <!-- ── Header ── -->
-  <header class="sticky top-0 z-50 header-glass">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="relative">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-agentA flex items-center justify-center text-white font-extrabold text-base shadow-lg shadow-accent/30">D</div>
-          <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-consensus border-2 border-surface-900"></div>
-        </div>
-        <div>
-          <h1 class="text-lg font-bold text-white tracking-tight">DebateAI</h1>
-          <p class="text-surface-400 text-xs" x-text="t('subtitle')"></p>
-        </div>
+  <!-- Header -->
+  <header class="header-bar sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">D</div>
+        <span class="text-base font-bold text-txt-1 tracking-tight">DebateAI</span>
+        <span class="text-xs text-txt-4 ml-1" x-text="t('subtitle')"></span>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="toggleLang()" class="px-3 py-1.5 text-xs rounded-lg btn-ghost font-medium transition-all"
-                x-text="lang === 'zh' ? 'EN' : '中文'"></button>
-        <button @click="showHistory = !showHistory" class="relative px-3 py-1.5 text-xs rounded-lg btn-ghost font-medium transition-all">
-          <span class="mr-1">📜</span> <span x-text="t('history')"></span>
-          <span x-show="historyList.length > 0"
-                class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-accent rounded-full text-[10px] text-white flex items-center justify-center font-bold"
-                x-text="historyList.length"></span>
+        <button @click="toggleLang()" class="btn btn-ghost px-3 py-1.5 text-xs" x-text="lang === 'zh' ? 'EN' : '中文'"></button>
+        <button @click="showHistory = !showHistory" class="btn btn-ghost px-3 py-1.5 text-xs relative">
+          📜 <span x-text="t('history')"></span>
+          <span x-show="historyList.length > 0" class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-blue-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold" x-text="historyList.length"></span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ── History Sidebar ── -->
+  <!-- History Sidebar -->
   <div x-show="showHistory" x-cloak
-       x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-       x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-       class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" @click.self="showHistory = false">
-    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-surface-900 border-l border-surface-700 overflow-y-auto shadow-2xl"
-         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
-         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
-      <div class="p-5 border-b border-surface-700 flex items-center justify-between sticky top-0 bg-surface-900/95 backdrop-blur-sm z-10">
-        <h2 class="text-lg font-bold text-white" x-text="t('debateHistory')"></h2>
-        <button @click="showHistory = false" class="w-8 h-8 rounded-lg flex items-center justify-center text-surface-400 hover:text-white hover:bg-surface-700 transition-all text-xl">&times;</button>
+       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+       class="fixed inset-0 z-40 bg-black/30" @click.self="showHistory = false">
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white border-l border-border overflow-y-auto shadow-xl"
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+      <div class="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-white z-10">
+        <h2 class="text-base font-bold text-txt-1" x-text="t('debateHistory')"></h2>
+        <button @click="showHistory = false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-txt-1 hover:bg-subtle transition-colors text-lg">&times;</button>
       </div>
-      <div x-show="historyList.length === 0" class="p-12 text-center text-surface-500">
-        <div class="text-5xl mb-4 opacity-50">📭</div>
+      <div x-show="historyList.length === 0" class="p-10 text-center text-txt-4">
+        <div class="text-4xl mb-3 opacity-40">📭</div>
         <p class="text-sm" x-text="t('noHistory')"></p>
       </div>
-      <div class="divide-y divide-surface-800">
-        <template x-for="(h, idx) in historyList" :key="h.id">
-          <div class="history-item p-4 cursor-pointer" @click="loadHistory(h)">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium text-surface-200 truncate max-w-[220px]" x-text="h.fileName || t('textInput')"></span>
-              <span class="text-xs text-surface-500" x-text="formatDate(h.timestamp)"></span>
+      <div class="divide-y divide-border">
+        <template x-for="h in historyList" :key="h.id">
+          <div class="p-4 hover:bg-blue-50/50 cursor-pointer transition-colors" @click="loadHistory(h)">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-txt-1 truncate max-w-[200px]" x-text="h.fileName || t('textInput')"></span>
+              <span class="text-xs text-txt-4" x-text="formatDate(h.timestamp)"></span>
             </div>
-            <div class="flex items-center gap-3 text-xs text-surface-400 mb-3">
-              <span class="px-2 py-0.5 rounded-full bg-surface-800 text-surface-300" x-text="h.rounds + ' ' + t('rounds')"></span>
+            <div class="flex items-center gap-2 text-xs text-txt-3 mb-2">
+              <span class="badge bg-blue-50 text-blue-600" x-text="h.rounds + ' ' + t('rounds')"></span>
               <span class="truncate" x-text="h.agentA.model + ' vs ' + h.agentB.model"></span>
             </div>
-            <div class="flex items-center gap-2">
-              <button @click.stop="exportHistory(h, 'md')" class="px-2.5 py-1 text-xs rounded-md btn-ghost">📄 MD</button>
-              <button @click.stop="exportHistory(h, 'json')" class="px-2.5 py-1 text-xs rounded-md btn-ghost">{ } JSON</button>
-              <button @click.stop="deleteHistory(h.id)" class="px-2.5 py-1 text-xs rounded-md btn-danger ml-auto">🗑</button>
+            <div class="flex items-center gap-1.5">
+              <button @click.stop="exportHistory(h, 'md')" class="btn btn-ghost px-2 py-0.5 text-xs">📄 MD</button>
+              <button @click.stop="exportHistory(h, 'json')" class="btn btn-ghost px-2 py-0.5 text-xs">{ } JSON</button>
+              <button @click.stop="deleteHistory(h.id)" class="btn btn-red px-2 py-0.5 text-xs ml-auto">🗑</button>
             </div>
           </div>
         </template>
       </div>
-      <div x-show="historyList.length > 0" class="p-4 border-t border-surface-700 sticky bottom-0 bg-surface-900/95 backdrop-blur-sm">
-        <button @click="clearAllHistory()" class="w-full px-3 py-2.5 text-sm rounded-xl btn-danger font-medium" x-text="t('clearAll')"></button>
+      <div x-show="historyList.length > 0" class="p-4 border-t border-border sticky bottom-0 bg-white">
+        <button @click="clearAllHistory()" class="w-full btn btn-red px-3 py-2 text-sm" x-text="t('clearAll')"></button>
       </div>
     </div>
   </div>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-6 py-6">
 
-    <!-- ── Error Alert ── -->
-    <div x-show="error" x-cloak x-transition
-         class="bg-red-950/40 border border-red-800/50 rounded-xl px-4 py-3 flex items-center justify-between backdrop-blur-sm">
-      <span class="text-red-300 text-sm flex items-center gap-2">
-        <svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-        <span x-text="error"></span>
-      </span>
-      <button @click="error = ''" class="text-red-400 hover:text-red-200 transition-colors text-lg leading-none ml-3">&times;</button>
+    <!-- Error -->
+    <div x-show="error" x-cloak x-transition class="mb-4 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-center justify-between">
+      <span class="text-red-600 text-sm">⚠️ <span x-text="error"></span></span>
+      <button @click="error = ''" class="text-red-400 hover:text-red-600">&times;</button>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 1: Upload Zone (Hero)
-         ══════════════════════════════════════════════ -->
-    <section class="upload-zone rounded-2xl p-8 sm:p-10 text-center cursor-pointer relative overflow-hidden"
+    <!-- Upload Zone -->
+    <section class="card p-8 text-center cursor-pointer mb-5 transition-all hover:border-blue-300 hover:shadow-sm"
       @click="$refs.fileInput.click()"
-      @dragover.prevent="$el.classList.add('drag-over')"
-      @dragleave.prevent="$el.classList.remove('drag-over')"
-      @drop.prevent="$el.classList.remove('drag-over'); handleFileDrop($event)">
-
-      <!-- Decorative grid -->
-      <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #6366f1 1px, transparent 1px); background-size: 24px 24px;"></div>
-
+      @dragover.prevent="$el.classList.add('border-blue-400','bg-blue-50/30')"
+      @dragleave.prevent="$el.classList.remove('border-blue-400','bg-blue-50/30')"
+      @drop.prevent="$el.classList.remove('border-blue-400','bg-blue-50/30'); handleFileDrop($event)">
       <input type="file" x-ref="fileInput" class="hidden"
              accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql"
              @change="handleFileSelect($event)">
-
-      <div x-show="!fileName" class="relative">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent/20 to-agentA/20 flex items-center justify-center">
-          <svg class="w-8 h-8 text-accent-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-          </svg>
-        </div>
-        <p class="text-lg font-semibold text-surface-200" x-text="t('dragDrop')"></p>
-        <p class="text-sm text-surface-500 mt-2" x-text="t('supportedFormats')"></p>
+      <div x-show="!fileName">
+        <div class="text-4xl mb-3">📎</div>
+        <p class="text-base font-semibold text-txt-2" x-text="t('dragDrop')"></p>
+        <p class="text-sm text-txt-4 mt-1" x-text="t('supportedFormats')"></p>
       </div>
-
-      <div x-show="fileName" x-cloak class="relative">
-        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-accent/15 flex items-center justify-center">
-          <svg class="w-7 h-7 text-accent-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-        </div>
-        <p class="text-lg font-semibold text-accent-light" x-text="fileName"></p>
-        <p class="text-sm text-surface-400 mt-1" x-text="formatSize(fileSize)"></p>
-        <p class="text-xs text-surface-500 mt-2" x-text="t('clickReplace')"></p>
+      <div x-show="fileName" x-cloak>
+        <div class="text-3xl mb-2">📄</div>
+        <p class="text-base font-semibold text-blue-600" x-text="fileName"></p>
+        <p class="text-sm text-txt-3" x-text="formatSize(fileSize)"></p>
+        <p class="text-xs text-txt-4 mt-1" x-text="t('clickReplace')"></p>
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 2: Config Panel (Collapsible)
-         ══════════════════════════════════════════════ -->
-    <section class="glass-card overflow-hidden">
-      <button @click="showConfig = !showConfig"
-              class="w-full flex items-center justify-between px-5 py-4 hover:bg-surface-700/30 transition-colors">
-        <span class="font-semibold text-surface-200 text-sm flex items-center gap-2.5">
-          <svg class="w-4 h-4 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span x-text="t('llmConfig')"></span>
-        </span>
-        <svg class="w-4 h-4 text-surface-500 transition-transform duration-200" :class="showConfig && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
+    <!-- Feature tags -->
+    <div class="flex flex-wrap gap-2 mb-5">
+      <span class="badge bg-violet-50 text-violet-600">📄 PDF</span>
+      <span class="badge bg-amber-50 text-amber-600">💻 Code</span>
+      <span class="badge bg-green-50 text-green-600">📝 Text</span>
+      <span class="badge bg-blue-50 text-blue-600">🤖 Multi-Agent</span>
+      <span class="badge bg-rose-50 text-rose-600">⚡ Stream</span>
+    </div>
 
-      <div x-show="showConfig" x-collapse class="px-5 pb-5 space-y-5">
-        <!-- Tabs -->
-        <div class="flex gap-5 border-b border-surface-700 -mx-5 px-5 mb-1">
-          <button @click="configTab = 'api'" class="pb-2.5 text-sm font-medium transition-colors"
-                  :class="configTab === 'api' ? 'tab-active' : 'tab-inactive'" x-text="t('apiSettings')"></button>
-          <button @click="configTab = 'prompts'" class="pb-2.5 text-sm font-medium transition-colors"
-                  :class="configTab === 'prompts' ? 'tab-active' : 'tab-inactive'" x-text="t('promptEditor')"></button>
+    <!-- Config -->
+    <section class="card mb-5 overflow-hidden">
+      <button @click="showConfig = !showConfig" class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-subtle/50 transition-colors">
+        <span class="font-semibold text-txt-2 text-sm">⚙️ <span x-text="t('llmConfig')"></span></span>
+        <svg class="w-4 h-4 text-txt-4 transition-transform duration-200" :class="showConfig && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div x-show="showConfig" x-collapse class="px-5 pb-5 space-y-4">
+        <div class="flex gap-5 border-b border-border -mx-5 px-5 mb-1">
+          <button @click="configTab = 'api'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'api' ? 'text-txt-1 border-b-2 border-blue-500' : 'text-txt-3 border-b-2 border-transparent hover:text-txt-2'" x-text="t('apiSettings')"></button>
+          <button @click="configTab = 'prompts'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'prompts' ? 'text-txt-1 border-b-2 border-blue-500' : 'text-txt-3 border-b-2 border-transparent hover:text-txt-2'" x-text="t('promptEditor')"></button>
         </div>
 
-        <!-- API Settings Tab -->
-        <div x-show="configTab === 'api'" class="space-y-5">
-          <!-- Agent A -->
-          <div class="space-y-2.5">
-            <h3 class="text-xs font-bold text-agentA-light flex items-center gap-2 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-agentA shadow-sm shadow-agentA/50"></span>
-              Agent A — <span x-text="t('suggester')"></span>
+        <div x-show="configTab === 'api'" class="space-y-4">
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold text-blue-600 flex items-center gap-2 uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> Agent A — <span x-text="t('suggester')"></span>
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-              <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
-              <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
-              <input type="text" x-model="configA.model" placeholder="gpt-4o" class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="input-box w-full px-3 py-2 text-sm">
+              <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="input-box w-full px-3 py-2 text-sm">
+              <input type="text" x-model="configA.model" placeholder="gpt-4o" class="input-box w-full px-3 py-2 text-sm">
             </div>
           </div>
-          <!-- Agent B -->
-          <div class="space-y-2.5">
-            <h3 class="text-xs font-bold text-agentB-light flex items-center gap-2 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-agentB shadow-sm shadow-agentB/50"></span>
-              Agent B — <span x-text="t('critic')"></span>
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold text-rose-500 flex items-center gap-2 uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span> Agent B — <span x-text="t('critic')"></span>
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-              <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
-              <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
-              <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="input-box w-full px-3 py-2 text-sm">
+              <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="input-box w-full px-3 py-2 text-sm">
+              <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="input-box w-full px-3 py-2 text-sm">
             </div>
           </div>
-          <!-- Save row -->
           <div class="flex items-end gap-3 flex-wrap">
             <div>
-              <label class="text-xs text-surface-400 mb-1.5 block font-medium" x-text="t('maxRounds')"></label>
-              <input type="number" x-model.number="maxRounds" min="2" max="20" class="input-field w-20 rounded-xl px-3 py-2.5 text-sm">
+              <label class="text-xs text-txt-3 mb-1 block font-medium" x-text="t('maxRounds')"></label>
+              <input type="number" x-model.number="maxRounds" min="2" max="20" class="input-box w-20 px-3 py-2 text-sm">
             </div>
-            <button @click="saveConfig()" class="px-5 py-2.5 btn-primary rounded-xl text-sm font-semibold text-white flex items-center gap-2">
+            <button @click="saveConfig()" class="btn btn-blue px-5 py-2 flex items-center gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               <span x-text="t('saveConfig')"></span>
             </button>
-            <div x-show="configSaved" x-transition class="flex items-center gap-1.5 text-consensus text-sm font-medium">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span x-text="t('saved')"></span>
-            </div>
+            <span x-show="configSaved" x-transition class="text-green-600 text-sm font-medium">✓ <span x-text="t('saved')"></span></span>
           </div>
         </div>
 
-        <!-- Prompts Tab -->
-        <div x-show="configTab === 'prompts'" class="space-y-4">
-          <p class="text-xs text-surface-500 bg-surface-800/50 rounded-lg px-3 py-2" x-text="t('promptHint')"></p>
-
-          <div class="space-y-2">
+        <div x-show="configTab === 'prompts'" class="space-y-3">
+          <p class="text-xs text-txt-4 bg-subtle rounded-lg px-3 py-2" x-text="t('promptHint')"></p>
+          <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-agentA-light flex items-center gap-1.5 uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-agentA"></span> Agent A — <span x-text="t('suggester')"></span>
-              </label>
-              <button @click="promptA = defaultPromptA()" class="text-xs text-surface-500 hover:text-surface-300 transition-colors" x-text="t('reset')"></button>
+              <label class="text-xs font-bold text-blue-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Agent A — <span x-text="t('suggester')"></span></label>
+              <button @click="promptA = defaultPromptA()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptA" rows="5" class="prompt-textarea input-field w-full rounded-xl px-3.5 py-2.5 text-sm resize-y"></textarea>
+            <textarea x-model="promptA" rows="4" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
           </div>
-
-          <div class="space-y-2">
+          <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-agentB-light flex items-center gap-1.5 uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-agentB"></span> Agent B — <span x-text="t('critic')"></span>
-              </label>
-              <button @click="promptB = defaultPromptB()" class="text-xs text-surface-500 hover:text-surface-300 transition-colors" x-text="t('reset')"></button>
+              <label class="text-xs font-bold text-rose-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Agent B — <span x-text="t('critic')"></span></label>
+              <button @click="promptB = defaultPromptB()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptB" rows="5" class="prompt-textarea input-field w-full rounded-xl px-3.5 py-2.5 text-sm resize-y"></textarea>
+            <textarea x-model="promptB" rows="4" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
           </div>
-
-          <div class="space-y-2">
+          <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-consensus-light flex items-center gap-1.5 uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-consensus"></span> <span x-text="t('consensusPrompt')"></span>
-              </label>
-              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-surface-500 hover:text-surface-300 transition-colors" x-text="t('reset')"></button>
+              <label class="text-xs font-bold text-green-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500"></span> <span x-text="t('consensusPrompt')"></span></label>
+              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptConsensus" rows="3" class="prompt-textarea input-field w-full rounded-xl px-3.5 py-2.5 text-sm resize-y"></textarea>
+            <textarea x-model="promptConsensus" rows="3" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
           </div>
-
           <div class="flex items-center gap-3">
-            <button @click="saveConfig()" class="px-5 py-2.5 btn-primary rounded-xl text-sm font-semibold text-white flex items-center gap-2">
+            <button @click="saveConfig()" class="btn btn-blue px-5 py-2 flex items-center gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               <span x-text="t('savePrompts')"></span>
             </button>
-            <button @click="resetAllPrompts()" class="px-4 py-2.5 btn-ghost rounded-xl text-sm font-medium" x-text="t('resetAll')"></button>
-            <div x-show="configSaved" x-transition class="flex items-center gap-1.5 text-consensus text-sm font-medium">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span x-text="t('saved')"></span>
-            </div>
+            <button @click="resetAllPrompts()" class="btn btn-ghost px-4 py-2" x-text="t('resetAll')"></button>
+            <span x-show="configSaved" x-transition class="text-green-600 text-sm font-medium">✓ <span x-text="t('saved')"></span></span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 3: Direct Text Input (Collapsible)
-         ══════════════════════════════════════════════ -->
-    <section class="glass-card overflow-hidden">
-      <button @click="showTextInput = !showTextInput"
-              class="w-full flex items-center justify-between px-5 py-4 hover:bg-surface-700/30 transition-colors">
-        <span class="font-semibold text-surface-200 text-sm flex items-center gap-2.5">
-          <svg class="w-4 h-4 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-          <span x-text="t('directInput')"></span>
-        </span>
-        <svg class="w-4 h-4 text-surface-500 transition-transform duration-200" :class="showTextInput && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
+    <!-- Direct text input -->
+    <section class="card mb-5 overflow-hidden">
+      <button @click="showTextInput = !showTextInput" class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-subtle/50 transition-colors">
+        <span class="font-semibold text-txt-2 text-sm">✏️ <span x-text="t('directInput')"></span></span>
+        <svg class="w-4 h-4 text-txt-4 transition-transform duration-200" :class="showTextInput && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
       </button>
       <div x-show="showTextInput" x-collapse class="px-5 pb-5">
-        <textarea x-model="directText" rows="5" :placeholder="t('directInputHint')"
-                  class="input-field w-full rounded-xl px-3.5 py-2.5 text-sm resize-y"></textarea>
-        <button @click="applyDirectText()" class="mt-3 px-4 py-2 btn-ghost rounded-xl text-sm font-medium transition-all flex items-center gap-2">
-          <svg class="w-4 h-4 text-consensus" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <textarea x-model="directText" rows="4" :placeholder="t('directInputHint')" class="input-box w-full px-3 py-2 text-sm resize-y"></textarea>
+        <button @click="applyDirectText()" class="mt-2 btn btn-ghost px-4 py-1.5 text-sm flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           <span x-text="t('applyText')"></span>
         </button>
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 4: Action Buttons
-         ══════════════════════════════════════════════ -->
-    <div class="flex justify-center gap-3 py-2">
+    <!-- Action buttons -->
+    <div class="flex justify-center gap-3 mb-6">
       <button x-show="!isDebating" @click="startDebate()" :disabled="!canStart"
-        class="px-8 py-3 btn-primary rounded-2xl text-base font-bold text-white flex items-center gap-2.5">
+        class="btn btn-blue px-8 py-2.5 text-base flex items-center gap-2 shadow-sm shadow-blue-500/20 disabled:shadow-none">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span x-text="t('startDebate')"></span>
       </button>
-
-      <button x-show="isDebating" @click="abortDebate()"
-        class="px-8 py-3 bg-surface-700 hover:bg-surface-600 rounded-2xl text-base font-bold text-surface-200 transition-all border border-surface-600 flex items-center gap-2.5">
+      <button x-show="isDebating" @click="abortDebate()" class="btn btn-ghost px-8 py-2.5 text-base flex items-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
         <span x-text="t('stopDebate')"></span>
       </button>
-
-      <button x-show="!isDebating && messages.length > 0 && consensus" @click="exportCurrentDebate()"
-        class="px-6 py-3 btn-ghost rounded-2xl text-base font-bold flex items-center gap-2.5">
+      <button x-show="!isDebating && messages.length > 0 && consensus" @click="exportCurrentDebate()" class="btn btn-ghost px-6 py-2.5 text-base flex items-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         <span x-text="t('export')"></span>
       </button>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 5: Debate Arena
-         ══════════════════════════════════════════════ -->
-    <section x-show="messages.length > 0" x-cloak class="space-y-4">
+    <!-- ═══════════════ DEBATE ARENA ═══════════════ -->
+    <section x-show="messages.length > 0" x-cloak class="mb-6">
 
-      <!-- Round indicator -->
-      <div x-show="currentRound > 0" class="flex items-center justify-center gap-3">
-        <div class="round-badge px-4 py-1.5 rounded-full text-xs font-bold text-surface-300 flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-accent-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          <span x-text="t('round')"></span>
-          <span x-text="currentRound" class="text-white text-sm"></span>
+      <!-- Round + progress -->
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div x-show="currentRound > 0" class="badge bg-subtle text-txt-2 border border-border">
+          <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span x-text="t('round')"></span> <span x-text="currentRound"></span>
         </div>
         <div x-show="isDebating" class="flex items-center gap-1">
           <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
         </div>
       </div>
-
-      <!-- Progress bar (during debate) -->
-      <div x-show="isDebating" class="w-full max-w-md mx-auto">
-        <div class="progress-bar" :style="'width:' + Math.min((currentRound / maxRounds) * 100, 100) + '%'"></div>
+      <div x-show="isDebating" class="max-w-xs mx-auto mb-4">
+        <div class="progress-shimmer" :style="'width:' + Math.min((currentRound / maxRounds) * 100, 100) + '%'"></div>
       </div>
 
-      <!-- Two-column debate -->
+      <!-- Two Windows -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Agent A column -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2.5 px-2 py-1.5">
-            <div class="w-8 h-8 rounded-lg bg-agentA/20 flex items-center justify-center">
-              <span class="text-sm font-bold text-agentA-light">A</span>
+
+        <!-- Agent A Window -->
+        <div class="card overflow-hidden">
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-blue-50 border-b border-blue-100">
+            <div class="w-7 h-7 rounded-md bg-blue-500 flex items-center justify-center text-white text-xs font-bold">A</div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-bold text-blue-700">Agent A</h3>
+              <p class="text-[10px] text-blue-400 uppercase tracking-wider" x-text="t('suggester')"></p>
             </div>
-            <div>
-              <h3 class="text-sm font-bold text-agentA-light">Agent A</h3>
-              <p class="text-[10px] text-surface-500 uppercase tracking-wider" x-text="t('suggester')"></p>
+            <span x-show="isDebating && agentAMessages.length > 0" class="badge bg-blue-100 text-blue-600 text-[10px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500" style="animation:pulse 1.5s infinite"></span>
+              streaming
+            </span>
+          </div>
+          <div class="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+            <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
+              <div class="bubble bubble-a slide-l md-content" x-html="renderMarkdown(msg.content)"></div>
+            </template>
+            <div x-show="agentAMessages.length === 0" class="text-center py-10 text-txt-4 text-sm">
+              <div class="text-2xl mb-2 opacity-30">💬</div>
+              <span x-text="lang === 'zh' ? '等待辩论开始...' : 'Waiting for debate...'"></span>
             </div>
           </div>
-          <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
-            <div class="bubble-a rounded-xl p-4 md-content text-sm slide-in-left"
-                 x-html="renderMarkdown(msg.content)"></div>
-          </template>
         </div>
 
-        <!-- Agent B column -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2.5 px-2 py-1.5">
-            <div class="w-8 h-8 rounded-lg bg-agentB/20 flex items-center justify-center">
-              <span class="text-sm font-bold text-agentB-light">B</span>
+        <!-- Agent B Window -->
+        <div class="card overflow-hidden">
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-rose-50 border-b border-rose-100">
+            <div class="w-7 h-7 rounded-md bg-rose-500 flex items-center justify-center text-white text-xs font-bold">B</div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-bold text-rose-700">Agent B</h3>
+              <p class="text-[10px] text-rose-400 uppercase tracking-wider" x-text="t('critic')"></p>
             </div>
-            <div>
-              <h3 class="text-sm font-bold text-agentB-light">Agent B</h3>
-              <p class="text-[10px] text-surface-500 uppercase tracking-wider" x-text="t('critic')"></p>
+            <span x-show="isDebating && agentBMessages.length > 0" class="badge bg-rose-100 text-rose-600 text-[10px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500" style="animation:pulse 1.5s infinite"></span>
+              streaming
+            </span>
+          </div>
+          <div class="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+            <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
+              <div class="bubble bubble-b slide-r md-content" x-html="renderMarkdown(msg.content)"></div>
+            </template>
+            <div x-show="agentBMessages.length === 0" class="text-center py-10 text-txt-4 text-sm">
+              <div class="text-2xl mb-2 opacity-30">💬</div>
+              <span x-text="lang === 'zh' ? '等待辩论开始...' : 'Waiting for debate...'"></span>
             </div>
           </div>
-          <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
-            <div class="bubble-b rounded-xl p-4 md-content text-sm slide-in-right"
-                 x-html="renderMarkdown(msg.content)"></div>
-          </template>
         </div>
+
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         SECTION 6: Consensus Result
-         ══════════════════════════════════════════════ -->
-    <section x-show="consensus" x-cloak class="fade-in-up">
-      <div class="bubble-consensus rounded-2xl p-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-consensus/5 rounded-full -translate-y-16 translate-x-16"></div>
-        <h2 class="text-lg font-bold text-consensus-light mb-4 flex items-center gap-2.5 relative">
-          <div class="w-9 h-9 rounded-xl bg-consensus/20 flex items-center justify-center">
-            <svg class="w-5 h-5 text-consensus-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <!-- Consensus -->
+    <section x-show="consensus" x-cloak class="fade-up mb-6">
+      <div class="card overflow-hidden">
+        <div class="flex items-center gap-2.5 px-5 py-3.5 bg-green-50 border-b border-green-100">
+          <div class="w-7 h-7 rounded-md bg-green-500 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <span x-text="t('consensusResult')"></span>
-        </h2>
-        <div class="md-content text-sm relative" x-html="renderMarkdown(consensus)"></div>
+          <h2 class="text-sm font-bold text-green-700" x-text="t('consensusResult')"></h2>
+        </div>
+        <div class="p-5 md-content text-sm" x-html="renderMarkdown(consensus)"></div>
       </div>
     </section>
 
-    <!-- ── Footer ── -->
-    <footer class="text-center text-xs text-surface-600 py-6 border-t border-surface-800 mt-8">
-      <span class="text-surface-500 font-medium">DebateAI</span> — <span x-text="t('footerNote')"></span>
+    <footer class="text-center text-xs text-txt-4 py-6 border-t border-border mt-8">
+      DebateAI — <span x-text="t('footerNote')"></span>
     </footer>
   </main>
 

@@ -73,7 +73,7 @@
 | 层级 | 技术 | 说明 |
 |------|------|------|
 | 框架 | Alpine.js | 轻量响应式，零构建 |
-| 样式 | Tailwind CSS (CDN) | 原子化 CSS，暗色主题 |
+| 样式 | Tailwind CSS (CDN) | 原子化 CSS，小米风格暖色调 |
 | 文件解析 | PDF.js | 浏览器端 PDF 文本提取 |
 | Markdown | marked.js | Markdown → HTML |
 | 代码高亮 | highlight.js | 语法高亮 |

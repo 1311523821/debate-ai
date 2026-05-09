@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            warm: {
-              950: '#1a1410', 900: '#221c15', 800: '#2d2318', 700: '#3d3020',
-              600: '#5c4a30', 500: '#7a6340', 400: '#a08860', 300: '#c4ab7e',
-              200: '#e0cfa5', 100: '#f0e6cc',
-            },
-            mi: { DEFAULT: '#FF6A00', light: '#FF8C38', dark: '#E05500', glow: '#FF6A0020' },
-            agentA: { DEFAULT: '#FF8C38', bubble: '#3d2a10', light: '#FFAA60', dark: '#E07020' },
-            agentB: { DEFAULT: '#FFB74D', bubble: '#3d3010', light: '#FFCC80', dark: '#F09030' },
-            consensus: { DEFAULT: '#FFD54F', bg: '#2d2810', light: '#FFE082' },
+            cream: { 50: '#FFFDF8', 100: '#FFF9ED', 200: '#FFF3DB', 300: '#FFE8C0', 400: '#FFD89E' },
+            warm: { 50: '#FEFCF7', 100: '#FDF8EE', 200: '#F8F0DD', 300: '#F0E4C8', 400: '#D4C4A0', 500: '#B8A882', 600: '#9C8E6A', 700: '#7A6E50', 800: '#5C523A' },
+            mi: { DEFAULT: '#FF6A00', light: '#FF8C38', dark: '#E05500', glow: '#FF6A0015' },
+            agentA: { DEFAULT: '#FF7A1A', bubble: '#FFF5EB', light: '#FF9A4A', dark: '#E06600', border: '#FFD4AA' },
+            agentB: { DEFAULT: '#FFAB40', bubble: '#FFF8ED', light: '#FFCC80', dark: '#E09020', border: '#FFE0AA' },
+            consensus: { DEFAULT: '#4CAF50', bg: '#F0FAF0', border: '#A5D6A7', light: '#66BB6A' },
           }
         }
       }
@@ -27,64 +23,75 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 
   <style>
+    body { background: #FFFDF8; color: #5C523A; }
+
     @keyframes fadeInUp { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
     .fade-in-up { animation: fadeInUp .35s ease-out forwards }
     @keyframes pulse-dot { 0%,80%,100% { opacity:.3; transform:scale(.8) } 40% { opacity:1; transform:scale(1) } }
-    .typing-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#a08860; margin:0 2px; animation:pulse-dot 1.4s infinite ease-in-out both }
+    .typing-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#B8A882; margin:0 2px; animation:pulse-dot 1.4s infinite ease-in-out both }
     .typing-dot:nth-child(1) { animation-delay:-.32s }
     .typing-dot:nth-child(2) { animation-delay:-.16s }
-    .upload-zone.drag-over { border-color:#FF6A00!important; background:rgba(255,106,0,.08)!important }
-    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.8em; margin-bottom:.4em }
+    .upload-zone.drag-over { border-color:#FF6A00!important; background:rgba(255,106,0,.06)!important }
+
+    .md-content { color: #5C523A; }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.8em; margin-bottom:.4em; color: #3D3520; }
     .md-content h1 { font-size:1.4em } .md-content h2 { font-size:1.2em } .md-content h3 { font-size:1.05em }
     .md-content p { margin-bottom:.6em; line-height:1.7 }
     .md-content ul,.md-content ol { margin-left:1.5em; margin-bottom:.6em }
     .md-content li { margin-bottom:.2em }
-    .md-content code { background:rgba(255,106,0,.12); padding:.12em .35em; border-radius:4px; font-size:.88em; color:#FFD54F }
-    .md-content pre { background:#1a1410; border:1px solid #3d3020; border-radius:8px; padding:.8em; overflow-x:auto; margin:.6em 0 }
-    .md-content pre code { background:transparent; padding:0; font-size:.83em; line-height:1.6; color:#e0cfa5 }
-    .md-content blockquote { border-left:3px solid #FF6A00; padding-left:.8em; color:#a08860; margin:.6em 0 }
+    .md-content code { background:#FFF3DB; padding:.12em .35em; border-radius:4px; font-size:.88em; color:#E05500 }
+    .md-content pre { background:#FFF9ED; border:1px solid #FFE8C0; border-radius:10px; padding:.8em; overflow-x:auto; margin:.6em 0 }
+    .md-content pre code { background:transparent; padding:0; font-size:.83em; line-height:1.6; color: #5C523A }
+    .md-content blockquote { border-left:3px solid #FF6A00; padding-left:.8em; color:#9C8E6A; margin:.6em 0 }
     .md-content table { border-collapse:collapse; width:100%; margin:.6em 0 }
-    .md-content th,.md-content td { border:1px solid #3d3020; padding:.4em .6em; text-align:left }
-    .md-content th { background:#2d2318; font-weight:600; color:#FFD54F }
-    .md-content strong { color:#f0e6cc }
-    .md-content a { color:#FF8C38; text-decoration:underline }
+    .md-content th,.md-content td { border:1px solid #FFE8C0; padding:.4em .6em; text-align:left }
+    .md-content th { background:#FFF3DB; font-weight:600; color:#7A6E50 }
+    .md-content strong { color: #3D3520; }
+    .md-content a { color:#FF6A00; text-decoration:underline }
+
     ::-webkit-scrollbar { width:5px } ::-webkit-scrollbar-track { background:transparent }
-    ::-webkit-scrollbar-thumb { background:#3d3020; border-radius:3px }
-    ::-webkit-scrollbar-thumb:hover { background:#5c4a30 }
+    ::-webkit-scrollbar-thumb { background:#F0E4C8; border-radius:3px }
+    ::-webkit-scrollbar-thumb:hover { background:#D4C4A0 }
     .prompt-textarea { font-family:'Courier New',monospace; font-size:.8rem; line-height:1.5; tab-size:2 }
-    .history-item:hover { background:rgba(255,106,0,.06) }
-    .tab-active { border-bottom:2px solid #FF6A00; color:#f0e6cc }
-    .tab-inactive { border-bottom:2px solid transparent; color:#a08860 }
-    .tab-inactive:hover { color:#c4ab7e; border-bottom-color:#5c4a30 }
-    .mi-glow { box-shadow: 0 0 20px rgba(255,106,0,.15) }
+    .history-item:hover { background:rgba(255,106,0,.04) }
+    .tab-active { border-bottom:2px solid #FF6A00; color:#3D3520 }
+    .tab-inactive { border-bottom:2px solid transparent; color:#9C8E6A }
+    .tab-inactive:hover { color:#7A6E50; border-bottom-color:#D4C4A0 }
     .mi-btn { background: linear-gradient(135deg, #FF6A00, #FF8C38); }
     .mi-btn:hover { background: linear-gradient(135deg, #E05500, #FF6A00); }
+    .card { background:#FFFFFF; border:1px solid #FFE8C0; border-radius:16px; box-shadow: 0 1px 3px rgba(154,120,60,.06); }
+    .card-header { border-bottom: 1px solid #FFF3DB; }
+    .input-field { background:#FFFDF8; border:1px solid #FFE8C0; color:#5C523A; }
+    .input-field::placeholder { color:#D4C4A0; }
+    .input-field:focus { border-color:#FF6A00; box-shadow: 0 0 0 2px rgba(255,106,0,.12); outline:none; }
+    .btn-subtle { background:#FFF3DB; border:1px solid #FFE8C0; color:#7A6E50; }
+    .btn-subtle:hover { background:#FFE8C0; }
   </style>
 </head>
 
-<body class="bg-warm-950 text-warm-200 min-h-screen" x-data="debateApp()" x-init="init()">
+<body class="min-h-screen" x-data="debateApp()" x-init="init()">
 
   <!-- Header -->
-  <header class="border-b border-warm-700/50 bg-warm-900/90 backdrop-blur-md sticky top-0 z-50">
+  <header class="sticky top-0 z-50 bg-cream-50/90 backdrop-blur-md border-b border-cream-200">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl mi-btn flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-mi/20">D</div>
+        <div class="w-8 h-8 rounded-xl mi-btn flex items-center justify-center text-white font-bold text-sm shadow-md shadow-mi/20">D</div>
         <div>
-          <h1 class="text-lg font-bold text-warm-100">DebateAI</h1>
-          <p class="text-warm-400 text-xs" x-text="t('subtitle')"></p>
+          <h1 class="text-lg font-bold text-warm-800">DebateAI</h1>
+          <p class="text-warm-500 text-xs" x-text="t('subtitle')"></p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="toggleLang()" class="px-2.5 py-1 text-xs rounded-lg bg-warm-800 hover:bg-warm-700 transition-colors border border-warm-600/50 text-warm-300"
+        <button @click="toggleLang()" class="px-2.5 py-1 text-xs rounded-lg btn-subtle transition-colors"
                 x-text="lang === 'zh' ? 'EN' : '中文'"></button>
-        <button @click="showHistory = !showHistory" class="relative px-2.5 py-1 text-xs rounded-lg bg-warm-800 hover:bg-warm-700 transition-colors border border-warm-600/50 text-warm-300">
+        <button @click="showHistory = !showHistory" class="relative px-2.5 py-1 text-xs rounded-lg btn-subtle transition-colors">
           📜 <span x-text="t('history')"></span>
-          <span x-show="historyList.length > 0" class="absolute -top-1.5 -right-1.5 w-4 h-4 mi-btn rounded-full text-[10px] text-white flex items-center justify-center shadow-sm" x-text="historyList.length"></span>
+          <span x-show="historyList.length > 0" class="absolute -top-1.5 -right-1.5 w-4 h-4 mi-btn rounded-full text-[10px] text-white flex items-center justify-center" x-text="historyList.length"></span>
         </button>
       </div>
     </div>
@@ -92,38 +99,38 @@
 
   <!-- History Sidebar -->
   <div x-show="showHistory" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-       class="fixed inset-0 z-40 bg-black/60" @click.self="showHistory = false">
-    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-warm-900 border-l border-warm-700/50 overflow-y-auto shadow-2xl"
+       class="fixed inset-0 z-40 bg-warm-800/20 backdrop-blur-sm" @click.self="showHistory = false">
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white border-l border-cream-200 overflow-y-auto shadow-2xl"
          x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
-      <div class="p-4 border-b border-warm-700/50 flex items-center justify-between sticky top-0 bg-warm-900 z-10">
-        <h2 class="text-lg font-bold text-warm-100" x-text="t('debateHistory')"></h2>
-        <button @click="showHistory = false" class="text-warm-400 hover:text-warm-100 text-2xl leading-none">&times;</button>
+      <div class="p-4 border-b border-cream-200 flex items-center justify-between sticky top-0 bg-white z-10">
+        <h2 class="text-lg font-bold text-warm-800" x-text="t('debateHistory')"></h2>
+        <button @click="showHistory = false" class="text-warm-400 hover:text-warm-700 text-2xl leading-none">&times;</button>
       </div>
-      <div x-show="historyList.length === 0" class="p-8 text-center text-warm-500">
+      <div x-show="historyList.length === 0" class="p-8 text-center text-warm-400">
         <div class="text-4xl mb-3">📭</div>
         <p x-text="t('noHistory')"></p>
       </div>
-      <div class="divide-y divide-warm-800">
+      <div class="divide-y divide-cream-200">
         <template x-for="(h, idx) in historyList" :key="h.id">
           <div class="history-item p-4 cursor-pointer transition-colors" @click="loadHistory(h)">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-sm font-medium text-warm-200 truncate max-w-[200px]" x-text="h.fileName || t('textInput')"></span>
-              <span class="text-xs text-warm-500" x-text="formatDate(h.timestamp)"></span>
+              <span class="text-sm font-medium text-warm-700 truncate max-w-[200px]" x-text="h.fileName || t('textInput')"></span>
+              <span class="text-xs text-warm-400" x-text="formatDate(h.timestamp)"></span>
             </div>
-            <div class="flex items-center gap-3 text-xs text-warm-400">
+            <div class="flex items-center gap-3 text-xs text-warm-500">
               <span x-text="h.rounds + ' ' + t('rounds')"></span><span>•</span>
               <span x-text="h.agentA.model + ' vs ' + h.agentB.model"></span>
             </div>
             <div class="flex items-center gap-2 mt-2">
-              <button @click.stop="exportHistory(h, 'md')" class="px-2 py-0.5 text-xs rounded-md bg-warm-800 hover:bg-warm-700 border border-warm-600/50 text-warm-300">📄 MD</button>
-              <button @click.stop="exportHistory(h, 'json')" class="px-2 py-0.5 text-xs rounded-md bg-warm-800 hover:bg-warm-700 border border-warm-600/50 text-warm-300">{ } JSON</button>
-              <button @click.stop="deleteHistory(h.id)" class="px-2 py-0.5 text-xs rounded-md bg-red-900/30 hover:bg-red-900/50 border border-red-800/50 text-red-400 ml-auto">🗑</button>
+              <button @click.stop="exportHistory(h, 'md')" class="px-2 py-0.5 text-xs rounded-md btn-subtle">📄 MD</button>
+              <button @click.stop="exportHistory(h, 'json')" class="px-2 py-0.5 text-xs rounded-md btn-subtle">{ } JSON</button>
+              <button @click.stop="deleteHistory(h.id)" class="px-2 py-0.5 text-xs rounded-md bg-red-50 border border-red-200 text-red-500 hover:bg-red-100 ml-auto">🗑</button>
             </div>
           </div>
         </template>
       </div>
-      <div x-show="historyList.length > 0" class="p-4 border-t border-warm-700/50 sticky bottom-0 bg-warm-900">
-        <button @click="clearAllHistory()" class="w-full px-3 py-2 text-sm rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-800/50 text-red-400 transition-colors" x-text="t('clearAll')"></button>
+      <div x-show="historyList.length > 0" class="p-4 border-t border-cream-200 sticky bottom-0 bg-white">
+        <button @click="clearAllHistory()" class="w-full px-3 py-2 text-sm rounded-lg bg-red-50 border border-red-200 text-red-500 hover:bg-red-100 transition-colors" x-text="t('clearAll')"></button>
       </div>
     </div>
   </div>
@@ -131,105 +138,102 @@
   <main class="max-w-5xl mx-auto px-4 py-5 space-y-4">
 
     <!-- Error -->
-    <div x-show="error" x-cloak class="bg-red-900/30 border border-red-700/50 rounded-xl px-4 py-3 flex items-center justify-between">
-      <span class="text-red-300 text-sm">⚠️ <span x-text="error"></span></span>
-      <button @click="error = ''" class="text-red-400 hover:text-red-200 text-xl leading-none">&times;</button>
+    <div x-show="error" x-cloak class="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-center justify-between">
+      <span class="text-red-600 text-sm">⚠️ <span x-text="error"></span></span>
+      <button @click="error = ''" class="text-red-400 hover:text-red-600 text-xl leading-none">&times;</button>
     </div>
 
     <!-- Upload Zone -->
-    <section class="upload-zone border-2 border-dashed border-warm-600/60 rounded-2xl p-6 text-center cursor-pointer transition-all hover:border-mi hover:bg-mi-glow"
+    <section class="upload-zone border-2 border-dashed border-cream-300 rounded-2xl p-6 text-center cursor-pointer transition-all hover:border-mi hover:bg-mi-glow"
       @click="$refs.fileInput.click()" @dragover.prevent="$el.classList.add('drag-over')" @dragleave.prevent="$el.classList.remove('drag-over')"
       @drop.prevent="$el.classList.remove('drag-over'); handleFileDrop($event)">
       <input type="file" x-ref="fileInput" class="hidden" accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFileSelect($event)">
       <div x-show="!fileName">
         <div class="text-3xl mb-2">📎</div>
-        <p class="text-base font-medium text-warm-200" x-text="t('dragDrop')"></p>
-        <p class="text-xs text-warm-500 mt-1" x-text="t('supportedFormats')"></p>
+        <p class="text-base font-medium text-warm-600" x-text="t('dragDrop')"></p>
+        <p class="text-xs text-warm-400 mt-1" x-text="t('supportedFormats')"></p>
       </div>
       <div x-show="fileName" x-cloak>
         <div class="text-2xl mb-1">📄</div>
-        <p class="text-base font-medium text-mi-light" x-text="fileName"></p>
-        <p class="text-xs text-warm-400" x-text="formatSize(fileSize)"></p>
-        <p class="text-xs text-warm-500 mt-1" x-text="t('clickReplace')"></p>
+        <p class="text-base font-medium text-mi" x-text="fileName"></p>
+        <p class="text-xs text-warm-500" x-text="formatSize(fileSize)"></p>
+        <p class="text-xs text-warm-400 mt-1" x-text="t('clickReplace')"></p>
       </div>
     </section>
 
     <!-- Config -->
-    <section class="bg-warm-900 rounded-2xl border border-warm-700/50 overflow-hidden">
-      <button @click="showConfig = !showConfig" class="w-full flex items-center justify-between px-4 py-3 hover:bg-warm-800/60 transition-colors">
-        <span class="font-semibold text-warm-200 text-sm">⚙️ <span x-text="t('llmConfig')"></span></span>
+    <section class="card overflow-hidden">
+      <button @click="showConfig = !showConfig" class="w-full flex items-center justify-between px-4 py-3 hover:bg-cream-100 transition-colors card-header">
+        <span class="font-semibold text-warm-700 text-sm">⚙️ <span x-text="t('llmConfig')"></span></span>
         <svg class="w-4 h-4 text-warm-400 transition-transform" :class="showConfig && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
       <div x-show="showConfig" x-collapse class="px-4 pb-4 space-y-4">
-        <!-- Tabs -->
-        <div class="flex gap-4 border-b border-warm-700/50 -mx-4 px-4 mb-1">
+        <div class="flex gap-4 border-b border-cream-200 -mx-4 px-4 mb-1">
           <button @click="configTab = 'api'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'api' ? 'tab-active' : 'tab-inactive'" x-text="t('apiSettings')"></button>
           <button @click="configTab = 'prompts'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'prompts' ? 'tab-active' : 'tab-inactive'" x-text="t('promptEditor')"></button>
         </div>
 
-        <!-- API Tab -->
         <div x-show="configTab === 'api'" class="space-y-4">
           <div class="space-y-2">
-            <h3 class="text-xs font-semibold text-agentA-light flex items-center gap-2">
+            <h3 class="text-xs font-semibold text-agentA-dark flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-agentA inline-block"></span> Agent A（<span x-text="t('suggester')"></span>）
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
-              <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
-              <input type="text" x-model="configA.model" placeholder="gpt-4o" class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
+              <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+              <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="input-field w-full rounded-lg px-3 py-2 text-sm">
+              <input type="text" x-model="configA.model" placeholder="gpt-4o" class="input-field w-full rounded-lg px-3 py-2 text-sm">
             </div>
           </div>
           <div class="space-y-2">
-            <h3 class="text-xs font-semibold text-agentB-light flex items-center gap-2">
+            <h3 class="text-xs font-semibold text-agentB-dark flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-agentB inline-block"></span> Agent B（<span x-text="t('critic')"></span>）
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
-              <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
-              <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="w-full bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
+              <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+              <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="input-field w-full rounded-lg px-3 py-2 text-sm">
+              <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="input-field w-full rounded-lg px-3 py-2 text-sm">
             </div>
           </div>
           <div class="flex items-end gap-3 flex-wrap">
             <div>
-              <label class="text-xs text-warm-400 mb-1 block" x-text="t('maxRounds')"></label>
-              <input type="number" x-model.number="maxRounds" min="2" max="20" class="w-20 bg-warm-800 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none">
+              <label class="text-xs text-warm-500 mb-1 block" x-text="t('maxRounds')"></label>
+              <input type="number" x-model.number="maxRounds" min="2" max="20" class="input-field w-20 rounded-lg px-3 py-2 text-sm">
             </div>
-            <button @click="saveConfig()" class="px-4 py-2 mi-btn rounded-lg text-sm font-medium text-white transition-all shadow-lg shadow-mi/20 hover:shadow-mi/30">
+            <button @click="saveConfig()" class="px-4 py-2 mi-btn rounded-lg text-sm font-medium text-white shadow-md shadow-mi/20 hover:shadow-mi/30 transition-all">
               💾 <span x-text="t('saveConfig')"></span>
             </button>
             <p x-show="configSaved" x-transition class="text-consensus text-sm self-center">✓ <span x-text="t('saved')"></span></p>
           </div>
         </div>
 
-        <!-- Prompt Tab -->
         <div x-show="configTab === 'prompts'" class="space-y-3">
           <p class="text-xs text-warm-400" x-text="t('promptHint')"></p>
           <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-agentA-light flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-agentA inline-block"></span> Agent A — <span x-text="t('suggester')"></span></label>
-              <button @click="promptA = defaultPromptA()" class="text-xs text-warm-500 hover:text-warm-300" x-text="t('reset')"></button>
+              <label class="text-xs font-semibold text-agentA-dark flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-agentA inline-block"></span> Agent A — <span x-text="t('suggester')"></span></label>
+              <button @click="promptA = defaultPromptA()" class="text-xs text-warm-400 hover:text-warm-600" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptA" rows="5" class="prompt-textarea w-full bg-warm-950 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none resize-y"></textarea>
+            <textarea x-model="promptA" rows="5" class="prompt-textarea input-field w-full rounded-lg px-3 py-2 text-sm resize-y"></textarea>
           </div>
           <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-agentB-light flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-agentB inline-block"></span> Agent B — <span x-text="t('critic')"></span></label>
-              <button @click="promptB = defaultPromptB()" class="text-xs text-warm-500 hover:text-warm-300" x-text="t('reset')"></button>
+              <label class="text-xs font-semibold text-agentB-dark flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-agentB inline-block"></span> Agent B — <span x-text="t('critic')"></span></label>
+              <button @click="promptB = defaultPromptB()" class="text-xs text-warm-400 hover:text-warm-600" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptB" rows="5" class="prompt-textarea w-full bg-warm-950 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none resize-y"></textarea>
+            <textarea x-model="promptB" rows="5" class="prompt-textarea input-field w-full rounded-lg px-3 py-2 text-sm resize-y"></textarea>
           </div>
           <div class="space-y-1">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-consensus-light flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-consensus inline-block"></span> <span x-text="t('consensusPrompt')"></span></label>
-              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-warm-500 hover:text-warm-300" x-text="t('reset')"></button>
+              <label class="text-xs font-semibold text-consensus flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-consensus inline-block"></span> <span x-text="t('consensusPrompt')"></span></label>
+              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-warm-400 hover:text-warm-600" x-text="t('reset')"></button>
             </div>
-            <textarea x-model="promptConsensus" rows="3" class="prompt-textarea w-full bg-warm-950 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-consensus focus:ring-1 focus:ring-consensus/30 outline-none resize-y"></textarea>
+            <textarea x-model="promptConsensus" rows="3" class="prompt-textarea input-field w-full rounded-lg px-3 py-2 text-sm resize-y"></textarea>
           </div>
           <div class="flex items-center gap-3">
-            <button @click="saveConfig()" class="px-4 py-2 mi-btn rounded-lg text-sm font-medium text-white shadow-lg shadow-mi/20">💾 <span x-text="t('savePrompts')"></span></button>
-            <button @click="resetAllPrompts()" class="px-4 py-2 bg-warm-800 hover:bg-warm-700 rounded-lg text-sm font-medium border border-warm-600/50 text-warm-300">↩ <span x-text="t('resetAll')"></span></button>
+            <button @click="saveConfig()" class="px-4 py-2 mi-btn rounded-lg text-sm font-medium text-white shadow-md shadow-mi/20">💾 <span x-text="t('savePrompts')"></span></button>
+            <button @click="resetAllPrompts()" class="px-4 py-2 btn-subtle rounded-lg text-sm font-medium">↩ <span x-text="t('resetAll')"></span></button>
             <p x-show="configSaved" x-transition class="text-consensus text-sm">✓ <span x-text="t('saved')"></span></p>
           </div>
         </div>
@@ -237,16 +241,16 @@
     </section>
 
     <!-- Direct text input -->
-    <section class="bg-warm-900 rounded-2xl border border-warm-700/50 overflow-hidden">
-      <button @click="showTextInput = !showTextInput" class="w-full flex items-center justify-between px-4 py-3 hover:bg-warm-800/60 transition-colors">
-        <span class="font-semibold text-warm-200 text-sm">✏️ <span x-text="t('directInput')"></span></span>
+    <section class="card overflow-hidden">
+      <button @click="showTextInput = !showTextInput" class="w-full flex items-center justify-between px-4 py-3 hover:bg-cream-100 transition-colors card-header">
+        <span class="font-semibold text-warm-700 text-sm">✏️ <span x-text="t('directInput')"></span></span>
         <svg class="w-4 h-4 text-warm-400 transition-transform" :class="showTextInput && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
       <div x-show="showTextInput" x-collapse class="px-4 pb-4">
-        <textarea x-model="directText" rows="5" :placeholder="t('directInputHint')" class="w-full bg-warm-950 border border-warm-600/50 rounded-lg px-3 py-2 text-sm text-warm-200 placeholder-warm-500 focus:border-mi focus:ring-1 focus:ring-mi/30 outline-none resize-y"></textarea>
-        <button @click="applyDirectText()" class="mt-2 px-4 py-1.5 bg-warm-800 hover:bg-warm-700 rounded-lg text-sm border border-warm-600/50 text-warm-300 transition-colors" x-text="t('applyText')"></button>
+        <textarea x-model="directText" rows="5" :placeholder="t('directInputHint')" class="input-field w-full rounded-lg px-3 py-2 text-sm resize-y"></textarea>
+        <button @click="applyDirectText()" class="mt-2 px-4 py-1.5 btn-subtle rounded-lg text-sm transition-colors" x-text="t('applyText')"></button>
       </div>
     </section>
 
@@ -257,11 +261,11 @@
         🚀 <span x-text="t('startDebate')"></span>
       </button>
       <button x-show="isDebating" @click="abortDebate()"
-        class="px-7 py-2.5 bg-warm-700 hover:bg-warm-600 rounded-xl text-base font-semibold text-warm-200 transition-all border border-warm-600/50">
+        class="px-7 py-2.5 bg-warm-200 hover:bg-warm-300 rounded-xl text-base font-semibold text-warm-700 transition-all border border-cream-300">
         ⏹ <span x-text="t('stopDebate')"></span>
       </button>
       <button x-show="!isDebating && messages.length > 0 && consensus" @click="exportCurrentDebate()"
-        class="px-5 py-2.5 bg-warm-800 hover:bg-warm-700 rounded-xl text-base font-semibold text-warm-300 transition-all border border-warm-600/50">
+        class="px-5 py-2.5 btn-subtle rounded-xl text-base font-semibold transition-all">
         📥 <span x-text="t('export')"></span>
       </button>
     </div>
@@ -269,30 +273,28 @@
     <!-- Debate Area -->
     <section x-show="messages.length > 0" x-cloak class="space-y-2">
       <div x-show="currentRound > 0" class="text-center text-xs text-warm-400">
-        <span x-text="t('round')"></span> <span x-text="currentRound" class="text-warm-200 font-semibold"></span>
+        <span x-text="t('round')"></span> <span x-text="currentRound" class="text-warm-600 font-semibold"></span>
         <span x-show="isDebating" class="inline-block ml-2"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-        <!-- Agent A -->
         <div class="space-y-2">
           <div class="flex items-center gap-2 mb-1 px-1">
             <span class="w-2 h-2 rounded-full bg-agentA"></span>
-            <h3 class="text-xs font-semibold text-agentA-light">Agent A（<span x-text="t('suggester')"></span>）</h3>
+            <h3 class="text-xs font-semibold text-agentA-dark">Agent A（<span x-text="t('suggester')"></span>）</h3>
           </div>
           <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
-            <div class="fade-in-up bg-agentA-bubble border-l-2 border-agentA rounded-xl rounded-l-none p-3 md-content text-sm"
+            <div class="fade-in-up bg-agentA-bubble border border-agentA-border rounded-xl p-3 md-content text-sm"
                  x-html="renderMarkdown(msg.content)"></div>
           </template>
         </div>
-        <!-- Agent B -->
         <div class="space-y-2">
           <div class="flex items-center gap-2 mb-1 px-1">
             <span class="w-2 h-2 rounded-full bg-agentB"></span>
-            <h3 class="text-xs font-semibold text-agentB-light">Agent B（<span x-text="t('critic')"></span>）</h3>
+            <h3 class="text-xs font-semibold text-agentB-dark">Agent B（<span x-text="t('critic')"></span>）</h3>
           </div>
           <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
-            <div class="fade-in-up bg-agentB-bubble border-r-2 border-agentB rounded-xl rounded-r-none p-3 md-content text-sm"
+            <div class="fade-in-up bg-agentB-bubble border border-agentB-border rounded-xl p-3 md-content text-sm"
                  x-html="renderMarkdown(msg.content)"></div>
           </template>
         </div>
@@ -300,12 +302,12 @@
     </section>
 
     <!-- Consensus -->
-    <section x-show="consensus" x-cloak class="fade-in-up bg-consensus-bg border border-consensus/40 rounded-2xl p-5">
-      <h2 class="text-base font-bold text-consensus-light mb-3 flex items-center gap-2">🤝 <span x-text="t('consensusResult')"></span></h2>
+    <section x-show="consensus" x-cloak class="fade-in-up bg-consensus-bg border border-consensus-border rounded-2xl p-5">
+      <h2 class="text-base font-bold text-consensus mb-3 flex items-center gap-2">🤝 <span x-text="t('consensusResult')"></span></h2>
       <div class="md-content text-sm" x-html="renderMarkdown(consensus)"></div>
     </section>
 
-    <footer class="text-center text-xs text-warm-600 py-4 border-t border-warm-800 mt-6">
+    <footer class="text-center text-xs text-warm-400 py-4 border-t border-cream-200 mt-6">
       DebateAI — <span x-text="t('footerNote')"></span>
     </footer>
   </main>

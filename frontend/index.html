@@ -14,9 +14,6 @@
             surface: '#1A1A1A', 'surface-2': '#222222', 'surface-3': '#2A2A2A', 'surface-4': '#141414',
             'border-dim': '#333333',
             'green-accent': '#A3E635', 'yellow-accent': '#FBBF24',
-            'blue-accent': '#60A5FA', 'rose-accent': '#FB7185', 'violet-accent': '#A78BFA',
-            'cyan-accent': '#22D3EE', 'orange-accent': '#FB923C', 'emerald-accent': '#34D399',
-            'pink-accent': '#F472B6', 'lime-accent': '#84CC16',
             'txt': { 1: '#E5E7EB', 2: '#D1D5DB', 3: '#9CA3AF', 4: '#6B7280' },
           }
         }
@@ -45,8 +42,8 @@
     .typing-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:#6B7280; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay:-.32s }
     .typing-dot:nth-child(2) { animation-delay:-.16s }
-    .glow-green:focus-within { box-shadow: 0 0 0 2px #A3E635, 0 0 16px rgba(163,230,53,0.08); }
-    .glow-yellow:focus-within { box-shadow: 0 0 0 2px #FBBF24, 0 0 16px rgba(251,191,36,0.08); }
+    .glow-green:focus-within { box-shadow: 0 0 0 2px #A3E635, 0 0 20px rgba(163,230,53,0.1); }
+    .glow-yellow:focus-within { box-shadow: 0 0 0 2px #FBBF24, 0 0 20px rgba(251,191,36,0.1); }
     textarea { resize: none; }
     textarea::-webkit-scrollbar { width: 3px; }
     .md-content { color:#D1D5DB; font-size:.85rem; line-height:1.7; }
@@ -65,9 +62,6 @@
     .md-content strong { color:#F3F4F6; }
     .md-content a { color:#60a5fa; text-decoration:underline }
     .prompt-textarea { font-family:'JetBrains Mono',monospace; font-size:.75rem; line-height:1.5; }
-    .role-pill { transition: all .15s; }
-    .role-pill:hover { transform: translateY(-1px); }
-    .role-dropdown { box-shadow: 0 8px 30px rgba(0,0,0,.5); }
   </style>
 </head>
 <body x-data="app()" x-init="init()">
@@ -84,12 +78,11 @@
       <span class="text-[10px] text-txt-4 ml-1 hidden sm:inline">多角色对抗辩论平台</span>
     </div>
     <div class="flex items-center gap-2">
-      <!-- Token counter -->
       <div x-show="totalTokens > 0" class="flex items-center gap-1.5 mr-2">
         <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span class="text-[10px] text-txt-3 font-mono" x-text="fmtTok(totalTokens)"></span>
         <span class="text-[10px] text-txt-4">tok</span>
-        <span x-show="totalCost > 0" class="text-[10px] text-yellow-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
+        <span x-show="totalCost>0" class="text-[10px] text-yellow-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
       </div>
       <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-white/10 text-[10px] font-medium text-txt-3 hover:text-white transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
       <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors" title="设置">
@@ -113,81 +106,64 @@
       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
       <div class="p-4 border-b border-border-dim flex items-center justify-between sticky top-0 bg-surface-4 z-10">
         <h2 class="text-sm font-bold text-txt-1">⚙️ 设置</h2>
-        <button @click="showSettings=false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-white hover:bg-white/10 transition-colors">&times;</button>
+        <button @click="showSettings=false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-white hover:bg-white/10">&times;</button>
       </div>
       <div class="p-4 space-y-5">
-        <!-- API Config -->
+        <!-- API -->
         <div class="space-y-2">
           <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">API 配置</h3>
-          <div>
-            <label class="text-[10px] text-txt-4 block mb-0.5">Base URL</label>
-            <input type="text" x-model="globalConfig.baseUrl" placeholder="https://api.openai.com/v1"
-              class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50">
-          </div>
-          <div>
-            <label class="text-[10px] text-txt-4 block mb-0.5">API Key</label>
-            <input type="password" x-model="globalConfig.apiKey" placeholder="sk-..."
-              class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50">
-          </div>
-          <div>
-            <label class="text-[10px] text-txt-4 block mb-0.5">默认模型</label>
-            <input type="text" x-model="globalConfig.model" placeholder="deepseek-v4-flash"
-              class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50">
+          <div><label class="text-[10px] text-txt-4 block mb-0.5">Base URL</label><input type="text" x-model="cfg.baseUrl" placeholder="https://api.openai.com/v1" class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50"></div>
+          <div><label class="text-[10px] text-txt-4 block mb-0.5">API Key</label><input type="password" x-model="cfg.apiKey" placeholder="sk-..." class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50"></div>
+          <div><label class="text-[10px] text-txt-4 block mb-0.5">默认模型</label><input type="text" x-model="cfg.model" placeholder="deepseek-v4-flash" class="w-full bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-green-accent/50"></div>
+        </div>
+        <!-- Debate -->
+        <div class="flex gap-3">
+          <div><label class="text-[10px] text-txt-4 block mb-0.5">最大轮次</label><input type="number" x-model.number="maxRounds" min="1" max="20" class="w-20 bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none"></div>
+          <div><label class="text-[10px] text-txt-4 block mb-0.5">共识模式</label>
+            <select x-model="consensusMode" class="bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none">
+              <option value="auto">自动检测</option><option value="vote">投票表决</option><option value="all">全部完成</option>
+            </select>
           </div>
         </div>
-        <!-- Debate Settings -->
+        <!-- Roles -->
         <div class="space-y-2">
-          <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">辩论设置</h3>
-          <div class="flex gap-3">
-            <div>
-              <label class="text-[10px] text-txt-4 block mb-0.5">最大轮次</label>
-              <input type="number" x-model.number="maxRounds" min="1" max="20"
-                class="w-20 bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none focus:border-white/30">
-            </div>
-            <div>
-              <label class="text-[10px] text-txt-4 block mb-0.5">共识模式</label>
-              <select x-model="consensusMode" class="bg-surface-3 border border-border-dim rounded px-3 py-2 text-xs text-txt-2 outline-none">
-                <option value="auto">自动检测</option>
-                <option value="vote">投票表决</option>
-                <option value="all">全部完成</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <!-- Role Selection -->
-        <div class="space-y-2">
-          <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">参与角色 <span class="text-txt-4 font-normal">(至少 2 个)</span></h3>
-          <!-- Templates -->
+          <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">参与角色</h3>
           <div class="flex flex-wrap gap-1.5 mb-2">
             <template x-for="tpl in templates" :key="tpl.id">
-              <button @click="applyTemplate(tpl)"
-                class="px-2 py-1 text-[10px] font-medium rounded border transition-colors"
-                :class="currentTemplate===tpl.id ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
+              <button @click="applyTemplate(tpl)" class="px-2 py-1 text-[10px] font-medium rounded border transition-colors"
+                :class="curTpl===tpl.id ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
                 <span x-text="tpl.icon"></span> <span x-text="tpl.name"></span>
               </button>
             </template>
           </div>
-          <!-- Role checkboxes -->
           <div class="grid grid-cols-2 gap-1.5">
-            <template x-for="role in allRoles" :key="role.id">
-              <button @click="toggleRole(role.id)"
-                class="flex items-center gap-2 px-2.5 py-2 rounded-lg border text-left transition-all"
-                :class="activeRoles.includes(role.id) ? 'bg-'+role.color+'/10 border-'+role.color+'/30' : 'bg-surface-3 border-border-dim opacity-50 hover:opacity-80'">
-                <span class="text-sm" x-text="role.icon"></span>
-                <div class="min-w-0">
-                  <div class="text-[11px] font-semibold" :class="activeRoles.includes(role.id) ? 'text-'+role.color : 'text-txt-3'" x-text="role.name"></div>
-                  <div class="text-[9px] text-txt-4 truncate" x-text="role.desc"></div>
-                </div>
+            <template x-for="r in allRoles" :key="r.id">
+              <button @click="toggleRole(r.id)" class="flex items-center gap-2 px-2.5 py-2 rounded-lg border text-left transition-all"
+                :class="roles.includes(r.id) ? 'bg-white/5 border-white/20' : 'bg-surface-3 border-border-dim opacity-40 hover:opacity-70'">
+                <span class="text-sm" x-text="r.icon"></span>
+                <div class="min-w-0"><div class="text-[11px] font-semibold text-txt-2" x-text="r.name"></div><div class="text-[9px] text-txt-4 truncate" x-text="r.desc"></div></div>
               </button>
             </template>
           </div>
         </div>
-        <!-- Save -->
-        <button @click="saveConfig()" class="w-full px-4 py-2.5 text-sm font-medium bg-green-accent text-black rounded-lg hover:bg-green-accent/90 transition-colors flex items-center justify-center gap-2">
+        <!-- Prompts -->
+        <div class="space-y-2">
+          <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">Prompt 编辑</h3>
+          <template x-for="rid in roles" :key="rid">
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <label class="text-[10px] font-medium text-txt-3"><span x-text="gr(rid).icon"></span> <span x-text="gr(rid).name"></span></label>
+                <button @click="prompts[rid]=gr(rid).def" class="text-[9px] text-txt-4 hover:text-txt-2">重置</button>
+              </div>
+              <textarea x-model="prompts[rid]" rows="2" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-white/30 prompt-textarea"></textarea>
+            </div>
+          </template>
+        </div>
+        <button @click="saveCfg()" class="w-full px-4 py-2.5 text-sm font-medium bg-green-accent text-black rounded-lg hover:bg-green-accent/90 transition-colors flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           保存配置
         </button>
-        <span x-show="configSaved" x-transition class="block text-center text-green-accent text-sm font-medium">✓ 已保存</span>
+        <span x-show="cfgSaved" x-transition class="block text-center text-green-accent text-sm font-medium">✓ 已保存</span>
       </div>
     </div>
   </div>
@@ -195,179 +171,142 @@
   <!-- ═══ Main Layout ═══ -->
   <div class="flex" style="height: calc(100vh - 44px);">
 
-    <!-- ─── Left Panel ─── -->
+    <!-- ─── Left Panel: 建设方 (Green) ─── -->
     <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
-      <!-- Panel Header -->
       <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
         <div class="flex items-center gap-2">
-          <span class="text-[11px] font-semibold uppercase tracking-wide" :class="'text-'+getRole(panelLeftRole).color" x-text="getRole(panelLeftRole).icon + ' ' + getRole(panelLeftRole).name"></span>
-          <span class="text-[10px] text-txt-4">/ Partner</span>
-        </div>
-        <div class="flex items-center gap-1">
-          <span x-show="isDebating && typingRoleId===panelLeftRole" class="flex items-center gap-1 text-[10px] text-green-accent/70 mr-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-accent" style="animation:pulse 1.5s infinite"></span>
-            思考中...
-          </span>
-          <!-- Role switcher -->
-          <div class="relative" x-data="{open:false}">
-            <button @click="open=!open" class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/10 text-[10px] text-txt-3 transition-colors">
-              切换 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div x-show="open" @click.away="open=false" x-transition
-              class="role-dropdown absolute right-0 top-full mt-1 w-48 bg-surface-2 border border-border-dim rounded-lg overflow-hidden z-30">
-              <template x-for="rid in activeRoles" :key="rid">
-                <button @click="panelLeftRole=rid; open=false"
-                  class="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-white/5 transition-colors"
-                  :class="panelLeftRole===rid ? 'bg-white/5' : ''">
-                  <span class="text-sm" x-text="getRole(rid).icon"></span>
-                  <span class="text-[11px]" :class="'text-'+getRole(rid).color" x-text="getRole(rid).name"></span>
-                  <svg x-show="panelLeftRole===rid" class="w-3 h-3 text-green-accent ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                </button>
-              </template>
-            </div>
+          <div class="w-5 h-5 rounded bg-green-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
           </div>
+          <span class="text-[11px] font-semibold text-green-accent uppercase tracking-wide">建设方 · Builder</span>
+          <span class="text-[10px] text-txt-4" x-text="leftRoles.map(id=>gr(id).icon).join(' ')"></span>
         </div>
+        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-green-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-accent" style="animation:pulse 1.5s infinite"></span>
+          思考中...
+        </span>
       </div>
 
       <!-- Messages -->
       <div class="flex-1 overflow-y-auto py-2" id="scroll-left">
-        <div x-show="getLeftMessages().length === 0" class="flex items-center justify-center h-full">
+        <div x-show="leftMsgs.length===0" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" :class="'bg-'+getRole(panelLeftRole).color+'/10'">
-              <span class="text-2xl opacity-50" x-text="getRole(panelLeftRole).icon"></span>
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-green-accent/10">
+              <span class="text-2xl opacity-50">🏗️</span>
             </div>
-            <p class="text-xs text-txt-4" x-text="getRole(panelLeftRole).name + ' 的发言将在这里显示'"></p>
-          </div>
-        </div>
-        <template x-for="(msg, idx) in getLeftMessages()" :key="'l-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-green-accent/5 transition-colors">
-            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs"
-              :class="'bg-'+getRole(msg.roleId).color+'/20 text-'+getRole(msg.roleId).color">
-              <span x-text="getRole(msg.roleId).icon"></span>
-            </div>
-            <div class="flex-1 border-l-2 border-l-green-accent/30 pl-3 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-green-accent/70" x-text="getRole(msg.roleId).name"></span>
-                <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
-              </div>
-              <div class="md-content break-words" x-html="renderMd(msg.content)"></div>
-            </div>
-          </div>
-        </template>
-      </div>
-
-      <!-- Bottom bar -->
-      <div class="border-t border-border-dim p-3 flex-shrink-0">
-        <div class="flex items-center gap-1.5 mb-2">
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">Agent</span>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border border-green-accent/20 bg-green-accent/10 text-green-accent" x-text="globalConfig.model || '未配置'"></span>
-        </div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="'第 '+currentRound+'/'+maxRounds+' 轮'"></span>
-            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden">
-              <div class="h-full bg-green-accent rounded-full transition-all" :style="'width:'+Math.min((currentRound/maxRounds)*100,100)+'%'"></div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button x-show="!isDebating" @click="showSettings=true" class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-txt-2 transition-colors" title="选择角色和配置">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── Center Panel ─── -->
-    <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
-      <!-- Panel Header -->
-      <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
-        <div class="flex items-center gap-2">
-          <span class="text-[11px] font-semibold uppercase tracking-wide" :class="'text-'+getRole(panelRightRole).color" x-text="getRole(panelRightRole).icon + ' ' + getRole(panelRightRole).name"></span>
-          <span class="text-[10px] text-txt-4">/ Adversary</span>
-        </div>
-        <div class="flex items-center gap-1">
-          <span x-show="isDebating && typingRoleId===panelRightRole" class="flex items-center gap-1 text-[10px] text-yellow-accent/70 mr-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent" style="animation:pulse 1.5s infinite"></span>
-            思考中...
-          </span>
-          <div class="relative" x-data="{open:false}">
-            <button @click="open=!open" class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/10 text-[10px] text-txt-3 transition-colors">
-              切换 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div x-show="open" @click.away="open=false" x-transition
-              class="role-dropdown absolute right-0 top-full mt-1 w-48 bg-surface-2 border border-border-dim rounded-lg overflow-hidden z-30">
-              <template x-for="rid in activeRoles" :key="rid">
-                <button @click="panelRightRole=rid; open=false"
-                  class="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-white/5 transition-colors"
-                  :class="panelRightRole===rid ? 'bg-white/5' : ''">
-                  <span class="text-sm" x-text="getRole(rid).icon"></span>
-                  <span class="text-[11px]" :class="'text-'+getRole(rid).color" x-text="getRole(rid).name"></span>
-                  <svg x-show="panelRightRole===rid" class="w-3 h-3 text-yellow-accent ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                </button>
+            <p class="text-xs text-txt-4">建设方的分析将在这里显示</p>
+            <div class="flex justify-center gap-1 mt-2">
+              <template x-for="id in leftRoles" :key="id">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-green-accent/10 text-green-accent/70" x-text="gr(id).icon+gr(id).name"></span>
               </template>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- System prompt -->
-      <div class="mx-3 mt-2 px-3 py-2 bg-white/5 rounded-md border border-white/10" x-show="getRightMessages().length === 0 && !isDebating">
-        <div class="flex items-center gap-1.5 mb-1">
-          <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span class="text-[9px] font-semibold text-txt-4 uppercase tracking-wide">System</span>
-        </div>
-        <p class="text-[11px] text-txt-4 leading-relaxed">Adversary monitoring active. I will review the coder's turns and inject steers when I find issues.</p>
-      </div>
-
-      <!-- Messages -->
-      <div class="flex-1 overflow-y-auto py-2" id="scroll-right">
-        <div x-show="getRightMessages().length === 0 && isDebating" class="flex items-center justify-center h-full">
-          <div class="text-center">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" :class="'bg-'+getRole(panelRightRole).color+'/10'">
-              <span class="text-2xl opacity-50" x-text="getRole(panelRightRole).icon"></span>
+        <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-green-accent/[.04] transition-colors">
+            <div class="w-6 h-6 rounded-full bg-green-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+              <span x-text="gr(msg.roleId).icon"></span>
             </div>
-            <p class="text-xs text-txt-4">等待辩论开始...</p>
-          </div>
-        </div>
-        <template x-for="(msg, idx) in getRightMessages()" :key="'r-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-yellow-accent/5 transition-colors">
-            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs"
-              :class="'bg-'+getRole(msg.roleId).color+'/20 text-'+getRole(msg.roleId).color">
-              <span x-text="getRole(msg.roleId).icon"></span>
-            </div>
-            <div class="flex-1 border-l-2 border-l-yellow-accent/30 pl-3 min-w-0">
+            <div class="flex-1 border-l-2 border-l-green-accent/30 pl-3 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-yellow-accent/70" x-text="getRole(msg.roleId).name"></span>
+                <span class="text-[10px] font-bold text-green-accent/80" x-text="gr(msg.roleId).name"></span>
                 <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
               </div>
-              <div class="md-content break-words" x-html="renderMd(msg.content)"></div>
+              <div class="md-content break-words" x-html="rmd(msg.content)"></div>
             </div>
           </div>
         </template>
       </div>
 
-      <!-- Bottom bar -->
+      <!-- Bottom -->
+      <div class="border-t border-border-dim p-3 flex-shrink-0">
+        <div class="flex items-center gap-1.5 mb-2">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">Agent</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-green-accent/10 text-green-accent border-green-accent/20" x-text="cfg.model||'未配置'"></span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="'第 '+curRound+'/'+maxRounds+' 轮'"></span>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-green-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
+          </div>
+          <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Center Panel: 审查方 (Yellow) ─── -->
+    <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
+      <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded bg-yellow-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-yellow-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-yellow-accent uppercase tracking-wide">审查方 · Reviewer</span>
+          <span class="text-[10px] text-txt-4" x-text="rightRoles.map(id=>gr(id).icon).join(' ')"></span>
+        </div>
+        <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1 text-[10px] text-yellow-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent" style="animation:pulse 1.5s infinite"></span>
+          思考中...
+        </span>
+      </div>
+
+      <!-- System prompt -->
+      <div class="mx-3 mt-2 px-3 py-2 bg-white/5 rounded-md border border-white/10" x-show="rightMsgs.length===0 && !isDebating">
+        <div class="flex items-center gap-1.5 mb-1">
+          <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="text-[9px] font-semibold text-txt-4 uppercase tracking-wide">System</span>
+        </div>
+        <p class="text-[11px] text-txt-4 leading-relaxed">Adversary monitoring active. We will review the builder's output and inject steers when we find issues.</p>
+      </div>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-y-auto py-2" id="scroll-right">
+        <div x-show="rightMsgs.length===0 && !isDebating" class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-yellow-accent/10">
+              <span class="text-2xl opacity-50">🛡️</span>
+            </div>
+            <p class="text-xs text-txt-4">审查方的反馈将在这里显示</p>
+            <div class="flex justify-center gap-1 mt-2">
+              <template x-for="id in rightRoles" :key="id">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-accent/10 text-yellow-accent/70" x-text="gr(id).icon+gr(id).name"></span>
+              </template>
+            </div>
+          </div>
+        </div>
+        <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-yellow-accent/[.04] transition-colors">
+            <div class="w-6 h-6 rounded-full bg-yellow-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+              <span x-text="gr(msg.roleId).icon"></span>
+            </div>
+            <div class="flex-1 border-l-2 border-l-yellow-accent/30 pl-3 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[10px] font-bold text-yellow-accent/80" x-text="gr(msg.roleId).name"></span>
+                <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+              </div>
+              <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Bottom -->
       <div class="border-t border-border-dim p-3 flex-shrink-0">
         <div class="flex items-center gap-1.5 mb-2">
           <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">静态检查</span>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border border-yellow-accent/20 bg-yellow-accent/10 text-yellow-accent" x-text="globalConfig.model || '未配置'"></span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-yellow-accent/10 text-yellow-accent border-yellow-accent/20" x-text="cfg.model||'未配置'"></span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
         </div>
         <div class="flex items-center justify-between">
-          <button x-show="isDebating" @click="abortDebate()"
-            class="px-3 py-1.5 text-[11px] font-medium bg-white/10 text-txt-2 rounded hover:bg-white/15 transition-colors">
-            ■ 停止
-          </button>
-          <button x-show="!isDebating && messages.length > 0" @click="exportCurrentDebate()"
-            class="px-3 py-1.5 text-[11px] font-medium bg-white/5 text-txt-3 rounded hover:bg-white/10 transition-colors flex items-center gap-1">
+          <button x-show="isDebating" @click="abort()" class="px-3 py-1.5 text-[11px] font-medium bg-white/10 text-txt-2 rounded hover:bg-white/15 transition-colors">■ 停止</button>
+          <button x-show="!isDebating && msgs.length>0" @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-white/5 text-txt-3 rounded hover:bg-white/10 transition-colors flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             导出
           </button>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="Math.round(currentRound/maxRounds*100)+'%'"></span>
-            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden">
-              <div class="h-full bg-yellow-accent rounded-full transition-all" :style="'width:'+Math.min((currentRound/maxRounds)*100,100)+'%'"></div>
-            </div>
+            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-yellow-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
           </div>
         </div>
       </div>
@@ -376,26 +315,21 @@
     <!-- ─── Right Sidebar ─── -->
     <div class="w-60 flex-shrink-0 flex flex-col bg-surface-4 border-l border-border-dim overflow-hidden">
 
-      <!-- Tabs -->
       <div class="flex border-b border-border-dim">
-        <button @click="sidebarTab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors"
-          :class="sidebarTab==='roles' ? 'text-white border-b-2 border-white' : 'text-txt-4 hover:text-txt-2'">角色</button>
-        <button @click="sidebarTab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors"
-          :class="sidebarTab==='history' ? 'text-white border-b-2 border-white' : 'text-txt-4 hover:text-txt-2'">
-          历史 <span x-show="historyList.length>0" class="text-[9px] text-txt-4" x-text="'('+historyList.length+')'"></span>
-        </button>
+        <button @click="stab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='roles'?'text-white border-b-2 border-white':'text-txt-4 hover:text-txt-2'">角色</button>
+        <button @click="stab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='history'?'text-white border-b-2 border-white':'text-txt-4 hover:text-txt-2'">历史 <span x-show="hist.length>0" class="text-[9px] text-txt-4" x-text="'('+hist.length+')'"></span></button>
       </div>
 
       <!-- Roles tab -->
-      <div x-show="sidebarTab==='roles'" class="flex-1 overflow-y-auto p-3">
-        <!-- Action buttons -->
-        <div class="space-y-1.5 mb-3">
-          <button @click="startDebate()" :disabled="!canStart || isDebating"
+      <div x-show="stab==='roles'" class="flex-1 overflow-y-auto p-3 space-y-3">
+        <!-- Actions -->
+        <div class="space-y-1.5">
+          <button @click="start()" :disabled="!canGo || isDebating"
             class="w-full flex items-center gap-2 px-3 py-2 bg-green-accent/15 text-green-accent text-[11px] font-medium rounded-md hover:bg-green-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             开始辩论
           </button>
-          <button x-show="messages.length>0 && consensus" @click="showConsensus=!showConsensus"
+          <button x-show="msgs.length>0 && cns" @click="showCns=!showCns"
             class="w-full flex items-center gap-2 px-3 py-2 bg-yellow-accent/15 text-yellow-accent text-[11px] font-medium rounded-md hover:bg-yellow-accent/25 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             共识结论
@@ -403,366 +337,242 @@
         </div>
 
         <!-- Consensus -->
-        <div x-show="showConsensus && consensus" x-collapse class="mb-3">
+        <div x-show="showCns && cns" x-collapse>
           <div class="bg-green-accent/5 border border-green-accent/20 rounded-lg p-3 max-h-48 overflow-y-auto">
-            <div class="md-content text-[11px]" x-html="renderMd(consensus)"></div>
+            <div class="md-content text-[11px]" x-html="rmd(cns)"></div>
           </div>
         </div>
 
-        <!-- Upload area -->
-        <div class="mb-3 rounded-lg bg-surface-3 border border-border-dim glow-green transition-all cursor-pointer"
-             @click="$refs.fileInput2.click()"
-             @dragover.prevent="$el.classList.add('border-green-accent/50')"
-             @dragleave.prevent="$el.classList.remove('border-green-accent/50')"
-             @drop.prevent="$el.classList.remove('border-green-accent/50'); handleFileDrop($event)">
-          <input type="file" x-ref="fileInput2" class="hidden"
-                 accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql"
-                 @change="handleFileSelect($event)">
+        <!-- Upload -->
+        <div class="rounded-lg bg-surface-3 border border-border-dim glow-green transition-all cursor-pointer"
+             @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-green-accent/50')" @dragleave.prevent="$el.classList.remove('border-green-accent/50')" @drop.prevent="$el.classList.remove('border-green-accent/50'); handleDrop($event)">
+          <input type="file" x-ref="fi" class="hidden" accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
           <div class="flex items-center gap-2 px-3 py-2.5">
             <svg class="w-4 h-4 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-            <span class="text-xs text-txt-4" x-text="fileName || '上传文件（PDF/代码/文本）'"></span>
+            <span class="text-xs text-txt-4" x-text="fname||'上传文件（PDF/代码/文本）'"></span>
           </div>
         </div>
 
         <!-- Direct input -->
-        <div class="mb-3">
-          <button @click="showTextInput=!showTextInput" class="text-[10px] text-txt-4 hover:text-txt-2 flex items-center gap-1 mb-1.5">
-            <svg class="w-3 h-3 transition-transform" :class="showTextInput&&'rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <div>
+          <button @click="showTI=!showTI" class="text-[10px] text-txt-4 hover:text-txt-2 flex items-center gap-1 mb-1.5">
+            <svg class="w-3 h-3 transition-transform" :class="showTI&&'rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             直接输入文本
           </button>
-          <div x-show="showTextInput" x-collapse>
-            <textarea x-model="directText" rows="3" placeholder="粘贴论文摘要、代码片段..."
-              class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-green-accent/50 prompt-textarea"></textarea>
-            <button @click="applyDirectText()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-green-accent/15 text-green-accent rounded hover:bg-green-accent/25">使用此文本</button>
+          <div x-show="showTI" x-collapse>
+            <textarea x-model="dtxt" rows="3" placeholder="粘贴论文摘要、代码片段..." class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-green-accent/50 prompt-textarea"></textarea>
+            <button @click="applyTxt()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-green-accent/15 text-green-accent rounded hover:bg-green-accent/25">使用此文本</button>
           </div>
         </div>
 
-        <!-- Active roles list -->
-        <div class="space-y-1">
-          <span class="text-[10px] font-semibold text-txt-4 uppercase tracking-wider">参与角色</span>
-          <template x-for="rid in activeRoles" :key="rid">
-            <div class="flex items-center gap-2 px-2 py-1.5 rounded bg-surface-3/50">
-              <span class="text-xs" x-text="getRole(rid).icon"></span>
-              <span class="text-[10px] font-medium" :class="'text-'+getRole(rid).color" x-text="getRole(rid).name"></span>
-              <span class="text-[9px] text-txt-4 ml-auto" x-text="getRoleMessages(rid).length + ' 条'"></span>
-            </div>
-          </template>
+        <!-- Groups -->
+        <div class="space-y-2">
+          <div>
+            <span class="text-[10px] font-semibold text-green-accent/70 uppercase tracking-wider">建设方</span>
+            <template x-for="id in leftRoles" :key="id">
+              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-green-accent/5">
+                <span class="text-xs" x-text="gr(id).icon"></span>
+                <span class="text-[10px] font-medium text-green-accent/80" x-text="gr(id).name"></span>
+                <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
+              </div>
+            </template>
+          </div>
+          <div>
+            <span class="text-[10px] font-semibold text-yellow-accent/70 uppercase tracking-wider">审查方</span>
+            <template x-for="id in rightRoles" :key="id">
+              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-yellow-accent/5">
+                <span class="text-xs" x-text="gr(id).icon"></span>
+                <span class="text-[10px] font-medium text-yellow-accent/80" x-text="gr(id).name"></span>
+                <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
 
       <!-- History tab -->
-      <div x-show="sidebarTab==='history'" class="flex-1 overflow-y-auto">
-        <div x-show="historyList.length===0" class="text-center py-10">
-          <div class="text-3xl mb-2 opacity-30">📭</div>
-          <p class="text-[11px] text-txt-4">暂无历史记录</p>
-        </div>
-        <template x-for="h in historyList" :key="h.id">
-          <button @click="loadHistory(h)" class="w-full text-left px-3 py-2.5 border-b border-border-dim hover:bg-white/5 transition-colors group">
+      <div x-show="stab==='history'" class="flex-1 overflow-y-auto">
+        <div x-show="hist.length===0" class="text-center py-10"><div class="text-3xl mb-2 opacity-30">📭</div><p class="text-[11px] text-txt-4">暂无历史记录</p></div>
+        <template x-for="h in hist" :key="h.id">
+          <button @click="loadHist(h)" class="w-full text-left px-3 py-2.5 border-b border-border-dim hover:bg-white/5 transition-colors group">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-[11px] text-txt-2 font-medium truncate" x-text="h.fileName||'文本输入'"></span>
-              <span class="text-[9px] text-txt-4" x-text="fmtDate(h.timestamp)"></span>
+              <span class="text-[11px] text-txt-2 font-medium truncate" x-text="h.fname||'文本输入'"></span>
+              <span class="text-[9px] text-txt-4" x-text="fd(h.ts)"></span>
             </div>
             <div class="flex items-center gap-1.5 mb-1">
-              <template x-for="rid in (h.roleIds||[]).slice(0,5)" :key="rid">
-                <span class="text-[10px]" x-text="getRole(rid).icon"></span>
-              </template>
-              <span x-show="(h.roleIds||[]).length>5" class="text-[9px] text-txt-4" x-text="'+'+((h.roleIds||[]).length-5)"></span>
+              <template x-for="id in (h.roles||[]).slice(0,5)" :key="id"><span class="text-[10px]" x-text="gr(id).icon"></span></template>
               <span class="text-[9px] text-txt-4 ml-auto" x-text="h.rounds+'轮'"></span>
             </div>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button @click.stop="exportHistory(h,'md')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">MD</button>
-              <button @click.stop="exportHistory(h,'json')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">JSON</button>
-              <button @click.stop="deleteHistory(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto">🗑</button>
+              <button @click.stop="expH(h,'md')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">MD</button>
+              <button @click.stop="expH(h,'json')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">JSON</button>
+              <button @click.stop="delH(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto">🗑</button>
             </div>
           </button>
         </template>
-        <div x-show="historyList.length>0" class="p-3 border-t border-border-dim sticky bottom-0 bg-surface-4">
-          <button @click="clearAllHistory()" class="w-full px-3 py-1.5 text-[10px] font-medium bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors">🗑 清空所有</button>
+        <div x-show="hist.length>0" class="p-3 border-t border-border-dim sticky bottom-0 bg-surface-4">
+          <button @click="clearH()" class="w-full px-3 py-1.5 text-[10px] font-medium bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors">🗑 清空所有</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Error toast -->
-  <div x-show="error" x-cloak x-transition
-    class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
-    <span x-text="error"></span>
-    <button @click="error=''" class="text-white/70 hover:text-white">&times;</button>
+  <!-- Error -->
+  <div x-show="err" x-cloak x-transition class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+    <span x-text="err"></span><button @click="err=''" class="text-white/70 hover:text-white">&times;</button>
   </div>
 
   <script>
-    const ALL_ROLES = [
-      { id:'architect', name:'架构师', icon:'🏗️', color:'blue-accent', desc:'系统架构设计',
-        defaultPrompt:'你是架构师。分析代码/系统的架构设计，评估技术权衡，提出结构性改进建议。关注模块划分、依赖关系、扩展性。用中文回答。' },
-      { id:'developer', name:'开发者', icon:'💻', color:'green-accent', desc:'代码实现与优化',
-        defaultPrompt:'你是高级开发者。分析代码实现，提供具体的改进方案。关注代码质量、设计模式、性能优化。给出改进后的代码示例。用中文回答。' },
-      { id:'reviewer', name:'审查者', icon:'🛡️', color:'rose-accent', desc:'代码审查与 bug 检测',
-        defaultPrompt:'你是代码审查者。严格审查代码，找出 bug、安全漏洞、性能问题。不要无理由反对——如果代码确实好，表示认可。发现问题时给出修复方案。用中文回答。' },
-      { id:'debugger', name:'调试工程师', icon:'🔍', color:'orange-accent', desc:'根因分析',
-        defaultPrompt:'你是调试工程师。分析代码中的潜在 bug 和运行时问题，关注边界条件、异常处理、并发问题。提供根因分析和修复方案。用中文回答。' },
-      { id:'tester', name:'测试工程师', icon:'🧪', color:'violet-accent', desc:'测试用例设计',
-        defaultPrompt:'你是测试工程师。设计全面的测试方案：单元测试、集成测试、边界用例、异常场景。提供测试代码。找出开发者可能忽略的 edge case。用中文回答。' },
-      { id:'security', name:'安全工程师', icon:'🔒', color:'rose-accent', desc:'STRIDE 安全分析',
-        defaultPrompt:'你是安全工程师。基于 STRIDE 模型分析：伪造身份、篡改数据、信息泄露、拒绝服务、权限提升。枚举攻击面，发现漏洞并给修复建议。用中文回答。' },
-      { id:'docs', name:'文档工程师', icon:'📘', color:'cyan-accent', desc:'文档完整性审查',
-        defaultPrompt:'你是文档工程师。审查 README、API 文档、注释的完整性和一致性。指出缺失或过时的地方。用中文回答。' },
-      { id:'migration', name:'迁移工程师', icon:'🗄️', color:'orange-accent', desc:'数据迁移安全',
-        defaultPrompt:'你是迁移工程师。审查迁移方案：回滚安全性、幂等性、向后兼容、零停机。发现风险并给建议。用中文回答。' },
-      { id:'i18n', name:'国际化工程师', icon:'🌐', color:'emerald-accent', desc:'多语言与本地化',
-        defaultPrompt:'你是国际化工程师。审查国际化支持：硬编码字符串、地区格式化、RTL、翻译覆盖度。给改进建议。用中文回答。' },
-      { id:'ml', name:'ML 工程师', icon:'📈', color:'pink-accent', desc:'模型训练与优化',
-        defaultPrompt:'你是 ML 工程师。分析 ML 相关代码：模型架构、训练流程、超参数、过拟合/欠拟合。给优化建议。用中文回答。' },
+    const ROLES = [
+      { id:'architect', name:'架构师', icon:'🏗️', side:'left', desc:'系统架构设计', def:'你是架构师。分析架构设计，评估技术权衡，提出结构性改进建议。关注模块划分、依赖关系、扩展性。用中文回答。' },
+      { id:'developer', name:'开发者', icon:'💻', side:'left', desc:'代码实现与优化', def:'你是高级开发者。分析代码实现，提供改进方案。关注代码质量、设计模式、性能优化。给出改进后的代码。用中文回答。' },
+      { id:'ml', name:'ML 工程师', icon:'📈', side:'left', desc:'模型训练与优化', def:'你是 ML 工程师。分析 ML 相关代码：模型架构、训练流程、超参数、过拟合。给优化建议。用中文回答。' },
+      { id:'docs', name:'文档工程师', icon:'📘', side:'left', desc:'文档完整性', def:'你是文档工程师。审查 README、API 文档、注释的完整性和一致性。指出缺失或过时的地方。用中文回答。' },
+      { id:'i18n', name:'国际化工程师', icon:'🌐', side:'left', desc:'多语言与本地化', def:'你是国际化工程师。审查国际化支持：硬编码字符串、地区格式化、RTL、翻译覆盖度。用中文回答。' },
+      { id:'reviewer', name:'审查者', icon:'🛡️', side:'right', desc:'代码审查与 bug 检测', def:'你是代码审查者。严格审查代码，找出 bug、安全漏洞、性能问题。不要无理由反对——如果代码确实好，表示认可。用中文回答。' },
+      { id:'security', name:'安全工程师', icon:'🔒', side:'right', desc:'STRIDE 安全分析', def:'你是安全工程师。基于 STRIDE 模型分析：伪造身份、篡改数据、信息泄露、权限提升。枚举攻击面，发现漏洞。用中文回答。' },
+      { id:'debugger', name:'调试工程师', icon:'🔍', side:'right', desc:'根因分析', def:'你是调试工程师。分析潜在 bug 和运行时问题：边界条件、异常处理、并发问题、资源泄漏。给根因分析和修复方案。用中文回答。' },
+      { id:'tester', name:'测试工程师', icon:'🧪', side:'right', desc:'测试用例设计', def:'你是测试工程师。设计全面测试方案：单元测试、集成测试、边界用例、异常场景。提供测试代码。用中文回答。' },
+      { id:'migration', name:'迁移工程师', icon:'🗄️', side:'right', desc:'数据迁移安全', def:'你是迁移工程师。审查迁移方案：回滚安全性、幂等性、向后兼容、零停机。发现风险并给建议。用中文回答。' },
     ];
 
-    const TEMPLATES = [
+    const TPLS = [
       { id:'code-review', name:'代码审查', icon:'🔍', roles:['developer','reviewer','tester','security'] },
-      { id:'full-audit', name:'全面审计', icon:'⚡', roles:['architect','developer','reviewer','security','docs','tester'] },
-      { id:'paper-review', name:'论文审稿', icon:'📄', roles:['architect','reviewer','docs'] },
-      { id:'security-scan', name:'安全扫描', icon:'🛡️', roles:['security','reviewer','debugger'] },
+      { id:'full-audit', name:'全面审计', icon:'⚡', roles:['architect','developer','docs','reviewer','security','tester'] },
+      { id:'paper-review', name:'论文审稿', icon:'📄', roles:['architect','developer','docs','reviewer'] },
+      { id:'security-scan', name:'安全扫描', icon:'🛡️', roles:['developer','security','reviewer','debugger'] },
       { id:'ml-pipeline', name:'ML 管道', icon:'🤖', roles:['ml','developer','tester','reviewer'] },
     ];
 
-    if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    if (typeof marked !== 'undefined') marked.setOptions({
-      highlight: (code, lang) => { if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value; return typeof hljs !== 'undefined' ? hljs.highlightAuto(code).value : code; },
-      breaks: true, gfm: true,
-    });
+    if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    if(typeof marked!=='undefined') marked.setOptions({ highlight:(c,l)=>{if(typeof hljs!=='undefined'&&l&&hljs.getLanguage(l))return hljs.highlight(c,{language:l}).value;return typeof hljs!=='undefined'?hljs.highlightAuto(c).value:c;}, breaks:true, gfm:true });
 
-    function app() {
+    function app(){
       return {
-        lang: 'zh',
-        allRoles: ALL_ROLES, templates: TEMPLATES,
-        activeRoles: ['developer','reviewer','architect','security'],
-        currentTemplate: '',
-        panelLeftRole: 'developer',
-        panelRightRole: 'reviewer',
-        showSettings: false, showTextInput: false, showConsensus: false, sidebarTab: 'roles',
-        fileName: '', fileSize: 0, fileContent: '', directText: '',
-        globalConfig: { baseUrl:'', apiKey:'', model:'' },
-        roleModelOverrides: {}, rolePrompts: {},
-        maxRounds: 4, consensusMode: 'auto', configSaved: false,
-        isDebating: false, messages: [], consensus: '', currentRound: 0,
-        error: '', abortController: null, typingRoleId: null,
-        totalTokens: 0, totalCost: 0,
-        historyList: [],
+        lang:'zh', allRoles:ROLES, templates:TPLS, curTpl:'',
+        roles:['developer','architect','reviewer','security','tester'],
+        showSettings:false, showTI:false, showCns:false, stab:'roles',
+        fname:'', fsize:'', fcont:'', dtxt:'',
+        cfg:{baseUrl:'',apiKey:'',model:''}, maxRounds:4, consensusMode:'auto', cfgSaved:false,
+        prompts:{}, isDebating:false, msgs:[], cns:'', curRound:0, err:'', ac:null,
+        typingGroup:null, totalTokens:0, totalCost:0, hist:[],
 
-        get canStart() {
-          return (this.fileContent||this.directText) && this.globalConfig.baseUrl && this.globalConfig.apiKey && this.globalConfig.model && this.activeRoles.length >= 2;
+        get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
+        get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
+        get leftMsgs(){ return this.msgs.filter(m=>this.leftRoles.includes(m.roleId)); },
+        get rightMsgs(){ return this.msgs.filter(m=>this.rightRoles.includes(m.roleId)); },
+        get canGo(){ return (this.fcont||this.dtxt) && this.cfg.baseUrl && this.cfg.apiKey && this.cfg.model && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
+        get pct(){ return Math.min(Math.round(this.curRound/this.maxRounds*100),100); },
+
+        gr(id){ return ROLES.find(r=>r.id===id)||{id:'?',name:'未知',icon:'❓',side:'left',desc:'',def:''}; },
+        rmd(t){ if(!t)return''; try{return marked.parse(t);}catch(e){return t.replace(/</g,'&lt;');} },
+        fmtTok(n){ if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n; },
+        fd(iso){ if(!iso)return''; return new Date(iso).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); },
+
+        init(){
+          this.allRoles.forEach(r=>{this.prompts[r.id]=r.def;});
+          this.loadCfg(); this.loadHist();
         },
 
-        init() {
-          this.lang = localStorage.getItem('debateai_lang')||'zh';
-          this.allRoles.forEach(r => { this.rolePrompts[r.id] = r.defaultPrompt; });
-          this.loadConfig(); this.loadHistoryList();
-          // Auto-assign panels
-          if (this.activeRoles.length >= 2) {
-            this.panelLeftRole = this.activeRoles[0];
-            this.panelRightRole = this.activeRoles[1];
-          }
+        toggleRole(id){ const i=this.roles.indexOf(id); if(i>=0){if(this.roles.length>2)this.roles.splice(i,1);}else{this.roles.push(id);} this.curTpl=''; },
+        applyTemplate(t){ this.roles=[...t.roles]; this.curTpl=t.id; },
+
+        async handleDrop(e){ const f=e.dataTransfer.files[0]; if(f)await this.procFile(f); },
+        async handleFile(e){ const f=e.target.files[0]; if(f)await this.procFile(f); },
+        async procFile(f){
+          const ext=f.name.split('.').pop().toLowerCase();
+          if(!['pdf','py','txt','md','csv','json','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql'].includes(ext)){this.err='不支持的格式';return;}
+          this.fname=f.name;this.fsize=f.size;this.err='';this.dtxt='';
+          this.fcont=ext==='pdf'?await this.parsePDF(f):await this.readTxt(f);
         },
+        readTxt(f){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej();r.readAsText(f);}); },
+        async parsePDF(f){ const b=await f.arrayBuffer();const p=await pdfjsLib.getDocument({data:b}).promise;let t='';for(let i=1;i<=p.numPages;i++){const pg=await p.getPage(i);const c=await pg.getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\n\n';}return t.trim(); },
+        applyTxt(){ if(this.dtxt.trim()){this.fcont=this.dtxt.trim();this.fname='直接输入文本';this.fsize=this.fcont.length;} },
 
-        getRole(id) { return this.allRoles.find(r => r.id === id) || { id:'?', name:'未知', icon:'❓', color:'txt-3', desc:'' }; },
-        getLeftMessages() { return this.messages.filter(m => m.roleId === this.panelLeftRole); },
-        getRightMessages() { return this.messages.filter(m => m.roleId === this.panelRightRole); },
-        getRoleMessages(rid) { return this.messages.filter(m => m.roleId === rid); },
+        saveCfg(){ localStorage.setItem('debateai_cfg',JSON.stringify({cfg:this.cfg,maxRounds:this.maxRounds,consensusMode:this.consensusMode,prompts:this.prompts,roles:this.roles})); this.cfgSaved=true;setTimeout(()=>this.cfgSaved=false,2000); },
+        loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.cfg)this.cfg={...this.cfg,...d.cfg};if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },
 
-        toggleRole(id) {
-          const i = this.activeRoles.indexOf(id);
-          if (i >= 0) { if (this.activeRoles.length > 2) this.activeRoles.splice(i, 1); }
-          else { this.activeRoles.push(id); }
-          this.currentTemplate = '';
-          // Auto-assign panels if needed
-          if (!this.activeRoles.includes(this.panelLeftRole)) this.panelLeftRole = this.activeRoles[0];
-          if (!this.activeRoles.includes(this.panelRightRole)) this.panelRightRole = this.activeRoles[1] || this.activeRoles[0];
-        },
-
-        applyTemplate(tpl) {
-          this.activeRoles = [...tpl.roles];
-          this.currentTemplate = tpl.id;
-          this.panelLeftRole = tpl.roles[0];
-          this.panelRightRole = tpl.roles[1];
-        },
-
-        async handleFileDrop(e) { const f = e.dataTransfer.files[0]; if (f) await this.processFile(f); },
-        async handleFileSelect(e) { const f = e.target.files[0]; if (f) await this.processFile(f); },
-        async processFile(file) {
-          const ext = file.name.split('.').pop().toLowerCase();
-          if (!['pdf','py','txt','md','csv','json','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql'].includes(ext)) { this.error = '不支持的文件格式'; return; }
-          this.fileName = file.name; this.fileSize = file.size; this.error = ''; this.directText = '';
-          this.fileContent = ext === 'pdf' ? await this.parsePDF(file) : await this.readText(file);
-        },
-        readText(f) { return new Promise((res,rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(); r.readAsText(f); }); },
-        async parsePDF(f) { const b = await f.arrayBuffer(); const p = await pdfjsLib.getDocument({data:b}).promise; let t=''; for(let i=1;i<=p.numPages;i++){const pg=await p.getPage(i);const c=await pg.getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\n\n';} return t.trim(); },
-        formatSize(b) { if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; },
-        applyDirectText() { if(this.directText.trim()){this.fileContent=this.directText.trim();this.fileName='直接输入文本';this.fileSize=this.fileContent.length;} },
-        fmtTok(n) { if(n>=1000000) return (n/1000000).toFixed(1)+'M'; if(n>=1000) return (n/1000).toFixed(1)+'K'; return n; },
-        fmtDate(iso) { if(!iso) return ''; return new Date(iso).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); },
-        renderMd(t) { if(!t) return ''; try{return marked.parse(t);}catch(e){return t.replace(/</g,'&lt;');} },
-
-        saveConfig() {
-          localStorage.setItem('debateai_config', JSON.stringify({
-            globalConfig:this.globalConfig, maxRounds:this.maxRounds, consensusMode:this.consensusMode,
-            roleModelOverrides:this.roleModelOverrides, rolePrompts:this.rolePrompts, activeRoles:this.activeRoles,
-            panelLeftRole:this.panelLeftRole, panelRightRole:this.panelRightRole,
-          }));
-          this.configSaved = true; setTimeout(()=>this.configSaved = false, 2000);
-        },
-        loadConfig() {
-          try {
-            const d = JSON.parse(localStorage.getItem('debateai_config'));
-            if(!d) return;
-            if(d.globalConfig) this.globalConfig = {...this.globalConfig, ...d.globalConfig};
-            if(d.maxRounds) this.maxRounds = d.maxRounds;
-            if(d.consensusMode) this.consensusMode = d.consensusMode;
-            if(d.roleModelOverrides) this.roleModelOverrides = d.roleModelOverrides;
-            if(d.rolePrompts) Object.assign(this.rolePrompts, d.rolePrompts);
-            if(d.activeRoles) this.activeRoles = d.activeRoles;
-            if(d.panelLeftRole) this.panelLeftRole = d.panelLeftRole;
-            if(d.panelRightRole) this.panelRightRole = d.panelRightRole;
-          } catch(e) {}
-        },
-
-        async startDebate() {
-          if(!this.canStart) return;
-          const content = this.fileContent || this.directText;
-          if(!content) return;
-          if(this.directText && !this.fileContent) { this.fileContent = this.directText.trim(); this.fileName = '文本输入'; }
-
-          this.isDebating = true; this.messages = []; this.consensus = ''; this.currentRound = 0;
-          this.error = ''; this.abortController = new AbortController(); this.totalTokens = 0; this.totalCost = 0;
-
-          const roles = this.activeRoles.map(id => this.allRoles.find(r => r.id === id)).filter(Boolean);
-
-          try {
-            for (let round = 1; round <= this.maxRounds; round++) {
-              this.currentRound = round;
-              for (const role of roles) {
-                this.typingRoleId = role.id;
-                const prompt = this.rolePrompts[role.id] || role.defaultPrompt;
-                const context = this.buildContext(role.id, content, round);
-                const msgs = [{ role:'system', content:prompt }, { role:'user', content:context }];
-                const msg = this.addMessage(role.id, '', round);
-                const model = this.roleModelOverrides[role.id] || this.globalConfig.model;
-                const config = {...this.globalConfig, model};
-                await this.callLLM(config, msgs, (chunk, meta) => {
-                  this.appendToMessage(msg, chunk);
-                  if(meta?.tokens) { msg.tokens = (msg.tokens||0) + meta.tokens; this.totalTokens += meta.tokens; }
-                });
-                this.typingRoleId = null;
-                if(this.consensusMode==='auto' && round>=2 && this.detectConsensus(msg.content)) { this.consensus = msg.content; break; }
+        async start(){
+          if(!this.canGo)return;
+          const content=this.fcont||this.dtxt; if(!content)return;
+          if(this.dtxt&&!this.fcont){this.fcont=this.dtxt.trim();this.fname='文本输入';}
+          this.isDebating=true;this.msgs=[];this.cns='';this.curRound=0;this.err='';this.ac=new AbortController();this.totalTokens=0;this.totalCost=0;
+          const allRoleObjs=this.roles.map(id=>ROLES.find(r=>r.id===id)).filter(Boolean);
+          try{
+            for(let round=1;round<=this.maxRounds;round++){
+              this.curRound=round;
+              // Builder group first
+              this.typingGroup='left';
+              for(const role of allRoleObjs.filter(r=>r.side==='left')){
+                const prompt=this.prompts[role.id]||role.def;
+                const ctx=this.buildCtx(role.id,content,round);
+                const m=this.addMsg(role.id,'',round);
+                await this.call([{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
               }
-              if(this.consensus) break;
-              if(this.consensusMode==='vote' && round>=2) {
-                const rMsgs = this.messages.filter(m => m.round === round);
-                if(rMsgs.filter(m => this.detectConsensus(m.content)).length > roles.length/2) { await this.extractConsensus(); break; }
+              this.typingGroup=null;
+              // Reviewer group
+              this.typingGroup='right';
+              for(const role of allRoleObjs.filter(r=>r.side==='right')){
+                const prompt=this.prompts[role.id]||role.def;
+                const ctx=this.buildCtx(role.id,content,round);
+                const m=this.addMsg(role.id,'',round);
+                await this.call([{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                if(this.consensusMode==='auto'&&round>=2&&this.detectCns(m.content)){this.cns=m.content;}
+              }
+              this.typingGroup=null;
+              if(this.cns)break;
+              if(this.consensusMode==='vote'&&round>=2){
+                const rMsgs=this.msgs.filter(m=>m.round===round);
+                if(rMsgs.filter(m=>this.detectCns(m.content)).length>this.roles.length/2){await this.extractCns();break;}
               }
             }
-            if(!this.consensus) await this.extractConsensus();
-            this.saveToHistory();
-          } catch(e) {
-            this.error = e.name==='AbortError' ? '辩论已中止' : `Error: ${e.message}`;
-          } finally {
-            this.isDebating = false; this.typingRoleId = null; this.abortController = null;
-          }
+            if(!this.cns)await this.extractCns();
+            this.saveHist();
+          }catch(e){this.err=e.name==='AbortError'?'辩论已中止':`Error: ${e.message}`;}
+          finally{this.isDebating=false;this.typingGroup=null;this.ac=null;}
         },
 
-        buildContext(roleId, content, round) {
-          const prev = this.messages.filter(m => m.round < round || (m.round === round && m.roleId !== roleId));
-          let ctx = `## 待分析材料\n\n${content}\n\n`;
-          if(prev.length > 0) {
-            ctx += `## 之前角色的分析\n\n`;
-            for(const m of prev.slice(-8)) { const r = this.getRole(m.roleId); ctx += `### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`; }
-          }
-          ctx += `\n请基于你的角色职责进行分析。如果是后续轮次，请回应或补充其他角色的观点。`;
+        buildCtx(roleId,content,round){
+          const prev=this.msgs.filter(m=>m.round<round||(m.round===round&&m.roleId!==roleId));
+          let ctx=`## 待分析材料\n\n${content}\n\n`;
+          if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
+          ctx+=`\n请基于你的角色职责分析。后续轮次请回应或补充其他角色观点。`;
           return ctx;
         },
 
-        addMessage(roleId, content, round) {
-          const m = { roleId, content, round, tokens:0, id:Date.now()+Math.random() };
-          this.messages.push(m);
-          this.$nextTick(() => {
-            ['scroll-left','scroll-right'].forEach(id => { const el = document.getElementById(id); if(el) el.scrollTop = el.scrollHeight; });
-          });
-          return m;
+        addMsg(roleId,content,round){ const m={roleId,content,round,id:Date.now()+Math.random()};this.msgs.push(m);this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});return m; },
+        append(msg,ch){ msg.content+=ch; if(!this._s){this._s=true;requestAnimationFrame(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});this._s=false;});} },
+
+        async call(messages,onChunk){
+          const signal=this.ac?.signal;
+          const resp=await fetch(this.cfg.baseUrl.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${this.cfg.apiKey}`},body:JSON.stringify({model:this.cfg.model,messages,stream:true}),signal});
+          if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
+          const reader=resp.body.getReader(),dec=new TextDecoder();let buf='';
+          while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]')return;try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;if(dt?.content)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}catch(e){}}}
         },
 
-        appendToMessage(msg, chunk) {
-          msg.content += chunk;
-          if(!this._sth) {
-            this._sth = true;
-            requestAnimationFrame(() => {
-              ['scroll-left','scroll-right'].forEach(id => { const el = document.getElementById(id); if(el) el.scrollTop = el.scrollHeight; });
-              this._sth = false;
-            });
-          }
+        detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},
+
+        async extractCns(){
+          const summary=this.msgs.map(m=>{const r=this.gr(m.roleId);return `### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}`;}).join('\n\n---\n\n');
+          const m=this.addMsg(this.roles[0],'',0);
+          await this.call([{role:'system',content:'你是总结者。根据以下多角色讨论提炼共识，输出最终结论和改进代码。Markdown 格式。'},{role:'user',content:`## 讨论记录\n\n${summary}`}],ch=>this.append(m,ch));
+          this.cns=m.content;
         },
 
-        async callLLM(config, messages, onChunk) {
-          const signal = this.abortController?.signal;
-          const resp = await fetch(config.baseUrl.replace(/\/+$/,'')+'/chat/completions', {
-            method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${config.apiKey}`},
-            body:JSON.stringify({model:config.model, messages, stream:true}), signal
-          });
-          if(!resp.ok) { const t = await resp.text().catch(()=>`API error ${resp.status}`); throw new Error(t.slice(0,200)); }
-          const reader = resp.body.getReader(), dec = new TextDecoder(); let buf = '';
-          while(true) {
-            const {done, value} = await reader.read(); if(done) break;
-            buf += dec.decode(value, {stream:true});
-            const lines = buf.split('\n'); buf = lines.pop()||'';
-            for(const l of lines) {
-              const tr = l.trim(); if(!tr||!tr.startsWith('data:')) continue;
-              const d = tr.slice(5).trim(); if(d==='[DONE]') return;
-              try { const j = JSON.parse(d); const dt = j.choices?.[0]?.delta; if(dt?.content) onChunk(dt.content, j.usage ? {tokens:j.usage.total_tokens} : null); } catch(e) {}
-            }
-          }
-        },
+        abort(){if(this.ac)this.ac.abort();},
 
-        detectConsensus(text) {
-          return ['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','I agree','no objections','一致认为','无异议'].some(k => text.toLowerCase().includes(k.toLowerCase()));
-        },
-
-        async extractConsensus() {
-          const summary = this.messages.map(m => { const r = this.getRole(m.roleId); return `### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}`; }).join('\n\n---\n\n');
-          const msg = this.addMessage(this.activeRoles[0], '', 0);
-          await this.callLLM(this.globalConfig, [
-            {role:'system', content:'你是总结者。根据以下多角色分析讨论，提炼共识，输出最终结论和改进代码。用 Markdown 格式。'},
-            {role:'user', content:`## 多角色讨论记录\n\n${summary}`}
-          ], chunk => this.appendToMessage(msg, chunk));
-          this.consensus = msg.content;
-        },
-
-        abortDebate() { if(this.abortController) this.abortController.abort(); },
-
-        loadHistoryList() { try{this.historyList=JSON.parse(localStorage.getItem('debateai_history'))||[];}catch(e){this.historyList=[];} },
-        saveToHistory() {
-          const r = { id:Date.now(), timestamp:new Date().toISOString(), fileName:this.fileName, fileSize:this.fileSize,
-            roleIds:[...this.activeRoles], rounds:this.currentRound, model:this.globalConfig.model,
-            panelLeftRole:this.panelLeftRole, panelRightRole:this.panelRightRole,
-            messages:JSON.parse(JSON.stringify(this.messages)), consensus:this.consensus };
-          this.historyList.unshift(r); if(this.historyList.length>50) this.historyList=this.historyList.slice(0,50);
-          localStorage.setItem('debateai_history', JSON.stringify(this.historyList));
-        },
-        loadHistory(h) {
-          this.messages = h.messages||[]; this.consensus = h.consensus||'';
-          this.currentRound = h.rounds||0; this.fileName = h.fileName||'';
-          if(h.roleIds) this.activeRoles = h.roleIds;
-          if(h.panelLeftRole) this.panelLeftRole = h.panelLeftRole;
-          if(h.panelRightRole) this.panelRightRole = h.panelRightRole;
-          this.$nextTick(() => { ['scroll-left','scroll-right'].forEach(id => { const el = document.getElementById(id); if(el) el.scrollTop = el.scrollHeight; }); });
-        },
-        deleteHistory(id) { this.historyList=this.historyList.filter(h=>h.id!==id); localStorage.setItem('debateai_history',JSON.stringify(this.historyList)); },
-        clearAllHistory() { this.historyList=[]; localStorage.removeItem('debateai_history'); },
-        exportCurrentDebate() { if(!this.messages.length) return; this.exportHistory({fileName:this.fileName,timestamp:new Date().toISOString(),roleIds:this.activeRoles,rounds:this.currentRound,model:this.globalConfig.model,messages:this.messages,consensus:this.consensus},'md'); },
-        exportHistory(h, fmt) {
-          let c, m, e;
-          if(fmt==='json') { c=JSON.stringify(h,null,2); m='application/json'; e='json'; }
-          else {
-            c = `# DebateAI 辩论记录\n\n- **文件**: ${h.fileName||'N/A'}\n- **日期**: ${new Date(h.timestamp).toLocaleString()}\n- **角色**: ${(h.roleIds||[]).map(id=>this.getRole(id).icon+' '+this.getRole(id).name).join(', ')}\n- **模型**: ${h.model||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;
-            for(const msg of (h.messages||[])) { const r=this.getRole(msg.roleId); c+=`## ${r.icon} ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`; }
-            if(h.consensus) c+=`## 🤝 共识结论\n\n${h.consensus}\n`;
-            m='text/markdown'; e='md';
-          }
-          const blob=new Blob([c],{type:m}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`debate-${h.fileName||'text'}-${h.id||Date.now()}.${e}`; a.click(); URL.revokeObjectURL(url);
+        loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
+        saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,model:this.cfg.model,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
+        loadHist(h){this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
+        delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
+        clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
+        exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,model:this.cfg.model,msgs:this.msgs,cns:this.cns},'md');},
+        expH(h,fmt){
+          let c,m,e;
+          if(fmt==='json'){c=JSON.stringify(h,null,2);m='application/json';e='json';}
+          else{c=`# DebateAI 辩论记录\n\n- **文件**: ${h.fname||'N/A'}\n- **日期**: ${new Date(h.ts).toLocaleString()}\n- **角色**: ${(h.roles||[]).map(id=>this.gr(id).icon+' '+this.gr(id).name).join(', ')}\n- **模型**: ${h.model||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;for(const msg of(h.msgs||[])){const r=this.gr(msg.roleId);c+=`## ${r.icon} ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`;}if(h.cns)c+=`## 🤝 共识结论\n\n${h.cns}\n`;m='text/markdown';e='md';}
+          const blob=new Blob([c],{type:m});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`debate-${h.fname||'text'}-${h.id||Date.now()}.${e}`;a.click();URL.revokeObjectURL(url);
         },
       };
     }

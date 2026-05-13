@@ -1,86 +1,79 @@
-# 🥊 DebateAI
+# 🥊 DebateAI — 多角色 AI 工程团队对抗平台
 
-**双模型对抗辩论平台** — 让两个 AI 围绕你的论文/代码互相挑刺，最终达成共识。
+**让多个 AI 专业角色围绕你的论文/代码互相审查，最终达成共识。**
 
-> 🚀 **纯前端应用**，无需后端服务器。直接打开 `index.html` 或部署到 GitHub Pages 即可使用。
+> 🚀 **纯前端应用**，无需后端服务器。直接打开 `frontend/index.html` 或部署到 GitHub Pages 即可使用。
 
-## ✨ 功能
+## ✨ 核心功能
 
-- 📄 上传 PDF 论文、Python 代码、纯文本
-- 🤖 两个 AI 实时辩论，左右分栏可视化（流式输出）
-- 🤝 自动检测共识，输出最终结论 + 改进代码
-- ⚙️ 支持任意 OpenAI 兼容 API（OpenAI / DeepSeek / Gemini / 本地模型）
-- 🌙 暗色主题，Markdown 渲染 + 代码高亮
+### 🤖 10 个专业 AI 角色
+| 角色 | 职责 |
+|------|------|
+| 🏗️ 架构师 | 系统架构设计，技术权衡评估 |
+| 💻 开发者 | 代码实现，最佳实践 |
+| 🛡️ 审查者 | 代码审查，发现 bug 和安全问题 |
+| 🔍 调试工程师 | 根因分析，运行时问题定位 |
+| 🧪 测试工程师 | 测试用例设计，边界覆盖 |
+| 🔒 安全工程师 | STRIDE 安全分析，攻击面评估 |
+| 📘 文档工程师 | 文档完整性和一致性审查 |
+| 🗄️ 迁移工程师 | 数据迁移回滚安全和兼容性 |
+| 🌐 国际化工程师 | 多语言、RTL、本地化审查 |
+| 📈 ML 工程师 | 训练指标、超参调整、收敛分析 |
+
+### ⚡ 预设辩论模板
+- **🔍 代码审查** — 开发者 + 审查者 + 测试 + 安全
+- **⚡ 全面审计** — 全 6 角色深度分析
+- **📄 论文审稿** — 架构师 + 审查者 + 文档
+- **🛡️ 安全扫描** — 安全 + 审查者 + 调试
+- **🤖 ML 管道** — ML + 开发者 + 测试 + 审查
+
+### 🎯 其他特性
+- 📄 上传 PDF 论文、20+ 种代码格式、纯文本
+- 🔀 多角色轮流发言，流式输出
+- 🤝 自动/投票/全部完成三种共识模式
+- 📊 Token 用量和成本实时统计
+- ⚙️ 支持任意 OpenAI 兼容 API
+- 🔧 角粒度模型覆盖（每个角色可用不同模型）
+- 📝 可自定义每个角色的系统提示词
+- 💾 辩论历史记录 + Markdown/JSON 导出
+- 🌙 深色主题，POMESOFT CODEMATE 风格
 
 ## 🚀 使用方式
 
-### 方式一：直接打开
-
 ```bash
-# 克隆仓库
-git clone https://github.com/your-username/debate-ai.git
-cd debate-ai
-
-# 直接在浏览器中打开
+# 直接打开
 open frontend/index.html
-# 或双击 frontend/index.html
-```
 
-### 方式二：GitHub Pages
-
-1. Fork 本仓库
-2. 进入仓库 Settings → Pages
-3. Source 选择 "GitHub Actions"
-4. 推送代码后自动部署到 `https://your-username.github.io/debate-ai/`
-
-### 方式三：本地 HTTP 服务
-
-```bash
-cd frontend
-python3 -m http.server 8080
-# 打开 http://localhost:8080
+# 或本地 HTTP 服务
+cd frontend && python3 -m http.server 8080
 ```
 
 ## ⚙️ 配置
 
-在页面上的「LLM 配置」区域填写两个 Agent 的 API 信息：
+在右侧「配置」面板填写 API 信息：
 
 | 字段 | 说明 | 示例 |
 |------|------|------|
 | Base URL | OpenAI 兼容 API 地址 | `https://api.openai.com/v1` |
 | API Key | API 密钥 | `sk-xxx` |
-| Model | 模型名称 | `gpt-4o` |
+| 默认模型 | 全局模型 | `deepseek-v4-flash` |
 
-配置会自动保存到浏览器 localStorage，下次打开自动恢复。
-
-## 🔒 安全提示
-
-- **API Key 仅存储在浏览器本地**（localStorage），不会发送到任何第三方服务器
-- 所有 LLM 调用直接从浏览器发起，不经中间服务器
-- 请勿在公共设备上保存 API Key
+支持角色级模型覆盖：每个角色可以使用不同的模型。
 
 ## 📐 架构
 
 ```
 浏览器（纯前端）
 ├── 文件解析（PDF.js / FileReader）
-├── 辩论编排（多轮交替 + 共识检测）
+├── 多角色辩论编排（轮流发言 + 共识检测）
 ├── LLM 调用（fetch + SSE 流式解析）
+├── Token/成本统计
 └── UI 渲染（Alpine.js + Tailwind + marked.js）
     ↓
 任意 OpenAI 兼容 API
 ```
 
 零后端，零构建，单 HTML 文件。
-
-## 📋 开发计划
-
-- [x] 核心辩论引擎 + Web UI
-- [x] GitHub Pages 自动部署
-- [ ] 辩论历史记录 / 导出
-- [ ] Agent 角色自定义（prompt 编辑器）
-- [ ] 更多文件格式支持（Word、Jupyter Notebook）
-- [ ] 多语言支持
 
 ## License
 

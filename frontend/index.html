@@ -149,7 +149,7 @@
             <template x-for="tpl in templates" :key="tpl.id">
               <button @click="applyTemplate(tpl)" class="px-2 py-1 text-[10px] font-medium rounded border transition-colors"
                 :class="curTpl===tpl.id ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
-                <span x-text="tpl.icon"></span> <span x-text="tpl.name"></span>
+                <span x-text="tpl.name"></span>
               </button>
             </template>
           </div>
@@ -157,7 +157,7 @@
             <template x-for="r in allRoles" :key="r.id">
               <button @click="toggleRole(r.id)" class="flex items-center gap-2 px-2.5 py-2 rounded-lg border text-left transition-all"
                 :class="roles.includes(r.id) ? 'bg-white/5 border-white/20' : 'bg-surface-3 border-border-dim opacity-40 hover:opacity-70'">
-                <span class="text-sm" x-text="r.icon"></span>
+                
                 <div class="min-w-0"><div class="text-[11px] font-semibold text-txt-2" x-text="r.name"></div><div class="text-[9px] text-txt-4 truncate" x-text="r.desc"></div></div>
               </button>
             </template>
@@ -169,7 +169,7 @@
           <template x-for="rid in roles" :key="rid">
             <div>
               <div class="flex items-center justify-between mb-0.5">
-                <label class="text-[10px] font-medium text-txt-3"><span x-text="gr(rid).icon"></span> <span x-text="gr(rid).name"></span></label>
+                <label class="text-[10px] font-medium text-txt-3"><span x-text="gr(rid).name"></span></label>
                 <button @click="prompts[rid]=gr(rid).def" class="text-[9px] text-txt-4 hover:text-txt-2">重置</button>
               </div>
               <textarea x-model="prompts[rid]" rows="2" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-white/30 prompt-textarea"></textarea>
@@ -196,7 +196,7 @@
             <svg class="w-3 h-3 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
           </div>
           <span class="text-[11px] font-semibold text-green-accent uppercase tracking-wide">建设方 · Builder</span>
-          <span class="text-[10px] text-txt-4" x-text="leftRoles.map(id=>gr(id).icon).join(' ')"></span>
+          <span class="text-[10px] text-txt-4" ></span>
         </div>
         <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-green-accent/70">
           <span class="w-1.5 h-1.5 rounded-full bg-green-accent" style="animation:pulse 1.5s infinite"></span>
@@ -209,12 +209,12 @@
         <div x-show="leftMsgs.length===0" class="flex items-center justify-center h-full">
           <div class="text-center">
             <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-green-accent/10">
-              <span class="text-2xl opacity-50">🏗️</span>
+              <span class="text-2xl opacity-50 text-green-accent">●</span>
             </div>
             <p class="text-xs text-txt-4">建设方的分析将在这里显示</p>
             <div class="flex justify-center gap-1 mt-2">
               <template x-for="id in leftRoles" :key="id">
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-green-accent/10 text-green-accent/70" x-text="gr(id).icon+gr(id).name"></span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-green-accent/10 text-green-accent/70" x-text="gr(id).name"></span>
               </template>
             </div>
           </div>
@@ -222,7 +222,7 @@
         <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
           <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-green-accent/[.04] transition-colors">
             <div class="w-6 h-6 rounded-full bg-green-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
-              <span x-text="gr(msg.roleId).icon"></span>
+              <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
             </div>
             <div class="flex-1 border-l-2 border-l-green-accent/30 pl-3 min-w-0">
               <div class="flex items-center gap-2 mb-1">
@@ -286,7 +286,7 @@
             <svg class="w-3 h-3 text-yellow-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <span class="text-[11px] font-semibold text-yellow-accent uppercase tracking-wide">审查方 · Reviewer</span>
-          <span class="text-[10px] text-txt-4" x-text="rightRoles.map(id=>gr(id).icon).join(' ')"></span>
+          <span class="text-[10px] text-txt-4" ></span>
         </div>
         <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1 text-[10px] text-yellow-accent/70">
           <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent" style="animation:pulse 1.5s infinite"></span>
@@ -308,12 +308,12 @@
         <div x-show="rightMsgs.length===0 && !isDebating" class="flex items-center justify-center h-full">
           <div class="text-center">
             <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-yellow-accent/10">
-              <span class="text-2xl opacity-50">🛡️</span>
+              <span class="text-2xl opacity-50 text-yellow-accent">●</span>
             </div>
             <p class="text-xs text-txt-4">审查方的反馈将在这里显示</p>
             <div class="flex justify-center gap-1 mt-2">
               <template x-for="id in rightRoles" :key="id">
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-accent/10 text-yellow-accent/70" x-text="gr(id).icon+gr(id).name"></span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-accent/10 text-yellow-accent/70" x-text="gr(id).name"></span>
               </template>
             </div>
           </div>
@@ -321,7 +321,7 @@
         <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
           <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-yellow-accent/[.04] transition-colors">
             <div class="w-6 h-6 rounded-full bg-yellow-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
-              <span x-text="gr(msg.roleId).icon"></span>
+              <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
             </div>
             <div class="flex-1 border-l-2 border-l-yellow-accent/30 pl-3 min-w-0">
               <div class="flex items-center gap-2 mb-1">
@@ -440,7 +440,7 @@
             <span class="text-[10px] font-semibold text-green-accent/70 uppercase tracking-wider">建设方</span>
             <template x-for="id in leftRoles" :key="id">
               <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-green-accent/5">
-                <span class="text-xs" x-text="gr(id).icon"></span>
+                
                 <span class="text-[10px] font-medium text-green-accent/80" x-text="gr(id).name"></span>
                 <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
@@ -450,7 +450,7 @@
             <span class="text-[10px] font-semibold text-yellow-accent/70 uppercase tracking-wider">审查方</span>
             <template x-for="id in rightRoles" :key="id">
               <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-yellow-accent/5">
-                <span class="text-xs" x-text="gr(id).icon"></span>
+                
                 <span class="text-[10px] font-medium text-yellow-accent/80" x-text="gr(id).name"></span>
                 <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
@@ -461,7 +461,7 @@
 
       <!-- History tab -->
       <div x-show="stab==='history'" class="flex-1 overflow-y-auto">
-        <div x-show="hist.length===0" class="text-center py-10"><div class="text-3xl mb-2 opacity-30">📭</div><p class="text-[11px] text-txt-4">暂无历史记录</p></div>
+        <div x-show="hist.length===0" class="text-center py-10"><div class="text-3xl mb-2 opacity-30 text-txt-4">—</div><p class="text-[11px] text-txt-4">暂无历史记录</p></div>
         <template x-for="h in hist" :key="h.id">
           <button @click="loadHist(h)" class="w-full text-left px-3 py-2.5 border-b border-border-dim hover:bg-white/5 transition-colors group">
             <div class="flex items-center justify-between mb-1">
@@ -469,23 +469,23 @@
               <span class="text-[9px] text-txt-4" x-text="fd(h.ts)"></span>
             </div>
             <div class="flex items-center gap-1.5 mb-1">
-              <template x-for="id in (h.roles||[]).slice(0,5)" :key="id"><span class="text-[10px]" x-text="gr(id).icon"></span></template>
+              <template x-for="id in (h.roles||[]).slice(0,5)" :key="id"></template>
               <span class="text-[9px] text-txt-4 ml-auto" x-text="h.rounds+'轮'"></span>
             </div>
             <div class="flex items-center gap-1 text-[9px] text-txt-4">
-              <span x-show="h.leftModel" class="text-green-accent/60" x-text="'🏗️'+h.leftModel"></span>
+              <span x-show="h.leftModel" class="text-green-accent/60" x-text="h.leftModel"></span>
               <span x-show="h.leftModel && h.rightModel" class="text-txt-4">vs</span>
-              <span x-show="h.rightModel" class="text-yellow-accent/60" x-text="'🛡️'+h.rightModel"></span>
+              <span x-show="h.rightModel" class="text-yellow-accent/60" x-text="h.rightModel"></span>
             </div>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button @click.stop="expH(h,'md')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">MD</button>
               <button @click.stop="expH(h,'json')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">JSON</button>
-              <button @click.stop="delH(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto">🗑</button>
+              <button @click.stop="delH(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto"></button>
             </div>
           </button>
         </template>
         <div x-show="hist.length>0" class="p-3 border-t border-border-dim sticky bottom-0 bg-surface-4">
-          <button @click="clearH()" class="w-full px-3 py-1.5 text-[10px] font-medium bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors">🗑 清空所有</button>
+          <button @click="clearH()" class="w-full px-3 py-1.5 text-[10px] font-medium bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors"> 清空所有</button>
         </div>
       </div>
     </div>
@@ -498,24 +498,24 @@
 
   <script>
     const ROLES = [
-      { id:'architect', name:'架构师', icon:'🏗️', side:'left', desc:'系统架构设计', def:'你是架构师。分析架构设计，评估技术权衡，提出结构性改进建议。关注模块划分、依赖关系、扩展性。用中文回答。' },
-      { id:'developer', name:'开发者', icon:'💻', side:'left', desc:'代码实现与优化', def:'你是高级开发者。分析代码实现，提供改进方案。关注代码质量、设计模式、性能优化。给出改进后的代码。用中文回答。' },
-      { id:'ml', name:'ML 工程师', icon:'📈', side:'left', desc:'模型训练与优化', def:'你是 ML 工程师。分析 ML 相关代码：模型架构、训练流程、超参数、过拟合。给优化建议。用中文回答。' },
-      { id:'docs', name:'文档工程师', icon:'📘', side:'left', desc:'文档完整性', def:'你是文档工程师。审查 README、API 文档、注释的完整性和一致性。指出缺失或过时的地方。用中文回答。' },
-      { id:'i18n', name:'国际化工程师', icon:'🌐', side:'left', desc:'多语言与本地化', def:'你是国际化工程师。审查国际化支持：硬编码字符串、地区格式化、RTL、翻译覆盖度。用中文回答。' },
-      { id:'reviewer', name:'审查者', icon:'🛡️', side:'right', desc:'代码审查与 bug 检测', def:'你是代码审查者。严格审查代码，找出 bug、安全漏洞、性能问题。不要无理由反对——如果代码确实好，表示认可。用中文回答。' },
-      { id:'security', name:'安全工程师', icon:'🔒', side:'right', desc:'STRIDE 安全分析', def:'你是安全工程师。基于 STRIDE 模型分析：伪造身份、篡改数据、信息泄露、权限提升。枚举攻击面，发现漏洞。用中文回答。' },
-      { id:'debugger', name:'调试工程师', icon:'🔍', side:'right', desc:'根因分析', def:'你是调试工程师。分析潜在 bug 和运行时问题：边界条件、异常处理、并发问题、资源泄漏。给根因分析和修复方案。用中文回答。' },
-      { id:'tester', name:'测试工程师', icon:'🧪', side:'right', desc:'测试用例设计', def:'你是测试工程师。设计全面测试方案：单元测试、集成测试、边界用例、异常场景。提供测试代码。用中文回答。' },
-      { id:'migration', name:'迁移工程师', icon:'🗄️', side:'right', desc:'数据迁移安全', def:'你是迁移工程师。审查迁移方案：回滚安全性、幂等性、向后兼容、零停机。发现风险并给建议。用中文回答。' },
+      { id:'architect', name:'架构师', side:'left', desc:'系统架构设计', def:'你是架构师。分析架构设计，评估技术权衡，提出结构性改进建议。关注模块划分、依赖关系、扩展性。用中文回答。' },
+      { id:'developer', name:'开发者', side:'left', desc:'代码实现与优化', def:'你是高级开发者。分析代码实现，提供改进方案。关注代码质量、设计模式、性能优化。给出改进后的代码。用中文回答。' },
+      { id:'ml', name:'ML 工程师', side:'left', desc:'模型训练与优化', def:'你是 ML 工程师。分析 ML 相关代码：模型架构、训练流程、超参数、过拟合。给优化建议。用中文回答。' },
+      { id:'docs', name:'文档工程师', side:'left', desc:'文档完整性', def:'你是文档工程师。审查 README、API 文档、注释的完整性和一致性。指出缺失或过时的地方。用中文回答。' },
+      { id:'i18n', name:'国际化工程师', side:'left', desc:'多语言与本地化', def:'你是国际化工程师。审查国际化支持：硬编码字符串、地区格式化、RTL、翻译覆盖度。用中文回答。' },
+      { id:'reviewer', name:'审查者', side:'right', desc:'代码审查与 bug 检测', def:'你是代码审查者。严格审查代码，找出 bug、安全漏洞、性能问题。不要无理由反对——如果代码确实好，表示认可。用中文回答。' },
+      { id:'security', name:'安全工程师', side:'right', desc:'STRIDE 安全分析', def:'你是安全工程师。基于 STRIDE 模型分析：伪造身份、篡改数据、信息泄露、权限提升。枚举攻击面，发现漏洞。用中文回答。' },
+      { id:'debugger', name:'调试工程师', side:'right', desc:'根因分析', def:'你是调试工程师。分析潜在 bug 和运行时问题：边界条件、异常处理、并发问题、资源泄漏。给根因分析和修复方案。用中文回答。' },
+      { id:'tester', name:'测试工程师', side:'right', desc:'测试用例设计', def:'你是测试工程师。设计全面测试方案：单元测试、集成测试、边界用例、异常场景。提供测试代码。用中文回答。' },
+      { id:'migration', name:'迁移工程师', side:'right', desc:'数据迁移安全', def:'你是迁移工程师。审查迁移方案：回滚安全性、幂等性、向后兼容、零停机。发现风险并给建议。用中文回答。' },
     ];
 
     const TPLS = [
-      { id:'code-review', name:'代码审查', icon:'🔍', roles:['developer','reviewer','tester','security'] },
-      { id:'full-audit', name:'全面审计', icon:'⚡', roles:['architect','developer','docs','reviewer','security','tester'] },
-      { id:'paper-review', name:'论文审稿', icon:'📄', roles:['architect','developer','docs','reviewer'] },
-      { id:'security-scan', name:'安全扫描', icon:'🛡️', roles:['developer','security','reviewer','debugger'] },
-      { id:'ml-pipeline', name:'ML 管道', icon:'🤖', roles:['ml','developer','tester','reviewer'] },
+      { id:'code-review', name:'代码审查', roles:['developer','reviewer','tester','security'] },
+      { id:'full-audit', name:'全面审计', roles:['architect','developer','docs','reviewer','security','tester'] },
+      { id:'paper-review', name:'论文审稿', roles:['architect','developer','docs','reviewer'] },
+      { id:'security-scan', name:'安全扫描', roles:['developer','security','reviewer','debugger'] },
+      { id:'ml-pipeline', name:'ML 管道', roles:['ml','developer','tester','reviewer'] },
     ];
 
     if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -547,7 +547,7 @@
         get canGo(){ return (this.fcont||this.dtxt) && this.leftModel && this.rightModel && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
         get pct(){ return Math.min(Math.round(this.curRound/this.maxRounds*100),100); },
 
-        gr(id){ return ROLES.find(r=>r.id===id)||{id:'?',name:'未知',icon:'❓',side:'left',desc:'',def:''}; },
+        gr(id){ return ROLES.find(r=>r.id===id)||{id:'?',name:'未知',side:'left',desc:'',def:''}; },
         rmd(t){ if(!t)return''; try{return marked.parse(t);}catch(e){return t.replace(/</g,'&lt;');} },
         fmtTok(n){ if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n; },
         fd(iso){ if(!iso)return''; return new Date(iso).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); },
@@ -618,7 +618,7 @@
         buildCtx(roleId,content,round){
           const prev=this.msgs.filter(m=>m.round<round||(m.round===round&&m.roleId!==roleId));
           let ctx=`## 待分析材料\n\n${content}\n\n`;
-          if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
+          if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
           ctx+=`\n请基于你的角色职责分析。后续轮次请回应或补充其他角色观点。`;
           return ctx;
         },
@@ -638,7 +638,7 @@
         detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},
 
         async extractCns(){
-          const summary=this.msgs.map(m=>{const r=this.gr(m.roleId);return `### ${r.icon} ${r.name} (Round ${m.round})\n\n${m.content}`;}).join('\n\n---\n\n');
+          const summary=this.msgs.map(m=>{const r=this.gr(m.roleId);return `### ${r.name} (Round ${m.round})\n\n${m.content}`;}).join('\n\n---\n\n');
           const m=this.addMsg(this.roles[0],'',0);
           await this.call(this.leftModel,[{role:'system',content:'你是总结者。根据以下多角色讨论提炼共识，输出最终结论和改进代码。Markdown 格式。'},{role:'user',content:`## 讨论记录\n\n${summary}`}],ch=>this.append(m,ch));
           this.cns=m.content;
@@ -655,7 +655,7 @@
         expH(h,fmt){
           let c,m,e;
           if(fmt==='json'){c=JSON.stringify(h,null,2);m='application/json';e='json';}
-          else{c=`# DebateAI 辩论记录\n\n- **文件**: ${h.fname||'N/A'}\n- **日期**: ${new Date(h.ts).toLocaleString()}\n- **角色**: ${(h.roles||[]).map(id=>this.gr(id).icon+' '+this.gr(id).name).join(', ')}\n- **建设方模型**: ${h.leftModel||'N/A'}\n- **审查方模型**: ${h.rightModel||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;for(const msg of(h.msgs||[])){const r=this.gr(msg.roleId);c+=`## ${r.icon} ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`;}if(h.cns)c+=`## 🤝 共识结论\n\n${h.cns}\n`;m='text/markdown';e='md';}
+          else{c=`# DebateAI 辩论记录\n\n- **文件**: ${h.fname||'N/A'}\n- **日期**: ${new Date(h.ts).toLocaleString()}\n- **角色**: ${(h.roles||[]).map(id=>this.gr(id).name).join(', ')}\n- **建设方模型**: ${h.leftModel||'N/A'}\n- **审查方模型**: ${h.rightModel||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;for(const msg of(h.msgs||[])){const r=this.gr(msg.roleId);c+=`## ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`;}if(h.cns)c+=`## 共识结论\n\n${h.cns}\n`;m='text/markdown';e='md';}
           const blob=new Blob([c],{type:m});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`debate-${h.fname||'text'}-${h.id||Date.now()}.${e}`;a.click();URL.revokeObjectURL(url);
         },
       };

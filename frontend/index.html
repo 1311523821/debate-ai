@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +7,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            bg: '#fafafa',
-            card: '#ffffff',
-            border: '#e5e7eb',
-            subtle: '#f3f4f6',
-            txt: { 1: '#111827', 2: '#374151', 3: '#6b7280', 4: '#9ca3af' },
-            blue: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
-            rose: { 50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 400: '#fb7185', 500: '#f43f5e', 600: '#e11d48' },
-            green: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 400: '#34d399', 500: '#10b981', 600: '#059669' },
-            violet: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed' },
-            amber: { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 400: '#fbbf24', 500: '#f59e0b' },
+            surface: '#1A1A1A',
+            'surface-2': '#222222',
+            'surface-3': '#2A2A2A',
+            'surface-4': '#141414',
+            'border-dim': '#333333',
+            'green-accent': '#A3E635',
+            'yellow-accent': '#FBBF24',
+            'txt': { 1: '#E5E7EB', 2: '#D1D5DB', 3: '#9CA3AF', 4: '#6B7280' },
           }
         }
       }
@@ -27,420 +26,443 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
     * { font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif; }
-    body { background: #fafafa; color: #111827; }
+    body { background: #1A1A1A; color: #E5E7EB; margin: 0; overflow: hidden; }
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #666; }
 
-    @keyframes fadeUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
-    @keyframes slideL { from { opacity:0; transform:translateX(-16px) } to { opacity:1; transform:translateX(0) } }
-    @keyframes slideR { from { opacity:0; transform:translateX(16px) } to { opacity:1; transform:translateX(0) } }
-    @keyframes typingBounce { 0%,80%,100% { transform:translateY(0) } 40% { transform:translateY(-5px) } }
+    @keyframes msgIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+    @keyframes typingBounce { 0%,80%,100% { transform:translateY(0) } 40% { transform:translateY(-4px) } }
     @keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
-    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.4 } }
+    @keyframes slideL { from { opacity:0; transform:translateX(-10px) } to { opacity:1; transform:translateX(0) } }
+    @keyframes slideR { from { opacity:0; transform:translateX(10px) } to { opacity:1; transform:translateX(0) } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
 
-    .fade-up { animation: fadeUp .35s ease-out forwards; }
-    .slide-l { animation: slideL .4s ease-out forwards; }
-    .slide-r { animation: slideR .4s ease-out forwards; }
-
-    .typing-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#9ca3af; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
+    .msg-in { animation: msgIn .3s ease-out; }
+    .slide-l { animation: slideL .35s ease-out; }
+    .slide-r { animation: slideR .35s ease-out; }
+    .fade-up { animation: fadeUp .35s ease-out; }
+    .typing-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:#6B7280; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay:-.32s }
     .typing-dot:nth-child(2) { animation-delay:-.16s }
+    .progress-shimmer { background:linear-gradient(90deg,#A3E635,#60a5fa,#A3E635); background-size:200% 100%; animation:shimmer 2s linear infinite; height:2px; border-radius:999px; }
 
-    .card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; }
-    .card:hover { border-color:#d1d5db; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    .glow-green:focus-within { box-shadow: 0 0 0 2px #A3E635, 0 0 16px rgba(163,230,53,0.08); }
+    .glow-yellow:focus-within { box-shadow: 0 0 0 2px #FBBF24, 0 0 16px rgba(251,191,36,0.08); }
 
-    .input-box { background:#fff; border:1px solid #e5e7eb; border-radius:8px; color:#111827; transition: all .15s; }
-    .input-box::placeholder { color:#9ca3af; }
-    .input-box:focus { border-color:#3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); outline:none; }
+    textarea { resize: none; }
+    textarea::-webkit-scrollbar { width: 3px; }
 
-    .btn { border-radius:8px; font-weight:600; font-size:.875rem; transition:all .15s; cursor:pointer; }
-    .btn:active { transform:scale(.97) }
+    .md-content { color:#D1D5DB; font-size:.875rem; line-height:1.7; }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.6em; margin-bottom:.3em; color:#F3F4F6; }
+    .md-content h1 { font-size:1.15em } .md-content h2 { font-size:1.05em } .md-content h3 { font-size:1em }
+    .md-content p { margin-bottom:.5em; }
+    .md-content ul,.md-content ol { margin-left:1.2em; margin-bottom:.5em }
+    .md-content li { margin-bottom:.15em }
+    .md-content code { background:#333; padding:.1em .3em; border-radius:4px; font-size:.82em; color:#c084fc; }
+    .md-content pre { background:#111; border:1px solid #333; border-radius:8px; padding:.7em; overflow-x:auto; margin:.5em 0 }
+    .md-content pre code { background:transparent; padding:0; font-size:.8em; line-height:1.6; color:#E5E7EB }
+    .md-content blockquote { border-left:3px solid #A3E635; padding-left:.7em; color:#9CA3AF; margin:.5em 0 }
+    .md-content table { border-collapse:collapse; width:100%; margin:.5em 0 }
+    .md-content th,.md-content td { border:1px solid #333; padding:.3em .5em; text-align:left }
+    .md-content th { background:#222; font-weight:600; color:#D1D5DB }
+    .md-content strong { color:#F3F4F6; }
+    .md-content a { color:#60a5fa; text-decoration:underline }
 
-    .btn-blue { background:#3b82f6; color:#fff; }
-    .btn-blue:hover { background:#2563eb; }
-    .btn-blue:disabled { background:#dbeafe; color:#93c5fd; cursor:not-allowed; }
-
-    .btn-ghost { background:#f3f4f6; border:1px solid #e5e7eb; color:#374151; }
-    .btn-ghost:hover { background:#e5e7eb; }
-
-    .btn-red { background:#fef2f2; border:1px solid #fecaca; color:#ef4444; }
-    .btn-red:hover { background:#fee2e2; }
-
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:9999px; font-size:.75rem; font-weight:600; }
-
-    .bubble { border-radius:12px; padding:16px; font-size:.875rem; line-height:1.7; }
-    .bubble-a { background:#eff6ff; border:1px solid #bfdbfe; }
-    .bubble-b { background:#fff1f2; border:1px solid #fecdd3; }
-    .bubble-consensus { background:#ecfdf5; border:1px solid #a7f3d0; }
-
-    .md-content { color:#374151; }
-    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.8em; margin-bottom:.4em; color:#111827; }
-    .md-content h1 { font-size:1.3em } .md-content h2 { font-size:1.1em } .md-content h3 { font-size:1em }
-    .md-content p { margin-bottom:.6em; }
-    .md-content ul,.md-content ol { margin-left:1.5em; margin-bottom:.6em }
-    .md-content li { margin-bottom:.2em }
-    .md-content code { background:#f3f4f6; padding:.1em .3em; border-radius:4px; font-size:.85em; color:#7c3aed; }
-    .md-content pre { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:.8em; overflow-x:auto; margin:.6em 0 }
-    .md-content pre code { background:transparent; padding:0; font-size:.82em; line-height:1.6; color:#111827 }
-    .md-content blockquote { border-left:3px solid #3b82f6; padding-left:.8em; color:#6b7280; margin:.6em 0 }
-    .md-content table { border-collapse:collapse; width:100%; margin:.6em 0 }
-    .md-content th,.md-content td { border:1px solid #e5e7eb; padding:.4em .6em; text-align:left }
-    .md-content th { background:#f3f4f6; font-weight:600; color:#374151 }
-    .md-content strong { color:#111827; }
-    .md-content a { color:#3b82f6; text-decoration:underline }
-
-    .prompt-textarea { font-family:'Courier New',monospace; font-size:.8rem; line-height:1.5; tab-size:2 }
-
-    .header-bar { background:#fff; border-bottom:1px solid #e5e7eb; }
-
-    .progress-shimmer { background:linear-gradient(90deg,#3b82f6,#60a5fa,#3b82f6); background-size:200% 100%; animation:shimmer 2s linear infinite; height:3px; border-radius:999px; }
+    .prompt-textarea { font-family:'Courier New',monospace; font-size:.78rem; line-height:1.5; }
   </style>
 </head>
 
-<body class="min-h-screen" x-data="debateApp()" x-init="init()">
+<body x-data="debateApp()" x-init="init()">
 
-  <!-- Header -->
-  <header class="header-bar sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">D</div>
-        <span class="text-base font-bold text-txt-1 tracking-tight">DebateAI</span>
-        <span class="text-xs text-txt-4 ml-1" x-text="t('subtitle')"></span>
+  <!-- ═══ Header ═══ -->
+  <header class="flex items-center justify-between h-11 px-4 bg-surface-4 border-b border-border-dim select-none flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5">
+        <div class="w-2 h-2 rounded-full bg-green-accent opacity-80"></div>
+        <span class="text-[11px] font-semibold text-txt-3 tracking-wider uppercase">Chat</span>
       </div>
-      <div class="flex items-center gap-2">
-        <button @click="toggleLang()" class="btn btn-ghost px-3 py-1.5 text-xs" x-text="lang === 'zh' ? 'EN' : '中文'"></button>
-        <button @click="showHistory = !showHistory" class="btn btn-ghost px-3 py-1.5 text-xs relative">
-          📜 <span x-text="t('history')"></span>
-          <span x-show="historyList.length > 0" class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-blue-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold" x-text="historyList.length"></span>
-        </button>
-      </div>
+      <div class="w-px h-3.5 bg-border-dim"></div>
+      <span class="text-[11px] font-bold text-white tracking-widest uppercase">DebateAI</span>
+      <span class="text-[10px] text-txt-4 ml-1" x-text="t('subtitle')"></span>
+    </div>
+    <div class="flex items-center gap-1">
+      <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-white/10 text-[10px] font-medium text-txt-3 hover:text-white transition-colors" x-text="lang === 'zh' ? 'EN' : '中文'"></button>
+      <button @click="showConfig = !showConfig" class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors" title="设置">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/></svg>
+      </button>
+      <button class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      </button>
+      <button class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
   </header>
 
-  <!-- History Sidebar -->
-  <div x-show="showHistory" x-cloak
-       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-       x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-       class="fixed inset-0 z-40 bg-black/30" @click.self="showHistory = false">
-    <div class="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white border-l border-border overflow-y-auto shadow-xl"
-         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
-      <div class="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-white z-10">
-        <h2 class="text-base font-bold text-txt-1" x-text="t('debateHistory')"></h2>
-        <button @click="showHistory = false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-txt-1 hover:bg-subtle transition-colors text-lg">&times;</button>
+  <!-- ═══ Main Layout ═══ -->
+  <div class="flex" style="height: calc(100vh - 44px);">
+
+    <!-- ─── Left Panel: Agent A (Suggester) ─── -->
+    <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
+      <!-- Panel Header -->
+      <div class="flex items-center justify-between px-4 h-9 border-b border-border-dim bg-surface flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded bg-green-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-green-accent uppercase tracking-wide">Agent A</span>
+          <span class="text-[10px] text-txt-4" x-text="t('suggester')"></span>
+        </div>
+        <span x-show="isDebating && agentAMessages.length > 0" class="flex items-center gap-1 text-[10px] text-green-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-accent" style="animation:pulse 1.5s infinite"></span>
+          streaming
+        </span>
       </div>
-      <div x-show="historyList.length === 0" class="p-10 text-center text-txt-4">
-        <div class="text-4xl mb-3 opacity-40">📭</div>
-        <p class="text-sm" x-text="t('noHistory')"></p>
-      </div>
-      <div class="divide-y divide-border">
-        <template x-for="h in historyList" :key="h.id">
-          <div class="p-4 hover:bg-blue-50/50 cursor-pointer transition-colors" @click="loadHistory(h)">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-sm font-medium text-txt-1 truncate max-w-[200px]" x-text="h.fileName || t('textInput')"></span>
-              <span class="text-xs text-txt-4" x-text="formatDate(h.timestamp)"></span>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-y-auto py-2" id="scroll-a">
+        <div x-show="agentAMessages.length === 0" class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-green-accent/10">
+              <svg class="w-6 h-6 text-green-accent/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
             </div>
-            <div class="flex items-center gap-2 text-xs text-txt-3 mb-2">
-              <span class="badge bg-blue-50 text-blue-600" x-text="h.rounds + ' ' + t('rounds')"></span>
-              <span class="truncate" x-text="h.agentA.model + ' vs ' + h.agentB.model"></span>
+            <p class="text-xs text-txt-4">等待辩论开始</p>
+          </div>
+        </div>
+        <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-green-accent/5 transition-colors">
+            <div class="w-5 h-5 rounded-full bg-green-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-[9px] font-bold text-green-accent">A</span>
             </div>
-            <div class="flex items-center gap-1.5">
-              <button @click.stop="exportHistory(h, 'md')" class="btn btn-ghost px-2 py-0.5 text-xs">📄 MD</button>
-              <button @click.stop="exportHistory(h, 'json')" class="btn btn-ghost px-2 py-0.5 text-xs">{ } JSON</button>
-              <button @click.stop="deleteHistory(h.id)" class="btn btn-red px-2 py-0.5 text-xs ml-auto">🗑</button>
+            <div class="flex-1 border-l-2 border-l-green-accent/40 pl-3 min-w-0">
+              <div class="text-[10px] font-semibold text-green-accent/70 mb-1">Agent A — <span x-text="t('suggester')"></span></div>
+              <div class="md-content break-words" x-html="renderMarkdown(msg.content)"></div>
             </div>
           </div>
         </template>
       </div>
-      <div x-show="historyList.length > 0" class="p-4 border-t border-border sticky bottom-0 bg-white">
-        <button @click="clearAllHistory()" class="w-full btn btn-red px-3 py-2 text-sm" x-text="t('clearAll')"></button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto px-6 py-6">
-
-    <!-- Error -->
-    <div x-show="error" x-cloak x-transition class="mb-4 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-center justify-between">
-      <span class="text-red-600 text-sm">⚠️ <span x-text="error"></span></span>
-      <button @click="error = ''" class="text-red-400 hover:text-red-600">&times;</button>
-    </div>
-
-    <!-- Upload Zone -->
-    <section class="card p-8 text-center cursor-pointer mb-5 transition-all hover:border-blue-300 hover:shadow-sm"
-      @click="$refs.fileInput.click()"
-      @dragover.prevent="$el.classList.add('border-blue-400','bg-blue-50/30')"
-      @dragleave.prevent="$el.classList.remove('border-blue-400','bg-blue-50/30')"
-      @drop.prevent="$el.classList.remove('border-blue-400','bg-blue-50/30'); handleFileDrop($event)">
-      <input type="file" x-ref="fileInput" class="hidden"
-             accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql"
-             @change="handleFileSelect($event)">
-      <div x-show="!fileName">
-        <div class="text-4xl mb-3">📎</div>
-        <p class="text-base font-semibold text-txt-2" x-text="t('dragDrop')"></p>
-        <p class="text-sm text-txt-4 mt-1" x-text="t('supportedFormats')"></p>
-      </div>
-      <div x-show="fileName" x-cloak>
-        <div class="text-3xl mb-2">📄</div>
-        <p class="text-base font-semibold text-blue-600" x-text="fileName"></p>
-        <p class="text-sm text-txt-3" x-text="formatSize(fileSize)"></p>
-        <p class="text-xs text-txt-4 mt-1" x-text="t('clickReplace')"></p>
-      </div>
-    </section>
-
-    <!-- Feature tags -->
-    <div class="flex flex-wrap gap-2 mb-5">
-      <span class="badge bg-violet-50 text-violet-600">📄 PDF</span>
-      <span class="badge bg-amber-50 text-amber-600">💻 Code</span>
-      <span class="badge bg-green-50 text-green-600">📝 Text</span>
-      <span class="badge bg-blue-50 text-blue-600">🤖 Multi-Agent</span>
-      <span class="badge bg-rose-50 text-rose-600">⚡ Stream</span>
-    </div>
-
-    <!-- Config -->
-    <section class="card mb-5 overflow-hidden">
-      <button @click="showConfig = !showConfig" class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-subtle/50 transition-colors">
-        <span class="font-semibold text-txt-2 text-sm">⚙️ <span x-text="t('llmConfig')"></span></span>
-        <svg class="w-4 h-4 text-txt-4 transition-transform duration-200" :class="showConfig && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </button>
-      <div x-show="showConfig" x-collapse class="px-5 pb-5 space-y-4">
-        <div class="flex gap-5 border-b border-border -mx-5 px-5 mb-1">
-          <button @click="configTab = 'api'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'api' ? 'text-txt-1 border-b-2 border-blue-500' : 'text-txt-3 border-b-2 border-transparent hover:text-txt-2'" x-text="t('apiSettings')"></button>
-          <button @click="configTab = 'prompts'" class="pb-2 text-sm font-medium transition-colors" :class="configTab === 'prompts' ? 'text-txt-1 border-b-2 border-blue-500' : 'text-txt-3 border-b-2 border-transparent hover:text-txt-2'" x-text="t('promptEditor')"></button>
+      <!-- Bottom: Upload + Input -->
+      <div class="border-t border-border-dim p-3 flex-shrink-0">
+        <!-- File info -->
+        <div x-show="fileName" class="flex items-center gap-2 mb-2 px-2 py-1.5 bg-surface-3 rounded-md">
+          <svg class="w-3.5 h-3.5 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span class="text-[11px] text-txt-2 truncate" x-text="fileName"></span>
+          <span class="text-[10px] text-txt-4" x-text="formatSize(fileSize)"></span>
+          <button @click="fileName='';fileContent='';fileSize=0" class="ml-auto text-txt-4 hover:text-red-400 text-xs">&times;</button>
         </div>
 
-        <div x-show="configTab === 'api'" class="space-y-4">
-          <div class="space-y-2">
-            <h3 class="text-xs font-bold text-blue-600 flex items-center gap-2 uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-blue-500"></span> Agent A — <span x-text="t('suggester')"></span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="input-box w-full px-3 py-2 text-sm">
-              <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="input-box w-full px-3 py-2 text-sm">
-              <input type="text" x-model="configA.model" placeholder="gpt-4o" class="input-box w-full px-3 py-2 text-sm">
+        <!-- Agent badges -->
+        <div class="flex items-center gap-1.5 mb-2">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">Agent</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-green-accent/10 text-green-accent border-green-accent/20" x-text="configA.model || '未配置'"></span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
+        </div>
+
+        <!-- Upload area -->
+        <div class="relative rounded-lg bg-surface-3 border border-border-dim glow-green transition-all mb-2"
+             @click="$refs.fileInput.click()"
+             @dragover.prevent="$el.classList.add('border-green-accent/50')"
+             @dragleave.prevent="$el.classList.remove('border-green-accent/50')"
+             @drop.prevent="$el.classList.remove('border-green-accent/50'); handleFileDrop($event)">
+          <input type="file" x-ref="fileInput" class="hidden"
+                 accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql"
+                 @change="handleFileSelect($event)">
+          <div class="flex items-center gap-2 px-3 py-2.5 cursor-pointer">
+            <svg class="w-4 h-4 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+            <span class="text-xs text-txt-4" x-text="fileName ? '点击替换文件' : t('dragDrop')"></span>
+          </div>
+        </div>
+
+        <!-- Direct text toggle -->
+        <div class="mb-2">
+          <button @click="showTextInput = !showTextInput" class="text-[10px] text-txt-4 hover:text-txt-2 transition-colors flex items-center gap-1">
+            <svg class="w-3 h-3 transition-transform" :class="showTextInput && 'rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span x-text="t('directInput')"></span>
+          </button>
+          <div x-show="showTextInput" x-collapse class="mt-1.5">
+            <textarea x-model="directText" rows="3" :placeholder="t('directInputHint')" class="w-full bg-surface-3 border border-border-dim rounded-md px-3 py-2 text-xs text-txt-2 placeholder-txt-4 outline-none focus:border-green-accent/50 prompt-textarea"></textarea>
+            <button @click="applyDirectText()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-green-accent/15 text-green-accent rounded hover:bg-green-accent/25 transition-colors">
+              <span x-text="t('applyText')"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="flex items-center justify-between">
+          <button @click="toggleAutoApprove()" class="flex items-center gap-1.5 text-[10px] text-txt-4 hover:text-txt-2 transition-colors">
+            <div class="w-7 h-3.5 rounded-full transition-colors relative" :class="autoApprove ? 'bg-green-accent/30' : 'bg-white/10'">
+              <div class="absolute top-0.5 w-2.5 h-2.5 rounded-full transition-all" :class="autoApprove ? 'left-3.5 bg-green-accent' : 'left-0.5 bg-gray-500'"></div>
+            </div>
+            <span>审批：<span x-text="autoApprove ? '自动授权' : '手动'"></span></span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="'第 ' + currentRound + ' 轮'"></span>
+            <button @click="startDebate()" :disabled="!canStart || isDebating"
+              class="p-2 rounded-lg bg-green-accent text-black transition-all hover:scale-105 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Center Panel: Agent B (Critic / Adversary) ─── -->
+    <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
+      <!-- Panel Header -->
+      <div class="flex items-center justify-between px-4 h-9 border-b border-border-dim bg-surface flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded bg-yellow-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-yellow-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-yellow-accent uppercase tracking-wide">反方 · Agent B</span>
+          <span class="text-[10px] text-txt-4" x-text="t('critic')"></span>
+        </div>
+        <span x-show="isDebating && agentBMessages.length > 0" class="flex items-center gap-1 text-[10px] text-yellow-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent" style="animation:pulse 1.5s infinite"></span>
+          streaming
+        </span>
+      </div>
+
+      <!-- System prompt -->
+      <div class="mx-3 mt-2 px-3 py-2 bg-white/5 rounded-md border border-white/10" x-show="!isDebating && agentBMessages.length === 0">
+        <div class="flex items-center gap-1.5 mb-1">
+          <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="text-[9px] font-semibold text-txt-4 uppercase tracking-wide">System</span>
+        </div>
+        <p class="text-[11px] text-txt-4 leading-relaxed">Adversary monitoring active. I will review the coder's turns and inject steers when I find issues.</p>
+      </div>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-y-auto py-2" id="scroll-b">
+        <div x-show="agentBMessages.length === 0 && isDebating === false" class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-yellow-accent/10">
+              <svg class="w-6 h-6 text-yellow-accent/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <p class="text-xs text-txt-4">设定监督要求</p>
+          </div>
+        </div>
+        <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-yellow-accent/5 transition-colors">
+            <div class="w-5 h-5 rounded-full bg-yellow-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-[9px] font-bold text-yellow-accent">B</span>
+            </div>
+            <div class="flex-1 border-l-2 border-l-yellow-accent/40 pl-3 min-w-0">
+              <div class="text-[10px] font-semibold text-yellow-accent/70 mb-1">Agent B — <span x-text="t('critic')"></span></div>
+              <div class="md-content break-words" x-html="renderMarkdown(msg.content)"></div>
             </div>
           </div>
-          <div class="space-y-2">
-            <h3 class="text-xs font-bold text-rose-500 flex items-center gap-2 uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-rose-500"></span> Agent B — <span x-text="t('critic')"></span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="input-box w-full px-3 py-2 text-sm">
-              <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="input-box w-full px-3 py-2 text-sm">
-              <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="input-box w-full px-3 py-2 text-sm">
-            </div>
-          </div>
-          <div class="flex items-end gap-3 flex-wrap">
+        </template>
+      </div>
+
+      <!-- Bottom: Input -->
+      <div class="border-t border-border-dim p-3 flex-shrink-0">
+        <!-- Agent badges -->
+        <div class="flex items-center gap-1.5 mb-2">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">静态检查</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-yellow-accent/10 text-yellow-accent border-yellow-accent/20" x-text="configB.model || '未配置'"></span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
+        </div>
+
+        <!-- Prompt editor toggle -->
+        <div class="mb-2">
+          <button @click="showPrompts = !showPrompts" class="text-[10px] text-txt-4 hover:text-txt-2 transition-colors flex items-center gap-1">
+            <svg class="w-3 h-3 transition-transform" :class="showPrompts && 'rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            Prompt 编辑器
+          </button>
+          <div x-show="showPrompts" x-collapse class="mt-1.5 space-y-2">
             <div>
-              <label class="text-xs text-txt-3 mb-1 block font-medium" x-text="t('maxRounds')"></label>
-              <input type="number" x-model.number="maxRounds" min="2" max="20" class="input-box w-20 px-3 py-2 text-sm">
+              <label class="text-[10px] font-medium text-green-accent/70 block mb-1">Agent A — <span x-text="t('suggester')"></span></label>
+              <textarea x-model="promptA" rows="3" class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-green-accent/50 prompt-textarea"></textarea>
             </div>
-            <button @click="saveConfig()" class="btn btn-blue px-5 py-2 flex items-center gap-1.5">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span x-text="t('saveConfig')"></span>
-            </button>
-            <span x-show="configSaved" x-transition class="text-green-600 text-sm font-medium">✓ <span x-text="t('saved')"></span></span>
+            <div>
+              <label class="text-[10px] font-medium text-yellow-accent/70 block mb-1">Agent B — <span x-text="t('critic')"></span></label>
+              <textarea x-model="promptB" rows="3" class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-yellow-accent/50 prompt-textarea"></textarea>
+            </div>
+            <div>
+              <label class="text-[10px] font-medium text-txt-3 block mb-1"><span x-text="t('consensusPrompt')"></span></label>
+              <textarea x-model="promptConsensus" rows="2" class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-white/30 prompt-textarea"></textarea>
+            </div>
+            <div class="flex gap-2">
+              <button @click="saveConfig()" class="px-3 py-1 text-[10px] font-medium bg-yellow-accent/15 text-yellow-accent rounded hover:bg-yellow-accent/25 transition-colors">保存</button>
+              <button @click="resetAllPrompts()" class="px-3 py-1 text-[10px] font-medium bg-white/5 text-txt-3 rounded hover:bg-white/10 transition-colors">重置</button>
+            </div>
           </div>
         </div>
 
-        <div x-show="configTab === 'prompts'" class="space-y-3">
-          <p class="text-xs text-txt-4 bg-subtle rounded-lg px-3 py-2" x-text="t('promptHint')"></p>
-          <div class="space-y-1">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-blue-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Agent A — <span x-text="t('suggester')"></span></label>
-              <button @click="promptA = defaultPromptA()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
+        <!-- Bottom bar -->
+        <div class="flex items-center justify-between">
+          <button @click="isDebating && abortDebate()" :class="isDebating ? 'opacity-100' : 'opacity-30 cursor-not-allowed'"
+            class="px-3 py-1.5 text-[11px] font-medium bg-white/10 text-txt-2 rounded hover:bg-white/15 transition-colors">
+            停止
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="Math.round(currentRound / maxRounds * 100) + '%'"></span>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden">
+              <div class="h-full bg-yellow-accent rounded-full transition-all" :style="'width:' + Math.min((currentRound / maxRounds) * 100, 100) + '%'"></div>
             </div>
-            <textarea x-model="promptA" rows="4" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-rose-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Agent B — <span x-text="t('critic')"></span></label>
-              <button @click="promptB = defaultPromptB()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
-            </div>
-            <textarea x-model="promptB" rows="4" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-green-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500"></span> <span x-text="t('consensusPrompt')"></span></label>
-              <button @click="promptConsensus = defaultPromptConsensus()" class="text-xs text-txt-4 hover:text-txt-2" x-text="t('reset')"></button>
-            </div>
-            <textarea x-model="promptConsensus" rows="3" class="prompt-textarea input-box w-full px-3 py-2 text-sm resize-y"></textarea>
-          </div>
-          <div class="flex items-center gap-3">
-            <button @click="saveConfig()" class="btn btn-blue px-5 py-2 flex items-center gap-1.5">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span x-text="t('savePrompts')"></span>
-            </button>
-            <button @click="resetAllPrompts()" class="btn btn-ghost px-4 py-2" x-text="t('resetAll')"></button>
-            <span x-show="configSaved" x-transition class="text-green-600 text-sm font-medium">✓ <span x-text="t('saved')"></span></span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Direct text input -->
-    <section class="card mb-5 overflow-hidden">
-      <button @click="showTextInput = !showTextInput" class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-subtle/50 transition-colors">
-        <span class="font-semibold text-txt-2 text-sm">✏️ <span x-text="t('directInput')"></span></span>
-        <svg class="w-4 h-4 text-txt-4 transition-transform duration-200" :class="showTextInput && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </button>
-      <div x-show="showTextInput" x-collapse class="px-5 pb-5">
-        <textarea x-model="directText" rows="4" :placeholder="t('directInputHint')" class="input-box w-full px-3 py-2 text-sm resize-y"></textarea>
-        <button @click="applyDirectText()" class="mt-2 btn btn-ghost px-4 py-1.5 text-sm flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          <span x-text="t('applyText')"></span>
+    <!-- ─── Right Sidebar: History & Config ─── -->
+    <div class="w-60 flex-shrink-0 flex flex-col bg-surface-4 border-l border-border-dim overflow-hidden">
+
+      <!-- Tabs -->
+      <div class="flex border-b border-border-dim">
+        <button @click="sidebarTab = 'all'" class="flex-1 py-2 text-[11px] font-medium transition-colors"
+          :class="sidebarTab === 'all' ? 'text-white border-b-2 border-white' : 'text-txt-4 hover:text-txt-2'">
+          <span x-text="t('history')"></span>
+        </button>
+        <button @click="sidebarTab = 'recent'" class="flex-1 py-2 text-[11px] font-medium transition-colors"
+          :class="sidebarTab === 'recent' ? 'text-white border-b-2 border-white' : 'text-txt-4 hover:text-txt-2'">
+          最近活跃
         </button>
       </div>
-    </section>
 
-    <!-- Action buttons -->
-    <div class="flex justify-center gap-3 mb-6">
-      <button x-show="!isDebating" @click="startDebate()" :disabled="!canStart"
-        class="btn btn-blue px-8 py-2.5 text-base flex items-center gap-2 shadow-sm shadow-blue-500/20 disabled:shadow-none">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        <span x-text="t('startDebate')"></span>
-      </button>
-      <button x-show="isDebating" @click="abortDebate()" class="btn btn-ghost px-8 py-2.5 text-base flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
-        <span x-text="t('stopDebate')"></span>
-      </button>
-      <button x-show="!isDebating && messages.length > 0 && consensus" @click="exportCurrentDebate()" class="btn btn-ghost px-6 py-2.5 text-base flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        <span x-text="t('export')"></span>
-      </button>
+      <!-- Config panel (collapsible) -->
+      <div x-show="showConfig" x-collapse class="border-b border-border-dim">
+        <div class="p-3 space-y-3">
+          <div class="space-y-1.5">
+            <h3 class="text-[10px] font-bold text-green-accent flex items-center gap-1.5 uppercase tracking-wider">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-accent"></span> Agent A
+            </h3>
+            <input type="text" x-model="configA.baseUrl" placeholder="https://api.openai.com/v1" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-green-accent/50">
+            <input type="password" x-model="configA.apiKey" placeholder="sk-..." class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-green-accent/50">
+            <input type="text" x-model="configA.model" placeholder="gpt-4o" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-green-accent/50">
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-[10px] font-bold text-yellow-accent flex items-center gap-1.5 uppercase tracking-wider">
+              <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent"></span> Agent B
+            </h3>
+            <input type="text" x-model="configB.baseUrl" placeholder="https://api.deepseek.com/v1" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-yellow-accent/50">
+            <input type="password" x-model="configB.apiKey" placeholder="sk-..." class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-yellow-accent/50">
+            <input type="text" x-model="configB.model" placeholder="deepseek-chat" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[11px] text-txt-2 outline-none focus:border-yellow-accent/50">
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-[10px] text-txt-4" x-text="t('maxRounds')"></label>
+            <input type="number" x-model.number="maxRounds" min="2" max="20" class="w-14 bg-surface-3 border border-border-dim rounded px-2 py-1 text-[11px] text-txt-2 outline-none focus:border-white/30">
+          </div>
+          <button @click="saveConfig()" class="w-full px-3 py-1.5 text-[11px] font-medium bg-green-accent/15 text-green-accent rounded hover:bg-green-accent/25 transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span x-text="t('saveConfig')"></span>
+          </button>
+          <span x-show="configSaved" x-transition class="block text-center text-green-accent text-[11px] font-medium">✓ <span x-text="t('saved')"></span></span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="p-3 space-y-1.5">
+        <button @click="startDebate()" :disabled="!canStart || isDebating"
+          class="w-full flex items-center gap-2 px-3 py-2 bg-green-accent/15 text-green-accent text-[11px] font-medium rounded-md hover:bg-green-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span x-text="t('startDebate')"></span>
+        </button>
+        <button x-show="messages.length > 0 && consensus" @click="exportCurrentDebate()"
+          class="w-full flex items-center gap-2 px-3 py-2 bg-yellow-accent/15 text-yellow-accent text-[11px] font-medium rounded-md hover:bg-yellow-accent/25 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span x-text="t('export')"></span>
+        </button>
+      </div>
+
+      <!-- Consensus result (inline) -->
+      <div x-show="consensus" x-cloak class="mx-3 mb-3 fade-up">
+        <div class="bg-green-accent/5 border border-green-accent/20 rounded-lg overflow-hidden">
+          <div class="flex items-center gap-1.5 px-3 py-2 border-b border-green-accent/10">
+            <svg class="w-3.5 h-3.5 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-[10px] font-bold text-green-accent" x-text="t('consensusResult')"></span>
+          </div>
+          <div class="px-3 py-2 md-content text-[11px] max-h-48 overflow-y-auto" x-html="renderMarkdown(consensus)"></div>
+        </div>
+      </div>
+
+      <!-- History list -->
+      <div class="flex-1 overflow-y-auto px-2">
+        <div x-show="historyList.length === 0" class="text-center py-8">
+          <div class="text-2xl mb-2 opacity-30">📭</div>
+          <p class="text-[11px] text-txt-4" x-text="t('noHistory')"></p>
+        </div>
+        <div class="px-2 py-1.5" x-show="historyList.length > 0">
+          <span class="text-[10px] font-semibold text-txt-4 uppercase tracking-wider">今天</span>
+        </div>
+        <template x-for="h in historyList" :key="h.id">
+          <button @click="loadHistory(h)" class="w-full text-left px-3 py-2 rounded-md mb-0.5 hover:bg-white/5 transition-colors group">
+            <div class="flex items-center gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-green-accent flex-shrink-0"></div>
+              <span class="text-[11px] text-txt-2 font-medium truncate flex-1" x-text="h.fileName || t('textInput')"></span>
+              <span class="text-[10px] text-txt-4" x-text="formatDate(h.timestamp)"></span>
+            </div>
+            <div class="ml-3.5 mt-0.5 flex items-center gap-2">
+              <span class="text-[9px] text-txt-4" x-text="h.agentA.model + ' vs ' + h.agentB.model"></span>
+              <span class="text-[9px] text-txt-4" x-text="h.rounds + '轮'"></span>
+            </div>
+            <div class="ml-3.5 mt-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button @click.stop="exportHistory(h, 'md')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">MD</button>
+              <button @click.stop="exportHistory(h, 'json')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">JSON</button>
+              <button @click.stop="deleteHistory(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto">🗑</button>
+            </div>
+          </button>
+        </template>
+      </div>
+
+      <!-- Clear all -->
+      <div x-show="historyList.length > 0" class="p-3 border-t border-border-dim">
+        <button @click="clearAllHistory()" class="w-full px-3 py-1.5 text-[10px] font-medium bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors">
+          <span x-text="t('clearAll')"></span>
+        </button>
+      </div>
     </div>
 
-    <!-- ═══════════════ DEBATE ARENA ═══════════════ -->
-    <section x-show="messages.length > 0" x-cloak class="mb-6">
+  </div>
 
-      <!-- Round + progress -->
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <div x-show="currentRound > 0" class="badge bg-subtle text-txt-2 border border-border">
-          <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          <span x-text="t('round')"></span> <span x-text="currentRound"></span>
-        </div>
-        <div x-show="isDebating" class="flex items-center gap-1">
-          <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-        </div>
-      </div>
-      <div x-show="isDebating" class="max-w-xs mx-auto mb-4">
-        <div class="progress-shimmer" :style="'width:' + Math.min((currentRound / maxRounds) * 100, 100) + '%'"></div>
-      </div>
-
-      <!-- Two Windows -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-        <!-- Agent A Window -->
-        <div class="card overflow-hidden">
-          <div class="flex items-center gap-2.5 px-4 py-3 bg-blue-50 border-b border-blue-100">
-            <div class="w-7 h-7 rounded-md bg-blue-500 flex items-center justify-center text-white text-xs font-bold">A</div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-sm font-bold text-blue-700">Agent A</h3>
-              <p class="text-[10px] text-blue-400 uppercase tracking-wider" x-text="t('suggester')"></p>
-            </div>
-            <span x-show="isDebating && agentAMessages.length > 0" class="badge bg-blue-100 text-blue-600 text-[10px]">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-500" style="animation:pulse 1.5s infinite"></span>
-              streaming
-            </span>
-          </div>
-          <div class="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
-            <template x-for="(msg, idx) in agentAMessages" :key="'a-'+idx">
-              <div class="bubble bubble-a slide-l md-content" x-html="renderMarkdown(msg.content)"></div>
-            </template>
-            <div x-show="agentAMessages.length === 0" class="text-center py-10 text-txt-4 text-sm">
-              <div class="text-2xl mb-2 opacity-30">💬</div>
-              <span x-text="lang === 'zh' ? '等待辩论开始...' : 'Waiting for debate...'"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Agent B Window -->
-        <div class="card overflow-hidden">
-          <div class="flex items-center gap-2.5 px-4 py-3 bg-rose-50 border-b border-rose-100">
-            <div class="w-7 h-7 rounded-md bg-rose-500 flex items-center justify-center text-white text-xs font-bold">B</div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-sm font-bold text-rose-700">Agent B</h3>
-              <p class="text-[10px] text-rose-400 uppercase tracking-wider" x-text="t('critic')"></p>
-            </div>
-            <span x-show="isDebating && agentBMessages.length > 0" class="badge bg-rose-100 text-rose-600 text-[10px]">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500" style="animation:pulse 1.5s infinite"></span>
-              streaming
-            </span>
-          </div>
-          <div class="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
-            <template x-for="(msg, idx) in agentBMessages" :key="'b-'+idx">
-              <div class="bubble bubble-b slide-r md-content" x-html="renderMarkdown(msg.content)"></div>
-            </template>
-            <div x-show="agentBMessages.length === 0" class="text-center py-10 text-txt-4 text-sm">
-              <div class="text-2xl mb-2 opacity-30">💬</div>
-              <span x-text="lang === 'zh' ? '等待辩论开始...' : 'Waiting for debate...'"></span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Consensus -->
-    <section x-show="consensus" x-cloak class="fade-up mb-6">
-      <div class="card overflow-hidden">
-        <div class="flex items-center gap-2.5 px-5 py-3.5 bg-green-50 border-b border-green-100">
-          <div class="w-7 h-7 rounded-md bg-green-500 flex items-center justify-center">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h2 class="text-sm font-bold text-green-700" x-text="t('consensusResult')"></h2>
-        </div>
-        <div class="p-5 md-content text-sm" x-html="renderMarkdown(consensus)"></div>
-      </div>
-    </section>
-
-    <footer class="text-center text-xs text-txt-4 py-6 border-t border-border mt-8">
-      DebateAI — <span x-text="t('footerNote')"></span>
-    </footer>
-  </main>
+  <!-- Error toast -->
+  <div x-show="error" x-cloak x-transition
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+    <span x-text="error"></span>
+    <button @click="error = ''" class="text-white/70 hover:text-white">&times;</button>
+  </div>
 
   <script>
     const I18N = {
       zh: {
         subtitle: '两个 AI 互相挑刺，找到最优解',
-        history: '历史', debateHistory: '📜 辩论历史', noHistory: '暂无历史记录',
+        history: '全部', noHistory: '暂无历史记录',
         clearAll: '🗑 清空所有历史', textInput: '文本输入', rounds: '轮',
-        dragDrop: '拖拽或点击上传文件', supportedFormats: '支持 PDF / 代码 / 文本 / Markdown 等',
+        dragDrop: '上传文件（PDF/代码/文本）', supportedFormats: '支持 PDF / 代码 / 文本 / Markdown 等',
         clickReplace: '点击或拖拽替换文件',
-        llmConfig: 'LLM 配置', apiSettings: 'API 设置', promptEditor: 'Prompt 编辑器',
         suggester: '建议者', critic: '批评者', maxRounds: '最大轮次',
-        saveConfig: '保存配置', saved: '已保存', savePrompts: '保存 Prompt',
-        promptHint: '自定义 Agent 的系统提示词，控制辩论风格和角色行为。',
-        reset: '重置', resetAll: '全部重置', consensusPrompt: '共识总结 Prompt',
+        saveConfig: '保存配置', saved: '已保存',
+        consensusPrompt: '共识总结 Prompt',
         directInput: '直接输入文本', directInputHint: '粘贴论文摘要、代码片段或任何文本...',
         applyText: '使用此文本', startDebate: '开始辩论', stopDebate: '停止辩论', export: '导出',
-        round: '第', consensusResult: '共识结论', footerNote: '纯前端，无需后端。API Key 仅存储在浏览器本地。',
+        round: '第', consensusResult: '共识结论',
         confirmClearHistory: '确定清空所有历史记录？', confirmDeleteItem: '确定删除此记录？',
       },
       en: {
         subtitle: 'Two AIs debate to find the best solution',
-        history: 'History', debateHistory: '📜 Debate History', noHistory: 'No history yet',
+        history: 'All', noHistory: 'No history yet',
         clearAll: '🗑 Clear All', textInput: 'Text Input', rounds: 'rounds',
-        dragDrop: 'Drag & drop or click to upload', supportedFormats: 'Supports PDF / Code / Text / Markdown etc.',
+        dragDrop: 'Upload file (PDF/Code/Text)', supportedFormats: 'Supports PDF / Code / Text / Markdown etc.',
         clickReplace: 'Click or drag to replace',
-        llmConfig: 'LLM Config', apiSettings: 'API Settings', promptEditor: 'Prompt Editor',
         suggester: 'Suggester', critic: 'Critic', maxRounds: 'Max Rounds',
-        saveConfig: 'Save Config', saved: 'Saved', savePrompts: 'Save Prompts',
-        promptHint: 'Customize agent system prompts to control debate style and role behavior.',
-        reset: 'Reset', resetAll: 'Reset All', consensusPrompt: 'Consensus Summary Prompt',
+        saveConfig: 'Save Config', saved: 'Saved',
+        consensusPrompt: 'Consensus Prompt',
         directInput: 'Direct Text Input', directInputHint: 'Paste an abstract, code snippet, or any text...',
         applyText: 'Use This Text', startDebate: 'Start Debate', stopDebate: 'Stop Debate', export: 'Export',
-        round: 'Round', consensusResult: 'Consensus', footerNote: 'Pure frontend, no backend needed. API keys stored locally only.',
+        round: 'Round', consensusResult: 'Consensus',
         confirmClearHistory: 'Clear all history?', confirmDeleteItem: 'Delete this record?',
       }
     };
@@ -452,22 +474,42 @@
 
     function debateApp() {
       return {
-        lang: 'zh',
+        lang: 'zh', sidebarTab: 'all', showConfig: false, showTextInput: false, showPrompts: false,
         t(key) { return (I18N[this.lang] || I18N.zh)[key] || key; },
         toggleLang() { this.lang = this.lang === 'zh' ? 'en' : 'zh'; localStorage.setItem('debateai_lang', this.lang); },
-        fileName: '', fileSize: 0, fileContent: '', directText: '', showTextInput: false,
-        configA: { baseUrl: '', apiKey: '', model: '' }, configB: { baseUrl: '', apiKey: '', model: '' },
-        maxRounds: 6, showConfig: true, configSaved: false, configTab: 'api',
+
+        // File
+        fileName: '', fileSize: 0, fileContent: '', directText: '',
+
+        // Config
+        configA: { baseUrl: '', apiKey: '', model: '' },
+        configB: { baseUrl: '', apiKey: '', model: '' },
+        maxRounds: 6, configSaved: false, autoApprove: true,
+        toggleAutoApprove() { this.autoApprove = !this.autoApprove; },
+
+        // Prompts
         promptA: '', promptB: '', promptConsensus: '',
         defaultPromptA() { return this.lang === 'zh' ? `你是一个专业的分析专家（建议者）。你的职责是：\n1. 仔细分析用户提供的材料（论文/代码/文本）\n2. 提出具体、可操作的改进建议\n3. 如果涉及代码，提供改进后的代码\n4. 输出结构化的分析，包含：问题分析、改进建议、代码示例\n5. 用中文回答` : `You are a professional analyst (Suggester). Your responsibilities:\n1. Carefully analyze the user's material (paper/code/text)\n2. Propose specific, actionable improvements\n3. If code is involved, provide improved code\n4. Output structured analysis: problem analysis, improvement suggestions, code examples`; },
         defaultPromptB() { return this.lang === 'zh' ? `你是一个严格的审查者（批评者）。你的职责是：\n1. 仔细审查 Agent A 的建议，找出逻辑漏洞、技术错误、遗漏点\n2. 提出你的替代方案或补充建议\n3. 不要无理由反对——如果 A 的建议确实好，可以表示认可\n4. 如果发现问题，详细说明问题所在并给出你的方案\n5. 用中文回答` : `You are a rigorous reviewer (Critic). Your responsibilities:\n1. Carefully review Agent A's suggestions, finding logical flaws, technical errors, and omissions\n2. Propose alternatives or supplementary suggestions\n3. Don't disagree without reason — if A's suggestion is good, acknowledge it\n4. If you find issues, explain them in detail and provide your solution`; },
         defaultPromptConsensus() { return this.lang === 'zh' ? `你是总结者。根据以下辩论记录，提炼双方共识，输出最终结论和改进代码。用 Markdown 格式。` : `You are a summarizer. Based on the debate record below, extract the consensus between both parties, output final conclusions and improved code. Use Markdown format.`; },
+
+        // Debate state
         isDebating: false, messages: [], consensus: '', currentRound: 0, error: '', abortController: null,
-        showHistory: false, historyList: [],
+        historyList: [],
+
         get canStart() { return (this.fileContent || this.directText) && this.configA.baseUrl && this.configA.apiKey && this.configA.model && this.configB.baseUrl && this.configB.apiKey && this.configB.model; },
         get agentAMessages() { return this.messages.filter(m => m.agent === 'A'); },
         get agentBMessages() { return this.messages.filter(m => m.agent === 'B'); },
-        init() { this.lang = localStorage.getItem('debateai_lang') || 'zh'; this.loadConfig(); this.loadHistoryList(); if (!this.promptA) this.promptA = this.defaultPromptA(); if (!this.promptB) this.promptB = this.defaultPromptB(); if (!this.promptConsensus) this.promptConsensus = this.defaultPromptConsensus(); },
+
+        init() {
+          this.lang = localStorage.getItem('debateai_lang') || 'zh';
+          this.loadConfig(); this.loadHistoryList();
+          if (!this.promptA) this.promptA = this.defaultPromptA();
+          if (!this.promptB) this.promptB = this.defaultPromptB();
+          if (!this.promptConsensus) this.promptConsensus = this.defaultPromptConsensus();
+        },
+
+        // File handling
         async handleFileDrop(e) { const f = e.dataTransfer.files[0]; if (f) await this.processFile(f); },
         async handleFileSelect(e) { const f = e.target.files[0]; if (f) await this.processFile(f); },
         async processFile(file) {
@@ -480,13 +522,18 @@
         async parsePDF(file) { const buf = await file.arrayBuffer(); const pdf = await pdfjsLib.getDocument({ data: buf }).promise; let t = ''; for (let i = 1; i <= pdf.numPages; i++) { const p = await pdf.getPage(i); const c = await p.getTextContent(); t += c.items.map(it => it.str).join(' ') + '\n\n'; } return t.trim(); },
         formatSize(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; },
         applyDirectText() { if (this.directText.trim()) { this.fileContent = this.directText.trim(); this.fileName = this.lang === 'zh' ? '直接输入文本' : 'Direct text input'; this.fileSize = this.fileContent.length; } },
+
+        // Config persistence
         saveConfig() {
           localStorage.setItem('debateai_config', JSON.stringify({ configA: this.configA, configB: this.configB, maxRounds: this.maxRounds, promptA: this.promptA, promptB: this.promptB, promptConsensus: this.promptConsensus }));
           this.configSaved = true; setTimeout(() => this.configSaved = false, 2000);
         },
         loadConfig() { try { const d = JSON.parse(localStorage.getItem('debateai_config')); if (d) { if (d.configA) this.configA = { ...this.configA, ...d.configA }; if (d.configB) this.configB = { ...this.configB, ...d.configB }; if (d.maxRounds) this.maxRounds = d.maxRounds; if (d.promptA) this.promptA = d.promptA; if (d.promptB) this.promptB = d.promptB; if (d.promptConsensus) this.promptConsensus = d.promptConsensus; } } catch (e) {} },
         resetAllPrompts() { this.promptA = this.defaultPromptA(); this.promptB = this.defaultPromptB(); this.promptConsensus = this.defaultPromptConsensus(); },
+
         renderMarkdown(t) { if (!t) return ''; try { return marked.parse(t); } catch (e) { return t.replace(/</g, '&lt;').replace(/>/g, '&gt;'); } },
+
+        // Debate engine
         async startDebate() {
           if (!this.canStart) return; const content = this.fileContent; if (!content) return;
           this.isDebating = true; this.messages = []; this.consensus = ''; this.currentRound = 0; this.error = ''; this.abortController = new AbortController();
@@ -516,9 +563,9 @@
           this.consensus = c.content; this.saveToHistory();
         },
         buildDebateSummary() { let s = (this.lang === 'zh' ? '辩论记录：\n\n' : 'Debate Record:\n\n'); for (const m of this.messages) { const r = m.agent === 'A' ? 'Agent A' : m.agent === 'B' ? 'Agent B' : 'Consensus'; s += `## ${this.lang === 'zh' ? '第' : 'Round '}${m.round}${this.lang === 'zh' ? '轮' : ''} - ${r}\n\n${m.content}\n\n---\n\n`; } return s; },
-        addMessage(agent, content, round) { const m = { agent, content, round, id: Date.now() + Math.random() }; this.messages.push(m); this.$nextTick(() => this.scrollToBottom()); return m; },
-        appendToMessage(msg, chunk) { msg.content += chunk; if (!this._sth) { this._sth = true; requestAnimationFrame(() => { this.scrollToBottom(); this._sth = false; }); } },
-        scrollToBottom() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); },
+        addMessage(agent, content, round) { const m = { agent, content, round, id: Date.now() + Math.random() }; this.messages.push(m); this.$nextTick(() => this.scrollPanel(agent)); return m; },
+        appendToMessage(msg, chunk) { msg.content += chunk; if (!this._sth) { this._sth = true; requestAnimationFrame(() => { this.scrollPanel(msg.agent); this._sth = false; }); } },
+        scrollPanel(agent) { const el = document.getElementById(agent === 'A' ? 'scroll-a' : agent === 'B' ? 'scroll-b' : 'scroll-a'); if (el) el.scrollTop = el.scrollHeight; },
         async callLLM(config, messages, onChunk) {
           const signal = this.abortController ? this.abortController.signal : undefined;
           const resp = await fetch(config.baseUrl.replace(/\/+$/, '') + '/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` }, body: JSON.stringify({ model: config.model, messages, stream: true }), signal });
@@ -528,13 +575,15 @@
         },
         detectConsensus(text) { return ['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','I agree','no objections','common ground'].some(k => text.toLowerCase().includes(k.toLowerCase())); },
         abortDebate() { if (this.abortController) this.abortController.abort(); },
+
+        // History
         loadHistoryList() { try { this.historyList = JSON.parse(localStorage.getItem('debateai_history')) || []; } catch (e) { this.historyList = []; } },
         saveToHistory() {
           const r = { id: Date.now(), timestamp: new Date().toISOString(), fileName: this.fileName, fileSize: this.fileSize, agentA: { model: this.configA.model, baseUrl: this.configA.baseUrl }, agentB: { model: this.configB.model, baseUrl: this.configB.baseUrl }, rounds: this.currentRound, messages: JSON.parse(JSON.stringify(this.messages)), consensus: this.consensus, contentPreview: this.fileContent.slice(0, 500) };
           this.historyList.unshift(r); if (this.historyList.length > 50) this.historyList = this.historyList.slice(0, 50);
           localStorage.setItem('debateai_history', JSON.stringify(this.historyList));
         },
-        loadHistory(h) { this.messages = h.messages || []; this.consensus = h.consensus || ''; this.currentRound = h.rounds || 0; this.fileName = h.fileName || ''; this.showHistory = false; this.$nextTick(() => this.scrollToBottom()); },
+        loadHistory(h) { this.messages = h.messages || []; this.consensus = h.consensus || ''; this.currentRound = h.rounds || 0; this.fileName = h.fileName || ''; this.$nextTick(() => { this.scrollPanel('A'); this.scrollPanel('B'); }); },
         deleteHistory(id) { if (!confirm(this.t('confirmDeleteItem'))) return; this.historyList = this.historyList.filter(h => h.id !== id); localStorage.setItem('debateai_history', JSON.stringify(this.historyList)); },
         clearAllHistory() { if (!confirm(this.t('confirmClearHistory'))) return; this.historyList = []; localStorage.removeItem('debateai_history'); },
         formatDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString(this.lang === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); },

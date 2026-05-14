@@ -129,6 +129,16 @@
                 <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
               </div>
               <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
+              <div class="flex items-center gap-2">
+                <button @click="testModel(m.id)" :disabled="m._testing"
+                  class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border transition-colors"
+                  :class="m._testOk===true ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
+                  <svg x-show="!m._testing" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  <span x-show="m._testing" class="w-3 h-3 border border-txt-3 border-t-transparent rounded-full animate-spin"></span>
+                  <span x-text="m._testing ? '测试中...' : m._testOk===true ? '✓ 连通 ('+m._testMs+'ms)' : m._testOk===false ? '✕ 失败' : '测试连接'"></span>
+                </button>
+                <span x-show="m._testOk===false && m._testErr" class="text-[9px] text-red-400 truncate max-w-[180px]" x-text="m._testErr"></span>
+              </div>
             </div>
           </template>
           <p x-show="models.length===0" class="text-[10px] text-txt-4 text-center py-2">点击「添加模型」配置你的 API</p>
@@ -415,11 +425,22 @@
         <!-- Upload -->
         <div class="rounded-lg bg-surface-3 border border-border-dim glow-green transition-all cursor-pointer"
              @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-green-accent/50')" @dragleave.prevent="$el.classList.remove('border-green-accent/50')" @drop.prevent="$el.classList.remove('border-green-accent/50'); handleDrop($event)">
-          <input type="file" x-ref="fi" class="hidden" accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
+          <input type="file" x-ref="fi" class="hidden" multiple accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
           <div class="flex items-center gap-2 px-3 py-2.5">
             <svg class="w-4 h-4 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-            <span class="text-xs text-txt-4" x-text="fname||'上传文件（PDF/代码/文本）'"></span>
+            <span class="text-xs text-txt-4" x-text="files.length ? (files.length+' 个文件，共 '+fmtSize(fsize)) : '上传文件（PDF/代码/文本，支持多选）'"></span>
           </div>
+        </div>
+        <!-- File list -->
+        <div x-show="files.length>0" class="space-y-1">
+          <template x-for="f in files" :key="f.name">
+            <div class="flex items-center gap-2 px-2 py-1 bg-surface-2 rounded border border-border-dim">
+              <svg class="w-3 h-3 text-txt-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span class="text-[10px] text-txt-2 truncate flex-1" x-text="f.name"></span>
+              <span class="text-[9px] text-txt-4" x-text="fmtSize(f.size)"></span>
+              <button @click.stop="removeFile(f.name)" class="text-txt-4 hover:text-red-400 text-xs p-0.5">&times;</button>
+            </div>
+          </template>
         </div>
 
         <!-- Direct input -->
@@ -683,7 +704,7 @@
         lang:'zh', allRoles:ROLES, templates:TPLS, curTpl:'',
         roles:['developer','architect','reviewer','security','tester'],
         showSettings:false, showTI:false, showCns:false, stab:'roles',
-        fname:'', fsize:'', fcont:'', dtxt:'',
+        fname:'', fsize:'', fcont:'', dtxt:'', files:[],
         // Model manager
         models:[],
         leftModelId:null, rightModelId:null,
@@ -691,6 +712,23 @@
         get rightModel(){ return this.models.find(m=>m.id===this.rightModelId)||null; },
         addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:''}; this.models.push(m); },
         rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; },
+        async testModel(id){
+          const m=this.models.find(x=>x.id===id); if(!m)return;
+          if(!m.baseUrl||!m.apiKey||!m.model){m._testOk=false;m._testErr='请填写完整配置';return;}
+          m._testing=true;m._testOk=null;m._testErr='';m._testMs=0;
+          const t0=performance.now();
+          try{
+            const resp=await fetch(m.baseUrl.replace(/\/+$/,'')+'/chat/completions',{
+              method:'POST',
+              headers:{'Content-Type':'application/json','Authorization':`Bearer ${m.apiKey}`},
+              body:JSON.stringify({model:m.model,messages:[{role:'user',content:'hi'}],max_tokens:5,stream:false})
+            });
+            const ms=Math.round(performance.now()-t0);
+            if(!resp.ok){const txt=await resp.text().catch(()=>'');m._testOk=false;m._testErr=`HTTP ${resp.status}: ${txt.slice(0,100)}`;}
+            else{const j=await resp.json();m._testOk=true;m._testMs=ms;}
+          }catch(e){m._testOk=false;m._testErr=e.message?.includes('fetch')?'网络错误或 CORS 限制':e.message.slice(0,100);}
+          finally{m._testing=false;}
+        },
         // Debate
         maxRounds:4, consensusMode:'auto', cfgSaved:false,
         prompts:{}, isDebating:false, msgs:[], cns:'', curRound:0, err:'', ac:null,
@@ -700,12 +738,13 @@
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
         get leftMsgs(){ return this.msgs.filter(m=>this.leftRoles.includes(m.roleId)); },
         get rightMsgs(){ return this.msgs.filter(m=>this.rightRoles.includes(m.roleId)); },
-        get canGo(){ return (this.fcont||this.dtxt) && this.leftModel && this.rightModel && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
+        get canGo(){ return (this.fcont||this.files.length||this.dtxt) && this.leftModel && this.rightModel && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
         get pct(){ return Math.min(Math.round(this.curRound/this.maxRounds*100),100); },
 
         gr(id){ return ROLES.find(r=>r.id===id)||{id:'?',name:'未知',side:'left',desc:'',def:''}; },
         rmd(t){ if(!t)return''; try{return marked.parse(t);}catch(e){return t.replace(/</g,'&lt;');} },
         fmtTok(n){ if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n; },
+        fmtSize(n){ if(n>=1e6)return(n/1e6).toFixed(1)+' MB';if(n>=1e3)return(n/1e3).toFixed(1)+' KB';return n+' B'; },
         fd(iso){ if(!iso)return''; return new Date(iso).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); },
 
         init(){
@@ -716,17 +755,23 @@
         toggleRole(id){ const i=this.roles.indexOf(id); if(i>=0){if(this.roles.length>2)this.roles.splice(i,1);}else{this.roles.push(id);} this.curTpl=''; },
         applyTemplate(t){ this.roles=[...t.roles]; this.curTpl=t.id; },
 
-        async handleDrop(e){ const f=e.dataTransfer.files[0]; if(f)await this.procFile(f); },
-        async handleFile(e){ const f=e.target.files[0]; if(f)await this.procFile(f); },
+        async handleDrop(e){ const fs=e.dataTransfer.files; for(let i=0;i<fs.length;i++)await this.procFile(fs[i]); },
+        async handleFile(e){ const fs=e.target.files; for(let i=0;i<fs.length;i++)await this.procFile(fs[i]); e.target.value=''; },
         async procFile(f){
           const ext=f.name.split('.').pop().toLowerCase();
-          if(!['pdf','py','txt','md','csv','json','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql'].includes(ext)){this.err='不支持的格式';return;}
-          this.fname=f.name;this.fsize=f.size;this.err='';this.dtxt='';
-          this.fcont=ext==='pdf'?await this.parsePDF(f):await this.readTxt(f);
+          if(!['pdf','py','txt','md','csv','json','js','ts','java','cpp','c','h','go','rs','rb','php','html','css','yaml','yml','toml','xml','sh','sql'].includes(ext)){this.err='不支持的格式: '+f.name;return;}
+          this.err='';this.dtxt='';
+          const content=ext==='pdf'?await this.parsePDF(f):await this.readTxt(f);
+          const existing=this.files.findIndex(x=>x.name===f.name);
+          if(existing>=0){this.files[existing]={name:f.name,size:f.size,content};}else{this.files.push({name:f.name,size:f.size,content});}
+          this.fname=this.files.length===1?f.name:this.files.length+' 个文件';
+          this.fsize=this.files.reduce((s,x)=>s+x.size,0);
+          this.fcont=this.files.map(x=>`// ===== ${x.name} =====\n${x.content}`).join('\n\n');
         },
+        removeFile(name){ this.files=this.files.filter(f=>f.name!==name); if(this.files.length===0){this.fname='';this.fsize=0;this.fcont='';}else if(this.files.length===1){this.fname=this.files[0].name;this.fsize=this.files[0].size;this.fcont=this.files[0].content;}else{this.fname=this.files.length+' 个文件';this.fsize=this.files.reduce((s,x)=>s+x.size,0);this.fcont=this.files.map(x=>`// ===== ${x.name} =====\n${x.content}`).join('\n\n');} },
         readTxt(f){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej();r.readAsText(f);}); },
         async parsePDF(f){ const b=await f.arrayBuffer();const p=await pdfjsLib.getDocument({data:b}).promise;let t='';for(let i=1;i<=p.numPages;i++){const pg=await p.getPage(i);const c=await pg.getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\n\n';}return t.trim(); },
-        applyTxt(){ if(this.dtxt.trim()){this.fcont=this.dtxt.trim();this.fname='直接输入文本';this.fsize=this.fcont.length;} },
+        applyTxt(){ if(this.dtxt.trim()){this.fcont=this.dtxt.trim();this.fname='直接输入文本';this.fsize=this.fcont.length;this.files=[];} },
 
         saveCfg(){ localStorage.setItem('debateai_cfg',JSON.stringify({models:this.models,leftModelId:this.leftModelId,rightModelId:this.rightModelId,maxRounds:this.maxRounds,consensusMode:this.consensusMode,prompts:this.prompts,roles:this.roles})); this.cfgSaved=true;setTimeout(()=>this.cfgSaved=false,2000); },
         loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.models&&d.models.length){this.models=d.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(d.leftModelId)this.leftModelId=d.leftModelId;if(d.rightModelId)this.rightModelId=d.rightModelId;if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },

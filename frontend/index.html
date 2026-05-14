@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            surface: '#443828', 'surface-2': '#524434', 'surface-3': '#5E4E3C', 'surface-4': '#3A3024',
-            'border-dim': '#7A6850',
-            'green-accent': '#A3E635', 'yellow-accent': '#FBBF24',
-            'txt': { 1: '#F5EDE0', 2: '#E8DCC8', 3: '#C4B498', 4: '#9A8A70' },
+            surface: '#FFF8F0', 'surface-2': '#FFF1E3', 'surface-3': '#FFE8D0', 'surface-4': '#FFFDF9',
+            'border-dim': '#F0D9C0',
+            'orange-accent': '#FF6A00', 'amber-accent': '#FF9500',
+            'txt': { 1: '#2C1810', 2: '#5C3D2E', 3: '#8B6B5A', 4: '#B89A88' },
           }
         }
       }
@@ -28,11 +27,11 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     * { font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif; }
-    body { background: #443828; color: #F5EDE0; margin: 0; overflow: hidden; }
+    body { background: #FFF8F0; color: #2C1810; margin: 0; overflow: hidden; }
 
     /* ── 磨砂噪点纹理 ── */
     body::before {
-      content:''; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
+      content:''; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.015;
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size:128px 128px;
     }
@@ -41,42 +40,42 @@
     body::after {
       content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
       background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255,160,40,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255,120,20,0.06) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255,149,0,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255,106,0,0.05) 0%, transparent 60%);
     }
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #8A7460; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #A08A70; }
+    ::-webkit-scrollbar-thumb { background: #E0C8B0; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D0B89A; }
     @keyframes msgIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
     @keyframes typingBounce { 0%,80%,100% { transform:translateY(0) } 40% { transform:translateY(-4px) } }
     @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.4 } }
     @keyframes fadeUp { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
     .msg-in { animation: msgIn .3s ease-out; }
     .fade-up { animation: fadeUp .35s ease-out; }
-    .typing-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:#9A8A70; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
+    .typing-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:#B89A88; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay:-.32s }
     .typing-dot:nth-child(2) { animation-delay:-.16s }
-    .glow-green:focus-within { box-shadow: 0 0 0 2px #A3E635, 0 0 20px rgba(163,230,53,0.08); }
-    .glow-yellow:focus-within { box-shadow: 0 0 0 2px #FBBF24, 0 0 20px rgba(251,191,36,0.08); }
+    .glow-orange:focus-within { box-shadow: 0 0 0 2px #FF6A00, 0 0 20px rgba(255,106,0,0.1); }
+    .glow-amber:focus-within { box-shadow: 0 0 0 2px #FF9500, 0 0 20px rgba(255,149,0,0.1); }
     textarea { resize: none; }
     textarea::-webkit-scrollbar { width: 3px; }
-    .md-content { color:#E8DCC8; font-size:.85rem; line-height:1.7; }
-    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.6em; margin-bottom:.3em; color:#F8F0E4; }
+    .md-content { color:#5C3D2E; font-size:.85rem; line-height:1.7; }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight:700; margin-top:.6em; margin-bottom:.3em; color:#2C1810; }
     .md-content h1 { font-size:1.15em } .md-content h2 { font-size:1.05em } .md-content h3 { font-size:1em }
     .md-content p { margin-bottom:.5em; }
     .md-content ul,.md-content ol { margin-left:1.2em; margin-bottom:.5em }
     .md-content li { margin-bottom:.15em }
-    .md-content code { background:rgba(255,160,40,0.1); padding:.1em .3em; border-radius:4px; font-size:.82em; color:#FBBF24; font-family:'JetBrains Mono',monospace; }
-    .md-content pre { background:#3A3024; border:1px solid #7A6850; border-radius:8px; padding:.7em; overflow-x:auto; margin:.5em 0 }
-    .md-content pre code { background:transparent; padding:0; font-size:.78em; line-height:1.6; color:#F5EDE0 }
-    .md-content blockquote { border-left:3px solid #FBBF24; padding-left:.7em; color:#C4B498; margin:.5em 0 }
+    .md-content code { background:rgba(255,106,0,0.08); padding:.1em .3em; border-radius:4px; font-size:.82em; color:#E85D00; font-family:'JetBrains Mono',monospace; }
+    .md-content pre { background:#FFF1E3; border:1px solid #F0D9C0; border-radius:8px; padding:.7em; overflow-x:auto; margin:.5em 0 }
+    .md-content pre code { background:transparent; padding:0; font-size:.78em; line-height:1.6; color:#2C1810 }
+    .md-content blockquote { border-left:3px solid #FF6A00; padding-left:.7em; color:#8B6B5A; margin:.5em 0 }
     .md-content table { border-collapse:collapse; width:100%; margin:.5em 0 }
-    .md-content th,.md-content td { border:1px solid #7A6850; padding:.3em .5em; text-align:left }
-    .md-content th { background:rgba(255,160,40,0.08); font-weight:600 }
-    .md-content strong { color:#F8F0E4; }
-    .md-content a { color:#60a5fa; text-decoration:underline }
+    .md-content th,.md-content td { border:1px solid #F0D9C0; padding:.3em .5em; text-align:left }
+    .md-content th { background:rgba(255,106,0,0.06); font-weight:600 }
+    .md-content strong { color:#2C1810; }
+    .md-content a { color:#FF6A00; text-decoration:underline }
     .prompt-textarea { font-family:'JetBrains Mono',monospace; font-size:.75rem; line-height:1.5; }
 
     /* ── 磨砂玻璃面板 ── */
@@ -86,14 +85,14 @@
 <body x-data="app()" x-init="init()">
 
   <!-- ═══ Header ═══ -->
-  <header class="frosted flex items-center justify-between h-11 px-4 bg-surface-4/80 border-b border-border-dim select-none flex-shrink-0">
+  <header class="frosted flex items-center justify-between h-11 px-4 bg-surface-4/90 border-b border-border-dim select-none flex-shrink-0">
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-1.5">
-        <div class="w-2 h-2 rounded-full bg-green-accent opacity-80"></div>
+        <div class="w-2 h-2 rounded-full bg-orange-accent opacity-80"></div>
         <span class="text-[11px] font-semibold text-txt-3 tracking-wider uppercase">Chat</span>
       </div>
       <div class="w-px h-3.5 bg-border-dim"></div>
-      <span class="text-[11px] font-bold text-white tracking-widest uppercase">DebateAI</span>
+      <span class="text-[11px] font-bold text-txt-1 tracking-widest uppercase">DebateAI</span>
       <span class="text-[10px] text-txt-4 ml-1 hidden sm:inline">多角色对抗辩论平台</span>
     </div>
     <div class="flex items-center gap-2">
@@ -101,16 +100,16 @@
         <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span class="text-[10px] text-txt-3 font-mono" x-text="fmtTok(totalTokens)"></span>
         <span class="text-[10px] text-txt-4">tok</span>
-        <span x-show="totalCost>0" class="text-[10px] text-yellow-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
+        <span x-show="totalCost>0" class="text-[10px] text-amber-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
       </div>
-      <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-white/10 text-[10px] font-medium text-txt-3 hover:text-white transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
-      <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors" title="设置">
+      <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-black/5 text-[10px] font-medium text-txt-3 hover:text-txt-1 transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
+      <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </button>
-      <button class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors">
+      <button class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
       </button>
-      <button class="p-1.5 rounded hover:bg-white/10 text-txt-4 hover:text-white transition-colors">
+      <button class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
@@ -125,14 +124,14 @@
       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
       <div class="p-4 border-b border-border-dim flex items-center justify-between sticky top-0 bg-surface-4 z-10">
         <h2 class="text-sm font-bold text-txt-1">⚙️ 设置</h2>
-        <button @click="showSettings=false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-white hover:bg-white/10">&times;</button>
+        <button @click="showSettings=false" class="w-7 h-7 rounded-md flex items-center justify-center text-txt-3 hover:text-txt-1 hover:bg-black/5">&times;</button>
       </div>
       <div class="p-4 space-y-5">
         <!-- Model Manager -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">模型管理</h3>
-            <button @click="addModel()" class="text-[10px] text-green-accent hover:text-green-accent/80 flex items-center gap-0.5">
+            <button @click="addModel()" class="text-[10px] text-orange-accent hover:text-orange-accent/80 flex items-center gap-0.5">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
               添加模型
             </button>
@@ -144,18 +143,18 @@
                 <button @click="rmModel(m.id)" class="text-txt-4 hover:text-red-400 text-xs p-0.5">&times;</button>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <input type="text" x-model="m.baseUrl" placeholder="Base URL" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
-                <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
+                <input type="text" x-model="m.baseUrl" placeholder="Base URL" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
+                <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
               </div>
-              <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
+              <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
               <div class="flex items-center gap-2">
-                <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
+                <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
                   <option value="openai">OpenAI 兼容</option>
                   <option value="anthropic">Anthropic 兼容</option>
                 </select>
                 <button @click="testModel(m.id)" :disabled="m._testing"
                   class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border transition-colors"
-                  :class="m._testOk===true ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
+                  :class="m._testOk===true ? 'bg-orange-accent/15 text-orange-accent border-orange-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
                   <svg x-show="!m._testing" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                   <span x-show="m._testing" class="w-3 h-3 border border-txt-3 border-t-transparent rounded-full animate-spin"></span>
                   <span x-text="m._testing ? '测试中...' : m._testOk===true ? '✓ 连通 ('+m._testMs+'ms)' : m._testOk===false ? '✕ 失败' : '测试连接'"></span>
@@ -181,7 +180,7 @@
           <div class="flex flex-wrap gap-1.5 mb-2">
             <template x-for="tpl in templates" :key="tpl.id">
               <button @click="applyTemplate(tpl)" class="px-2 py-1 text-[10px] font-medium rounded border transition-colors"
-                :class="curTpl===tpl.id ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
+                :class="curTpl===tpl.id ? 'bg-orange-accent/15 text-orange-accent border-orange-accent/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
                 <span x-text="tpl.name"></span>
               </button>
             </template>
@@ -189,7 +188,7 @@
           <div class="grid grid-cols-2 gap-1.5">
             <template x-for="r in allRoles" :key="r.id">
               <button @click="toggleRole(r.id)" class="flex items-center gap-2 px-2.5 py-2 rounded-lg border text-left transition-all"
-                :class="roles.includes(r.id) ? 'bg-white/5 border-white/20' : 'bg-surface-3 border-border-dim opacity-40 hover:opacity-70'">
+                :class="roles.includes(r.id) ? 'bg-black/[.03] border-black/15' : 'bg-surface-3 border-border-dim opacity-40 hover:opacity-70'">
                 
                 <div class="min-w-0"><div class="text-[11px] font-semibold text-txt-2" x-text="r.name"></div><div class="text-[9px] text-txt-4 truncate" x-text="r.desc"></div></div>
               </button>
@@ -205,15 +204,15 @@
                 <label class="text-[10px] font-medium text-txt-3"><span x-text="gr(rid).name"></span></label>
                 <button @click="prompts[rid]=gr(rid).def" class="text-[9px] text-txt-4 hover:text-txt-2">重置</button>
               </div>
-              <textarea x-model="prompts[rid]" rows="2" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-white/30 prompt-textarea"></textarea>
+              <textarea x-model="prompts[rid]" rows="2" class="w-full bg-surface-3 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-black/20 prompt-textarea"></textarea>
             </div>
           </template>
         </div>
-        <button @click="saveCfg()" class="w-full px-4 py-2.5 text-sm font-medium bg-green-accent text-black rounded-lg hover:bg-green-accent/90 transition-colors flex items-center justify-center gap-2">
+        <button @click="saveCfg()" class="w-full px-4 py-2.5 text-sm font-medium bg-orange-accent text-black rounded-lg hover:bg-orange-accent/90 transition-colors flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           保存配置
         </button>
-        <span x-show="cfgSaved" x-transition class="block text-center text-green-accent text-sm font-medium">✓ 已保存</span>
+        <span x-show="cfgSaved" x-transition class="block text-center text-orange-accent text-sm font-medium">✓ 已保存</span>
       </div>
     </div>
   </div>
@@ -225,14 +224,14 @@
     <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
       <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-green-accent/20 flex items-center justify-center">
-            <svg class="w-3 h-3 text-green-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <div class="w-5 h-5 rounded bg-orange-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-orange-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
           </div>
-          <span class="text-[11px] font-semibold text-green-accent uppercase tracking-wide">建设方 · Builder</span>
+          <span class="text-[11px] font-semibold text-orange-accent uppercase tracking-wide">建设方 · Builder</span>
           <span class="text-[10px] text-txt-4" ></span>
         </div>
-        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-green-accent/70">
-          <span class="w-1.5 h-1.5 rounded-full bg-green-accent" style="animation:pulse 1.5s infinite"></span>
+        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-orange-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-accent" style="animation:pulse 1.5s infinite"></span>
           思考中...
         </span>
       </div>
@@ -241,25 +240,25 @@
       <div class="flex-1 overflow-y-auto py-2" id="scroll-left">
         <div x-show="leftMsgs.length===0" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-green-accent/10">
-              <span class="text-2xl opacity-50 text-green-accent">●</span>
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-orange-accent/10">
+              <span class="text-2xl opacity-50 text-orange-accent">●</span>
             </div>
             <p class="text-xs text-txt-4">建设方的分析将在这里显示</p>
             <div class="flex justify-center gap-1 mt-2">
               <template x-for="id in leftRoles" :key="id">
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-green-accent/10 text-green-accent/70" x-text="gr(id).name"></span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-accent/10 text-orange-accent/70" x-text="gr(id).name"></span>
               </template>
             </div>
           </div>
         </div>
         <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-green-accent/[.04] transition-colors">
-            <div class="w-6 h-6 rounded-full bg-green-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-orange-accent/[.04] transition-colors">
+            <div class="w-6 h-6 rounded-full bg-orange-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
               <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
             </div>
-            <div class="flex-1 border-l-2 border-l-green-accent/30 pl-3 min-w-0">
+            <div class="flex-1 border-l-2 border-l-orange-accent/30 pl-3 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-green-accent/80" x-text="gr(msg.roleId).name"></span>
+                <span class="text-[10px] font-bold text-orange-accent/80" x-text="gr(msg.roleId).name"></span>
                 <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
               </div>
               <div class="md-content break-words" x-html="rmd(msg.content)"></div>
@@ -271,11 +270,11 @@
       <!-- Bottom -->
       <div class="border-t border-border-dim p-3 flex-shrink-0">
         <div class="flex items-center gap-1.5 mb-2">
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">Agent</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">Agent</span>
           <!-- Model selector for left panel -->
           <div class="relative" x-data="{open:false}">
             <button @click="open=!open" class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border cursor-pointer transition-colors"
-              :class="leftModel ? 'bg-green-accent/10 text-green-accent border-green-accent/20' : 'bg-white/5 text-txt-4 border-white/10 hover:border-white/20'">
+              :class="leftModel ? 'bg-orange-accent/10 text-orange-accent border-orange-accent/20' : 'bg-black/[.03] text-txt-4 border-black/10 hover:border-black/15'">
               <span x-text="leftModel ? leftModel.name : '未配置'"></span>
               <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
@@ -284,9 +283,9 @@
               <div class="p-1.5 max-h-48 overflow-y-auto">
                 <template x-for="m in models" :key="m.id">
                   <button @click="leftModelId=m.id; open=false"
-                    class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-left hover:bg-white/5 transition-colors"
-                    :class="leftModelId===m.id ? 'bg-green-accent/10' : ''">
-                    <div class="w-1.5 h-1.5 rounded-full" :class="leftModelId===m.id ? 'bg-green-accent' : 'bg-transparent'"></div>
+                    class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-left hover:bg-black/[.03] transition-colors"
+                    :class="leftModelId===m.id ? 'bg-orange-accent/10' : ''">
+                    <div class="w-1.5 h-1.5 rounded-full" :class="leftModelId===m.id ? 'bg-orange-accent' : 'bg-transparent'"></div>
                     <div class="min-w-0">
                       <div class="text-[10px] font-medium text-txt-2 truncate" x-text="m.name"></div>
                       <div class="text-[9px] text-txt-4 truncate" x-text="m.model"></div>
@@ -299,12 +298,12 @@
               </div>
             </div>
           </div>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">工具</span>
         </div>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="'第 '+curRound+'/'+maxRounds+' 轮'"></span>
-            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-green-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-orange-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
           </div>
           <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
         </div>
@@ -315,20 +314,20 @@
     <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
       <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-yellow-accent/20 flex items-center justify-center">
-            <svg class="w-3 h-3 text-yellow-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="w-5 h-5 rounded bg-amber-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-amber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <span class="text-[11px] font-semibold text-yellow-accent uppercase tracking-wide">审查方 · Reviewer</span>
+          <span class="text-[11px] font-semibold text-amber-accent uppercase tracking-wide">审查方 · Reviewer</span>
           <span class="text-[10px] text-txt-4" ></span>
         </div>
-        <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1 text-[10px] text-yellow-accent/70">
-          <span class="w-1.5 h-1.5 rounded-full bg-yellow-accent" style="animation:pulse 1.5s infinite"></span>
+        <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1 text-[10px] text-amber-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-accent" style="animation:pulse 1.5s infinite"></span>
           思考中...
         </span>
       </div>
 
       <!-- System prompt -->
-      <div class="mx-3 mt-2 px-3 py-2 bg-white/5 rounded-md border border-white/10" x-show="rightMsgs.length===0 && !isDebating">
+      <div class="mx-3 mt-2 px-3 py-2 bg-black/[.03] rounded-md border border-black/10" x-show="rightMsgs.length===0 && !isDebating">
         <div class="flex items-center gap-1.5 mb-1">
           <svg class="w-3 h-3 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           <span class="text-[9px] font-semibold text-txt-4 uppercase tracking-wide">System</span>
@@ -340,25 +339,25 @@
       <div class="flex-1 overflow-y-auto py-2" id="scroll-right">
         <div x-show="rightMsgs.length===0 && !isDebating" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-yellow-accent/10">
-              <span class="text-2xl opacity-50 text-yellow-accent">●</span>
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-amber-accent/10">
+              <span class="text-2xl opacity-50 text-amber-accent">●</span>
             </div>
             <p class="text-xs text-txt-4">审查方的反馈将在这里显示</p>
             <div class="flex justify-center gap-1 mt-2">
               <template x-for="id in rightRoles" :key="id">
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-accent/10 text-yellow-accent/70" x-text="gr(id).name"></span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-accent/10 text-amber-accent/70" x-text="gr(id).name"></span>
               </template>
             </div>
           </div>
         </div>
         <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-yellow-accent/[.04] transition-colors">
-            <div class="w-6 h-6 rounded-full bg-yellow-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-amber-accent/[.04] transition-colors">
+            <div class="w-6 h-6 rounded-full bg-amber-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
               <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
             </div>
-            <div class="flex-1 border-l-2 border-l-yellow-accent/30 pl-3 min-w-0">
+            <div class="flex-1 border-l-2 border-l-amber-accent/30 pl-3 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-yellow-accent/80" x-text="gr(msg.roleId).name"></span>
+                <span class="text-[10px] font-bold text-amber-accent/80" x-text="gr(msg.roleId).name"></span>
                 <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
               </div>
               <div class="md-content break-words" x-html="rmd(msg.content)"></div>
@@ -370,11 +369,11 @@
       <!-- Bottom -->
       <div class="border-t border-border-dim p-3 flex-shrink-0">
         <div class="flex items-center gap-1.5 mb-2">
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">静态检查</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">静态检查</span>
           <!-- Model selector for right panel -->
           <div class="relative" x-data="{open:false}">
             <button @click="open=!open" class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border cursor-pointer transition-colors"
-              :class="rightModel ? 'bg-yellow-accent/10 text-yellow-accent border-yellow-accent/20' : 'bg-white/5 text-txt-4 border-white/10 hover:border-white/20'">
+              :class="rightModel ? 'bg-amber-accent/10 text-amber-accent border-amber-accent/20' : 'bg-black/[.03] text-txt-4 border-black/10 hover:border-black/15'">
               <span x-text="rightModel ? rightModel.name : '未配置'"></span>
               <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
@@ -383,9 +382,9 @@
               <div class="p-1.5 max-h-48 overflow-y-auto">
                 <template x-for="m in models" :key="m.id">
                   <button @click="rightModelId=m.id; open=false"
-                    class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-left hover:bg-white/5 transition-colors"
-                    :class="rightModelId===m.id ? 'bg-yellow-accent/10' : ''">
-                    <div class="w-1.5 h-1.5 rounded-full" :class="rightModelId===m.id ? 'bg-yellow-accent' : 'bg-transparent'"></div>
+                    class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-left hover:bg-black/[.03] transition-colors"
+                    :class="rightModelId===m.id ? 'bg-amber-accent/10' : ''">
+                    <div class="w-1.5 h-1.5 rounded-full" :class="rightModelId===m.id ? 'bg-amber-accent' : 'bg-transparent'"></div>
                     <div class="min-w-0">
                       <div class="text-[10px] font-medium text-txt-2 truncate" x-text="m.name"></div>
                       <div class="text-[9px] text-txt-4 truncate" x-text="m.model"></div>
@@ -398,28 +397,28 @@
               </div>
             </div>
           </div>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-white/5 text-txt-3 border-white/10">工具</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">工具</span>
         </div>
         <div class="flex items-center justify-between">
-          <button x-show="isDebating" @click="abort()" class="px-3 py-1.5 text-[11px] font-medium bg-white/10 text-txt-2 rounded hover:bg-white/15 transition-colors">■ 停止</button>
-          <button x-show="!isDebating && msgs.length>0" @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-white/5 text-txt-3 rounded hover:bg-white/10 transition-colors flex items-center gap-1">
+          <button x-show="isDebating" @click="abort()" class="px-3 py-1.5 text-[11px] font-medium bg-black/5 text-txt-2 rounded hover:bg-black/10 transition-colors">■ 停止</button>
+          <button x-show="!isDebating && msgs.length>0" @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-black/[.03] text-txt-3 rounded hover:bg-black/5 transition-colors flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             导出
           </button>
           <div class="flex items-center gap-2">
             <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
-            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-yellow-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-amber-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ─── Right Sidebar ─── -->
-    <div class="frosted w-60 flex-shrink-0 flex flex-col bg-surface-4/80 border-l border-border-dim overflow-hidden">
+    <div class="frosted w-60 flex-shrink-0 flex flex-col bg-surface-4/90 border-l border-border-dim overflow-hidden">
 
       <div class="flex border-b border-border-dim">
-        <button @click="stab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='roles'?'text-white border-b-2 border-white':'text-txt-4 hover:text-txt-2'">角色</button>
-        <button @click="stab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='history'?'text-white border-b-2 border-white':'text-txt-4 hover:text-txt-2'">历史 <span x-show="hist.length>0" class="text-[9px] text-txt-4" x-text="'('+hist.length+')'"></span></button>
+        <button @click="stab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='roles'?'text-txt-1 border-b-2 border-orange-accent':'text-txt-4 hover:text-txt-2'">角色</button>
+        <button @click="stab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='history'?'text-txt-1 border-b-2 border-orange-accent':'text-txt-4 hover:text-txt-2'">历史 <span x-show="hist.length>0" class="text-[9px] text-txt-4" x-text="'('+hist.length+')'"></span></button>
       </div>
 
       <!-- Roles tab -->
@@ -427,12 +426,12 @@
         <!-- Actions -->
         <div class="space-y-1.5">
           <button @click="start()" :disabled="!canGo || isDebating"
-            class="w-full flex items-center gap-2 px-3 py-2 bg-green-accent/15 text-green-accent text-[11px] font-medium rounded-md hover:bg-green-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            class="w-full flex items-center gap-2 px-3 py-2 bg-orange-accent/15 text-orange-accent text-[11px] font-medium rounded-md hover:bg-orange-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             开始辩论
           </button>
           <button x-show="msgs.length>0 && cns" @click="showCns=!showCns"
-            class="w-full flex items-center gap-2 px-3 py-2 bg-yellow-accent/15 text-yellow-accent text-[11px] font-medium rounded-md hover:bg-yellow-accent/25 transition-colors">
+            class="w-full flex items-center gap-2 px-3 py-2 bg-amber-accent/15 text-amber-accent text-[11px] font-medium rounded-md hover:bg-amber-accent/25 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             共识结论
           </button>
@@ -440,14 +439,14 @@
 
         <!-- Consensus -->
         <div x-show="showCns && cns" x-collapse>
-          <div class="bg-green-accent/5 border border-green-accent/20 rounded-lg p-3 max-h-48 overflow-y-auto">
+          <div class="bg-orange-accent/5 border border-orange-accent/20 rounded-lg p-3 max-h-48 overflow-y-auto">
             <div class="md-content text-[11px]" x-html="rmd(cns)"></div>
           </div>
         </div>
 
         <!-- Upload -->
-        <div class="rounded-lg bg-surface-3 border border-border-dim glow-green transition-all cursor-pointer"
-             @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-green-accent/50')" @dragleave.prevent="$el.classList.remove('border-green-accent/50')" @drop.prevent="$el.classList.remove('border-green-accent/50'); handleDrop($event)">
+        <div class="rounded-lg bg-surface-3 border border-border-dim glow-orange transition-all cursor-pointer"
+             @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-orange-accent/50')" @dragleave.prevent="$el.classList.remove('border-orange-accent/50')" @drop.prevent="$el.classList.remove('border-orange-accent/50'); handleDrop($event)">
           <input type="file" x-ref="fi" class="hidden" multiple accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
           <div class="flex items-center gap-2 px-3 py-2.5">
             <svg class="w-4 h-4 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
@@ -473,29 +472,29 @@
             直接输入文本
           </button>
           <div x-show="showTI" x-collapse>
-            <textarea x-model="dtxt" rows="3" placeholder="粘贴论文摘要、代码片段..." class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-green-accent/50 prompt-textarea"></textarea>
-            <button @click="applyTxt()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-green-accent/15 text-green-accent rounded hover:bg-green-accent/25">使用此文本</button>
+            <textarea x-model="dtxt" rows="3" placeholder="粘贴论文摘要、代码片段..." class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-orange-accent/50 prompt-textarea"></textarea>
+            <button @click="applyTxt()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-orange-accent/15 text-orange-accent rounded hover:bg-orange-accent/25">使用此文本</button>
           </div>
         </div>
 
         <!-- Groups -->
         <div class="space-y-2">
           <div>
-            <span class="text-[10px] font-semibold text-green-accent/70 uppercase tracking-wider">建设方</span>
+            <span class="text-[10px] font-semibold text-orange-accent/70 uppercase tracking-wider">建设方</span>
             <template x-for="id in leftRoles" :key="id">
-              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-green-accent/5">
+              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-orange-accent/5">
                 
-                <span class="text-[10px] font-medium text-green-accent/80" x-text="gr(id).name"></span>
+                <span class="text-[10px] font-medium text-orange-accent/80" x-text="gr(id).name"></span>
                 <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
             </template>
           </div>
           <div>
-            <span class="text-[10px] font-semibold text-yellow-accent/70 uppercase tracking-wider">审查方</span>
+            <span class="text-[10px] font-semibold text-amber-accent/70 uppercase tracking-wider">审查方</span>
             <template x-for="id in rightRoles" :key="id">
-              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-yellow-accent/5">
+              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-amber-accent/5">
                 
-                <span class="text-[10px] font-medium text-yellow-accent/80" x-text="gr(id).name"></span>
+                <span class="text-[10px] font-medium text-amber-accent/80" x-text="gr(id).name"></span>
                 <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
             </template>
@@ -507,7 +506,7 @@
       <div x-show="stab==='history'" class="flex-1 overflow-y-auto">
         <div x-show="hist.length===0" class="text-center py-10"><div class="text-3xl mb-2 opacity-30 text-txt-4">—</div><p class="text-[11px] text-txt-4">暂无历史记录</p></div>
         <template x-for="h in hist" :key="h.id">
-          <button @click="loadHist(h)" class="w-full text-left px-3 py-2.5 border-b border-border-dim hover:bg-white/5 transition-colors group">
+          <button @click="loadHist(h)" class="w-full text-left px-3 py-2.5 border-b border-border-dim hover:bg-black/[.03] transition-colors group">
             <div class="flex items-center justify-between mb-1">
               <span class="text-[11px] text-txt-2 font-medium truncate" x-text="h.fname||'文本输入'"></span>
               <span class="text-[9px] text-txt-4" x-text="fd(h.ts)"></span>
@@ -517,13 +516,13 @@
               <span class="text-[9px] text-txt-4 ml-auto" x-text="h.rounds+'轮'"></span>
             </div>
             <div class="flex items-center gap-1 text-[9px] text-txt-4">
-              <span x-show="h.leftModel" class="text-green-accent/60" x-text="h.leftModel"></span>
+              <span x-show="h.leftModel" class="text-orange-accent/60" x-text="h.leftModel"></span>
               <span x-show="h.leftModel && h.rightModel" class="text-txt-4">vs</span>
-              <span x-show="h.rightModel" class="text-yellow-accent/60" x-text="h.rightModel"></span>
+              <span x-show="h.rightModel" class="text-amber-accent/60" x-text="h.rightModel"></span>
             </div>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button @click.stop="expH(h,'md')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">MD</button>
-              <button @click.stop="expH(h,'json')" class="px-1.5 py-0.5 text-[9px] bg-white/5 text-txt-3 rounded hover:bg-white/10">JSON</button>
+              <button @click.stop="expH(h,'md')" class="px-1.5 py-0.5 text-[9px] bg-black/[.03] text-txt-3 rounded hover:bg-black/5">MD</button>
+              <button @click.stop="expH(h,'json')" class="px-1.5 py-0.5 text-[9px] bg-black/[.03] text-txt-3 rounded hover:bg-black/5">JSON</button>
               <button @click.stop="delH(h.id)" class="px-1.5 py-0.5 text-[9px] bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 ml-auto"></button>
             </div>
           </button>
@@ -537,7 +536,7 @@
 
   <!-- Error -->
   <div x-show="err" x-cloak x-transition class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
-    <span x-text="err"></span><button @click="err=''" class="text-white/70 hover:text-white">&times;</button>
+    <span x-text="err"></span><button @click="err=''" class="text-txt-1/70 hover:text-txt-1">&times;</button>
   </div>
 
   <script>

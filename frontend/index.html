@@ -321,9 +321,10 @@
           <span class="text-[11px] font-semibold text-blue-accent uppercase tracking-wide">建设方 · Builder</span>
           <span class="text-[10px] text-txt-4" ></span>
         </div>
-        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-blue-accent/70">
+        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1.5 text-[10px] text-blue-accent/70">
           <span class="w-1.5 h-1.5 rounded-full bg-blue-accent" style="animation:pulse 1.5s infinite"></span>
-          思考中...
+          <span x-text="curRoleId ? gr(curRoleId).name+' 思考中...' : '思考中...'"></span>
+          <span class="text-[9px] text-txt-4" x-show="curRound>0" x-text="'R'+curRound+'/'+maxRounds"></span>
         </span>
       </div>
 
@@ -383,8 +384,9 @@
               </span>
             </div>
             <p class="text-sm font-semibold text-txt-2 mb-1">正在生成分析...</p>
-            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在思考' : '准备中...'"></p>
-            <p class="text-[9px] text-txt-4 mt-1" x-text="'第 '+curRound+'/'+maxRounds+' 轮 · '+fmtElapsed()"></p>
+            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在分析...' : '准备中...'"></p>
+            <p class="text-[9px] text-txt-4 mt-1" x-text="curRound>0 ? '第 '+curRound+'/'+maxRounds+' 轮 · '+fmtElapsed() : fmtElapsed()"></p>
+            <div class="mt-2 w-32 h-1 bg-surface-3 rounded-full overflow-hidden mx-auto"><div class="h-full bg-blue-accent/60 rounded-full animate-pulse" style="width:60%"></div></div>
           </div>
         </div>
         <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
@@ -503,9 +505,10 @@
           <span class="text-[11px] font-semibold text-amber-accent uppercase tracking-wide">审查方 · Reviewer</span>
           <span class="text-[10px] text-txt-4" ></span>
         </div>
-        <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1 text-[10px] text-amber-accent/70">
+        <span x-show="isDebating && typingGroup==='right'" class="flex items-center gap-1.5 text-[10px] text-amber-accent/70">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-accent" style="animation:pulse 1.5s infinite"></span>
-          思考中...
+          <span x-text="curRoleId ? gr(curRoleId).name+' 思考中...' : '思考中...'"></span>
+          <span class="text-[9px] text-txt-4" x-show="curRound>0" x-text="'R'+curRound+'/'+maxRounds"></span>
         </span>
       </div>
 
@@ -572,7 +575,9 @@
               </span>
             </div>
             <p class="text-sm font-semibold text-txt-2 mb-1">审查方准备发言...</p>
-            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在思考' : '等待建设方完成...'"></p>
+            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在分析...' : '等待建设方完成...'"></p>
+            <p class="text-[9px] text-txt-4 mt-1" x-text="curRound>0 ? '第 '+curRound+'/'+maxRounds+' 轮 · '+fmtElapsed() : fmtElapsed()"></p>
+            <div class="mt-2 w-32 h-1 bg-surface-3 rounded-full overflow-hidden mx-auto"><div class="h-full bg-amber-accent/60 rounded-full animate-pulse" style="width:60%"></div></div>
           </div>
         </div>
         <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
@@ -1280,7 +1285,13 @@
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.leftModel;this.curRoleId=role.id;
-                await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                try{
+                  await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                }catch(e){
+                  if(e.name==='AbortError')throw e;
+                  m.content=`> ⚠️ **${role.name} 生成失败**: ${e.message?.slice(0,200)||'未知错误'}`;
+                }
+                if(!m.content||!m.content.trim())m.content=`> ⚠️ **${role.name}** 未返回内容（可能被 API 过滤或超时）`;
                 m.isStreaming=false;
               }
               this.typingGroup=null;
@@ -1291,7 +1302,13 @@
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.rightModel;this.curRoleId=role.id;
-                await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                try{
+                  await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                }catch(e){
+                  if(e.name==='AbortError')throw e;
+                  m.content=`> ⚠️ **${role.name} 生成失败**: ${e.message?.slice(0,200)||'未知错误'}`;
+                }
+                if(!m.content||!m.content.trim())m.content=`> ⚠️ **${role.name}** 未返回内容（可能被 API 过滤或超时）`;
                 m.isStreaming=false;
                 if(this.consensusMode==='auto'&&round>=2&&this.detectCns(m.content)){this.cns=m.content;}
               }

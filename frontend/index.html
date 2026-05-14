@@ -180,7 +180,7 @@
         <span x-show="totalCost>0" class="text-[10px] text-amber-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
       </div>
       <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-black/5 text-[10px] font-medium text-txt-3 hover:text-txt-1 transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
-      <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置 (⌘/,)">
+      <button @click="showSettings=!showSettings" aria-label="打开设置" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置 (⌘/,)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </button>
       <button class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors">
@@ -327,7 +327,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="flex-1 overflow-y-auto py-2" id="scroll-left">
+      <div class="flex-1 overflow-y-auto py-2" id="scroll-left" role="log" aria-live="polite" aria-label="建设方消息区域">
         <!-- Debate Progress Timeline -->
         <div x-show="isDebating || (msgs.length > 0 && curRound > 0)" class="debate-timeline px-4 py-2.5 mx-2 mb-2 rounded-lg sticky top-0 z-10">
           <div class="flex items-center justify-between mb-1.5">
@@ -464,11 +464,11 @@
         </div>
         <!-- Chat Input -->
         <div class="chat-input-wrapper flex items-end gap-2">
-          <textarea x-ref="chatInputLeft" x-model="chatText" rows="1" placeholder="输入评论... (⌘/Ctrl+Enter 发送)"
+          <textarea x-ref="chatInputLeft" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'补充说明...':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
             @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('left');}"
             class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-blue-accent/50 transition-colors"
             style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
-          <button @click="chatText.trim() && sendChat('left')" :disabled="!chatText.trim()"
+          <button @click="chatText.trim() && sendChat('left')" :disabled="!chatText.trim()" aria-label="发送消息"
             class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
             :class="chatText.trim() ? 'bg-blue-accent text-white hover:bg-blue-accent/90' : 'bg-black/[.04] text-txt-4'">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
@@ -503,7 +503,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="flex-1 overflow-y-auto py-2" id="scroll-right">
+      <div class="flex-1 overflow-y-auto py-2" id="scroll-right" role="log" aria-live="polite" aria-label="审查方消息区域">
         <!-- Debate Progress Timeline (right panel) -->
         <div x-show="isDebating || (msgs.length > 0 && curRound > 0)" class="debate-timeline px-4 py-2.5 mx-2 mb-2 rounded-lg sticky top-0 z-10">
           <div class="flex items-center justify-between mb-1.5">
@@ -630,11 +630,15 @@
           <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">工具</span>
         </div>
         <div class="flex items-center justify-between mb-2">
-          <button x-show="isDebating" @click="abort()" class="px-3 py-1.5 text-[11px] font-medium bg-black/5 text-txt-2 rounded hover:bg-black/10 transition-colors">■ 停止</button>
-          <button x-show="!isDebating && msgs.length>0" @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-black/[.03] text-txt-3 rounded hover:bg-black/5 transition-colors flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            导出
-          </button>
+          <button x-show="isDebating" @click="abort()" aria-label="停止辩论" class="px-3 py-1.5 text-[11px] font-medium bg-black/5 text-txt-2 rounded hover:bg-black/10 transition-colors">■ 停止</button>
+          <div x-show="!isDebating && msgs.length>0" class="flex items-center gap-1.5">
+            <button @click="copyToClip()" class="px-3 py-1.5 text-[11px] font-medium bg-black/[.03] text-txt-3 rounded hover:bg-black/5 transition-colors flex items-center gap-1">
+              📋 复制
+            </button>
+            <button @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-black/[.03] text-txt-3 rounded hover:bg-black/5 transition-colors flex items-center gap-1">
+              ⬇️ 下载
+            </button>
+          </div>
           <div class="flex items-center gap-2">
             <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
             <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-amber-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
@@ -642,11 +646,11 @@
         </div>
         <!-- Chat Input -->
         <div class="chat-input-wrapper flex items-end gap-2">
-          <textarea x-ref="chatInputRight" x-model="chatText" rows="1" placeholder="输入评论... (⌘/Ctrl+Enter 发送)"
+          <textarea x-ref="chatInputRight" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'补充说明...':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
             @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('right');}"
             class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-amber-accent/50 transition-colors"
             style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
-          <button @click="chatText.trim() && sendChat('right')" :disabled="!chatText.trim()"
+          <button @click="chatText.trim() && sendChat('right')" :disabled="!chatText.trim()" aria-label="发送消息"
             class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
             :class="chatText.trim() ? 'bg-amber-accent text-white hover:bg-amber-accent/90' : 'bg-black/[.04] text-txt-4'">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
@@ -667,7 +671,7 @@
       <div x-show="stab==='roles'" class="flex-1 overflow-y-auto p-3 space-y-3">
         <!-- Actions -->
         <div class="space-y-1.5">
-          <button @click="start()" :disabled="!canGo || isDebating"
+          <button @click="start()" :disabled="!canGo || isDebating" aria-label="开始辩论"
             class="w-full flex items-center gap-2 px-3 py-2 bg-blue-accent/15 text-blue-accent text-[11px] font-medium rounded-md hover:bg-blue-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             开始辩论
@@ -688,6 +692,7 @@
 
         <!-- Upload -->
         <div class="rounded-lg bg-surface-3 border border-border-dim glow-orange transition-all cursor-pointer"
+             aria-label="上传文件" role="button" tabindex="0"
              @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-blue-accent/50')" @dragleave.prevent="$el.classList.remove('border-blue-accent/50')" @drop.prevent="$el.classList.remove('border-blue-accent/50'); handleDrop($event)">
           <input type="file" x-ref="fi" class="hidden" multiple accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
           <div class="flex items-center gap-2 px-3 py-2.5">
@@ -769,6 +774,14 @@
   <!-- Error -->
   <div x-show="err" x-cloak x-transition class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-500/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
     <span x-text="err"></span><button @click="err=''" class="text-txt-1/70 hover:text-txt-1">&times;</button>
+  </div>
+
+  <!-- Toast -->
+  <div x-show="toast" x-cloak
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-green-600/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+    <span x-text="toast"></span>
   </div>
 
   <script>
@@ -1127,7 +1140,7 @@
         typingGroup:null, totalTokens:0, totalCost:0, hist:[],
         toolMsgs:[], curModelCfg:null, curRoleId:null,
         // Chat & Progress
-        userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null,
+        userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null, toast:'',
 
         get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
@@ -1340,6 +1353,14 @@
         loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';this.toolMsgs=h.toolMsgs||[];this.userMsgs=h.userMsgs||[];this.debateStartTime=null;this.debateEndTime=null;if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
+        async copyToClip(){
+          if(!this.msgs.length)return;
+          let c=`# DebateAI 辩论记录\n\n- **文件**: ${this.fname||'N/A'}\n- **角色**: ${this.roles.map(id=>this.gr(id).name).join(', ')}\n- **轮次**: ${this.curRound}\n\n---\n\n`;
+          for(const msg of this.msgs){const r=this.gr(msg.roleId);c+=`## ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`;}
+          if(this.cns)c+=`## 共识结论\n\n${this.cns}\n`;
+          try{await navigator.clipboard.writeText(c);this.showToast('已复制到剪贴板');}catch(e){this.showToast('复制失败: '+e.message);};
+        },
+        showToast(msg){this.toast=msg;setTimeout(()=>this.toast='',2500);},
         exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',msgs:this.msgs,cns:this.cns},'md');},
         expH(h,fmt){
           let c,m,e;

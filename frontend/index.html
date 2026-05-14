@@ -771,7 +771,7 @@
           try{
             const lines=ctx.material.split('\n');const rx=new RegExp(p.pattern,'gi');
             const cl=Math.min(p.context_lines||2,10);const hits=[];
-            for(let i=0;i<lines.length;i++){if(rx.test(lines[i])){const s=Math.max(0,i-cl),e=Math.min(lines.length-1,i+cl);hits.push({line:i+1,match:lines[i].trim(),context:lines.slice(s,e+1).map((l,j)=>({num:s+j+1,text:l})));if(hits.length>=20)break;}}
+            for(let i=0;i<lines.length;i++){if(rx.test(lines[i])){const s=Math.max(0,i-cl),e=Math.min(lines.length-1,i+cl);hits.push({line:i+1,match:lines[i].trim(),context:lines.slice(s,e+1).map((l,j)=>({num:s+j+1,text:l}))});if(hits.length>=20)break;}}
             return{total:hits.length,results:hits,pattern:p.pattern};
           }catch(e){return{error:'正则表达式无效: '+e.message};}
         }

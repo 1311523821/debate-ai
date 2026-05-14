@@ -714,29 +714,32 @@
         leftModelId:null, rightModelId:null,
         get leftModel(){ return this.models.find(m=>m.id===this.leftModelId)||null; },
         get rightModel(){ return this.models.find(m=>m.id===this.rightModelId)||null; },
-        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai'}; this.models.push(m); },
+        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0}; this.models.push(m); },
         rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; },
         async testModel(id){
           const m=this.models.find(x=>x.id===id); if(!m)return;
           if(!m.baseUrl||!m.apiKey||!m.model){m._testOk=false;m._testErr='请填写完整配置';return;}
           m._testing=true;m._testOk=null;m._testErr='';m._testMs=0;
           const t0=performance.now();
+          const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),15000);
           try{
             const isAnt=(m.proto||'openai')==='anthropic';
+            const base=m.baseUrl.replace(/\/+$/,'');
             const url=isAnt
-              ? m.baseUrl.replace(/\/+$/,'')+'/v1/messages'
-              : m.baseUrl.replace(/\/+$/,'')+'/chat/completions';
+              ? (base.endsWith('/v1')?base.slice(0,-3):base)+'/v1/messages'
+              : base+'/chat/completions';
             const headers={'Content-Type':'application/json'};
             if(isAnt){headers['x-api-key']=m.apiKey;headers['anthropic-version']='2023-06-01';}
             else{headers['Authorization']=`Bearer ${m.apiKey}`;}
             const body=isAnt
               ? JSON.stringify({model:m.model,max_tokens:5,messages:[{role:'user',content:'hi'}]})
               : JSON.stringify({model:m.model,max_tokens:5,messages:[{role:'user',content:'hi'}],stream:false});
-            const resp=await fetch(url,{method:'POST',headers,body});
+            const resp=await fetch(url,{method:'POST',headers,body,signal:ac.signal});
+            clearTimeout(timer);
             const ms=Math.round(performance.now()-t0);
             if(!resp.ok){const txt=await resp.text().catch(()=>'');m._testOk=false;m._testErr=`HTTP ${resp.status}: ${txt.slice(0,120)}`;}
             else{await resp.json();m._testOk=true;m._testMs=ms;}
-          }catch(e){m._testOk=false;m._testErr=e.message?.includes('fetch')?'网络错误或 CORS 限制':e.message.slice(0,120);}
+          }catch(e){clearTimeout(timer);m._testOk=false;m._testErr=e.name==='AbortError'?'请求超时 (15s)':e.message?.includes('fetch')?'网络错误或 CORS 限制':e.message.slice(0,120);}
           finally{m._testing=false;}
         },
         // Debate
@@ -784,7 +787,7 @@
         applyTxt(){ if(this.dtxt.trim()){this.fcont=this.dtxt.trim();this.fname='直接输入文本';this.fsize=this.fcont.length;this.files=[];} },
 
         saveCfg(){ localStorage.setItem('debateai_cfg',JSON.stringify({models:this.models,leftModelId:this.leftModelId,rightModelId:this.rightModelId,maxRounds:this.maxRounds,consensusMode:this.consensusMode,prompts:this.prompts,roles:this.roles})); this.cfgSaved=true;setTimeout(()=>this.cfgSaved=false,2000); },
-        loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.models&&d.models.length){d.models.forEach(m=>{if(!m.proto)m.proto='openai';});this.models=d.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(d.leftModelId)this.leftModelId=d.leftModelId;if(d.rightModelId)this.rightModelId=d.rightModelId;if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },
+        loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.models&&d.models.length){d.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=d.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(d.leftModelId)this.leftModelId=d.leftModelId;if(d.rightModelId)this.rightModelId=d.rightModelId;if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },
 
         async start(){
           if(!this.canGo)return;
@@ -847,7 +850,8 @@
           const isAnt=(modelCfg.proto||'openai')==='anthropic';
           let url,headers,body;
           if(isAnt){
-            url=modelCfg.baseUrl.replace(/\/+$/,'')+'/v1/messages';
+            const base=modelCfg.baseUrl.replace(/\/+$/,'');
+            url=(base.endsWith('/v1')?base.slice(0,-3):base)+'/v1/messages';
             headers={'Content-Type':'application/json','x-api-key':modelCfg.apiKey,'anthropic-version':'2023-06-01'};
             const sys=[];const msgs=[];
             for(const m of messages){if(m.role==='system')sys.push(m.content);else msgs.push(m);}
@@ -883,7 +887,7 @@
 
         loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
         saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
-        loadHist(h){this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
+        loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
         exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',msgs:this.msgs,cns:this.cns},'md');},

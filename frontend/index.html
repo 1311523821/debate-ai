@@ -1423,7 +1423,11 @@
           catch(e){this._log('API 请求失败: '+e.message?.slice(0,100));clearTimeout(timeoutTimer);throw e;}
           clearTimeout(timeoutTimer);
           this._log('API 响应: HTTP '+resp.status+(resp.ok?' ✓':' ✗'));
-          if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
+          if(!resp.ok){
+            let errDetail='';try{errDetail=await resp.text();}catch(e){}
+            this._log('API 错误详情: '+errDetail.slice(0,200));
+            throw new Error('API 返回 HTTP '+resp.status+': '+(errDetail||resp.statusText).slice(0,200));
+          }
           if(!resp.body){throw new Error('API 返回空响应体（可能是 CORS 或代理问题）');}
           // Check Content-Type — if not streaming, parse as regular JSON fallback
           const ct=resp.headers.get('content-type')||'';
@@ -1475,8 +1479,20 @@
           for(let tr=0;tr<maxTR;tr++){
             const result=await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
             if(!result.toolCalls||result.toolCalls.length===0){
-              this._log('  第'+(tr+1)+'轮: 无工具调用，返回内容');
-              return;
+              this._log('  第'+(tr+1)+'轮: 无工具调用，内容 '+(result.content?.length||0)+'字');
+              // If content is empty, try non-streaming fallback
+              if(!result.content||!result.content.trim()){
+                this._log('  流式返回空内容，尝试非流式请求...');
+                try{
+                  const fallback=await this.callNonStreaming(this.curModelCfg,allMsgs);
+                  if(fallback.content&&onChunk){onChunk(fallback.content,null);}
+                  return fallback;
+                }catch(e){
+                  this._log('  非流式回退也失败: '+e.message?.slice(0,100));
+                  return result;
+                }
+              }
+              return result;
             }
             this._log('  第'+(tr+1)+'轮: '+result.toolCalls.length+'个工具调用，执行中...');
             allMsgs.push({role:'assistant',content:result.content||'',tool_calls:result.toolCalls});
@@ -1490,6 +1506,27 @@
           this._log('  工具调用达上限('+maxTR+'轮)，最终请求...');
           const finalResult=await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
           this._log('  最终结果: '+(finalResult.content?.length||0)+'字 · 工具: '+(finalResult.toolCalls?.length||0));
+          return finalResult;
+        },
+
+        // Non-streaming fallback
+        async callNonStreaming(modelCfg,messages){
+          if(!modelCfg)throw new Error('未配置模型');
+          this._log('  非流式请求...');
+          const url=modelCfg.baseUrl.replace(/\/+$/,'')+'/chat/completions';
+          const headers={'Content-Type':'application/json','Authorization':`Bearer ${modelCfg.apiKey}`};
+          const body=JSON.stringify({model:modelCfg.model,messages,max_tokens:4096,stream:false});
+          const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),120000);
+          let resp;
+          try{resp=await fetch(url,{method:'POST',headers,body,signal:ac.signal});}
+          catch(e){clearTimeout(timer);this._log('  非流式请求失败: '+e.message?.slice(0,80));throw e;}
+          clearTimeout(timer);
+          this._log('  非流式响应: HTTP '+resp.status);
+          if(!resp.ok){const t=await resp.text().catch(()=>'' );throw new Error('HTTP '+resp.status+': '+t.slice(0,200));}
+          const j=await resp.json();
+          const content=j.choices?.[0]?.message?.content||'';
+          this._log('  非流式结果: '+content.length+'字');
+          return{content,toolCalls:[]};
         },
 
         detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},

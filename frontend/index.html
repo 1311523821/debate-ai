@@ -1454,23 +1454,31 @@
           }else{
             const tcIdx={};
             while(true){const{done,value}=await reader.read();if(done)break;resetStreamTimer();buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]'){if(streamTimer)clearTimeout(streamTimer);return toolCalls.length>0?{content,toolCalls}:{content};}try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;
-              if(dt?.content){content+=dt.content;if(onChunk)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}
-              if(dt?.tool_calls){for(const tc of dt.tool_calls){const i=tc.index;if(!tcIdx[i])tcIdx[i]={id:'',name:'',args:''};if(tc.id)tcIdx[i].id=tc.id;if(tc.function?.name)tcIdx[i].name=tc.function.name;if(tc.function?.arguments)tcIdx[i].args+=tc.function.arguments;}}
-              if(j.choices?.[0]?.finish_reason==='tool_calls'){for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}if(streamTimer)clearTimeout(streamTimer);return{content,toolCalls};}
+              if(dt?.content){if(!content)this._log('  收到首个内容数据');content+=dt.content;if(onChunk)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}
+              if(dt?.tool_calls){this._log('  收到 tool_calls delta');for(const tc of dt.tool_calls){const i=tc.index;if(!tcIdx[i])tcIdx[i]={id:'',name:'',args:''};if(tc.id)tcIdx[i].id=tc.id;if(tc.function?.name)tcIdx[i].name=tc.function.name;if(tc.function?.arguments)tcIdx[i].args+=tc.function.arguments;}}
+              if(j.choices?.[0]?.finish_reason==='tool_calls'){this._log('  收到 finish_reason=tool_calls, '+Object.keys(tcIdx).length+'个工具');for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}if(streamTimer)clearTimeout(streamTimer);return{content,toolCalls};}
+              if(j.choices?.[0]?.finish_reason==='stop'&&!content){this._log('  收到 finish_reason=stop 但内容为空');}
             }catch(e){}}}
           }
           if(streamTimer)clearTimeout(streamTimer);
           if(!content&&!toolCalls.length){this._log('⚠ 流式读取结束但无内容，可能是 API 不支持流式返回');throw new Error('API 返回空内容（流式读取无数据）。请检查 API 是否支持 SSE 流式返回，或尝试更换 Base URL。');}
           this._log('API 流结束 · 内容: '+(content.length||0)+'字 · 工具调用: '+(toolCalls.length||0));
+          if(toolCalls.length>0)this._log('  工具: '+toolCalls.map(tc=>tc.function?.name).join(', '));
+          if(!content&&!toolCalls.length)this._log('⚠ 空响应 — API 未返回任何内容或工具调用');
           return toolCalls.length>0?{content,toolCalls}:{content};
         },
 
         async callWithTools(roleId,messages,onChunk){
           const toolDefs=getToolDefs(roleId);
           const maxTR=3;let allMsgs=[...messages];
+          if(toolDefs.length>0)this._log('  工具定义: '+toolDefs.map(t=>t.function.name).join(', '));
           for(let tr=0;tr<maxTR;tr++){
             const result=await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
-            if(!result.toolCalls||result.toolCalls.length===0)return;
+            if(!result.toolCalls||result.toolCalls.length===0){
+              this._log('  第'+(tr+1)+'轮: 无工具调用，返回内容');
+              return;
+            }
+            this._log('  第'+(tr+1)+'轮: '+result.toolCalls.length+'个工具调用，执行中...');
             allMsgs.push({role:'assistant',content:result.content||'',tool_calls:result.toolCalls});
             for(const tc of result.toolCalls){
               let toolResult;try{const args=JSON.parse(tc.function.arguments||'{}');toolResult=execTool(tc.function.name,args,{material:this.fcont,files:this.files});}catch(e){toolResult={error:e.message};}
@@ -1479,7 +1487,9 @@
               this.toolMsgs.push({name:tc.function.name,icon:(TOOL_REGISTRY[tc.function.name]||{}).icon||'🔧',args:tc.function.arguments,result:toolResult,roleId:this.curRoleId,round:this.curRound});
             }
           }
-          await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
+          this._log('  工具调用达上限('+maxTR+'轮)，最终请求...');
+          const finalResult=await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
+          this._log('  最终结果: '+(finalResult.content?.length||0)+'字 · 工具: '+(finalResult.toolCalls?.length||0));
         },
 
         detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},

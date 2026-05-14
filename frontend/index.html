@@ -181,6 +181,9 @@
         <span x-show="totalCost>0" class="text-[10px] text-amber-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
       </div>
       <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-black/5 text-[10px] font-medium text-txt-3 hover:text-txt-1 transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
+      <button @click="_showDbg=!_showDbg" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="调试日志" :class="_showDbg&&'bg-red-500/10 text-red-500'">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </button>
       <button @click="showSettings=!showSettings" aria-label="打开设置" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置 (⌘/,)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </button>
@@ -828,6 +831,24 @@
     <span x-text="toast"></span>
   </div>
 
+  <!-- Debug Panel -->
+  <div x-show="_showDbg" x-cloak x-transition
+    class="fixed bottom-0 left-0 right-0 z-40 bg-black/95 text-green-400 text-[10px] font-mono p-3 max-h-48 overflow-y-auto border-t border-green-500/30">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-green-300 font-bold">🔍 调试日志 <span class="text-txt-4">({{_dbg.length}})</span></span>
+      <div class="flex gap-2">
+        <button @click="_dbg=[]" class="text-txt-4 hover:text-green-300 text-[9px]">清空</button>
+        <button @click="_showDbg=false" class="text-txt-4 hover:text-green-300">✕</button>
+      </div>
+    </div>
+    <template x-for="(d, i) in _dbg" :key="i">
+      <div class="py-0.5 border-b border-white/5" :class="d.m.includes('✗')?'text-red-400':d.m.includes('✓')?'text-green-400':d.m.includes('▶')?'text-yellow-300':'text-green-400/70'">
+        <span class="text-txt-4" x-text="d.t"></span> <span x-text="d.m"></span>
+      </div>
+    </template>
+    <div x-show="_dbg.length===0" class="text-txt-4 py-2 text-center">暂无日志。点击「开始辩论」后会显示 API 调用详情。</div>
+  </div>
+
   <script>
     const ROLES = [
       { id:'architect', name:'架构师', side:'left', desc:'系统架构设计',
@@ -1185,6 +1206,9 @@
         toolMsgs:[], curModelCfg:null, curRoleId:null,
         // Chat & Progress
         userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null, toast:'', userGoal:'', _tick:0, _tickTimer:null,
+        // Debug log
+        _dbg:[], _showDbg:false,
+        _log(t){const ts=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});this._dbg.push({t:ts,m:t});if(this._dbg.length>100)this._dbg=this._dbg.slice(-50);console.log('[DebateAI]',t);},
 
         get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
@@ -1277,6 +1301,8 @@
           this.debateStartTime=Date.now();this.debateEndTime=null;this._userComments=[...this.userMsgs];
           if(this._tickTimer)clearInterval(this._tickTimer);
           this._tickTimer=setInterval(()=>{this._tick++;},1000);
+          this._log('辩论开始 · 角色: '+this.roles.map(id=>this.gr(id).name).join(', '));
+          this._log('左模型: '+(this.leftModel?.name||'未配置')+' | 右模型: '+(this.rightModel?.name||'未配置'));
           const allRoleObjs=this.roles.map(id=>ROLES.find(r=>r.id===id)).filter(Boolean);
           try{
             for(let round=1;round<=this.maxRounds;round++){
@@ -1288,10 +1314,13 @@
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.leftModel;this.curRoleId=role.id;
+                this._log('R'+round+' ▶ '+role.name+' 开始生成...');
                 try{
                   await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                  this._log('R'+round+' ✓ '+role.name+' 完成 ('+m.content.length+'字)');
                 }catch(e){
                   if(e.name==='AbortError')throw e;
+                  this._log('R'+round+' ✗ '+role.name+' 失败: '+e.message?.slice(0,100));
                   m.content=`> ⚠️ **${role.name} 生成失败**: ${e.message?.slice(0,200)||'未知错误'}`;
                 }
                 if(!m.content||!m.content.trim())m.content=`> ⚠️ **${role.name}** 未返回内容（可能被 API 过滤或超时）`;
@@ -1305,10 +1334,13 @@
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.rightModel;this.curRoleId=role.id;
+                this._log('R'+round+' ▶ '+role.name+' 开始生成...');
                 try{
                   await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                  this._log('R'+round+' ✓ '+role.name+' 完成 ('+m.content.length+'字)');
                 }catch(e){
                   if(e.name==='AbortError')throw e;
+                  this._log('R'+round+' ✗ '+role.name+' 失败: '+e.message?.slice(0,100));
                   m.content=`> ⚠️ **${role.name} 生成失败**: ${e.message?.slice(0,200)||'未知错误'}`;
                 }
                 if(!m.content||!m.content.trim())m.content=`> ⚠️ **${role.name}** 未返回内容（可能被 API 过滤或超时）`;
@@ -1367,6 +1399,7 @@
             combinedSignal=timeoutAc.signal;
           }
           const isAnt=(modelCfg.proto||'openai')==='anthropic';
+          this._log('API 请求: '+(isAnt?'Anthropic':'OpenAI')+' · 模型: '+modelCfg.model);
           let url,headers,body;
           if(isAnt){
             const base=modelCfg.baseUrl.replace(/\/+$/,'');
@@ -1387,8 +1420,9 @@
           }
           let resp;
           try{resp=await fetch(url,{method:'POST',headers,body,signal:combinedSignal});}
-          catch(e){clearTimeout(timeoutTimer);throw e;}
+          catch(e){this._log('API 请求失败: '+e.message?.slice(0,100));clearTimeout(timeoutTimer);throw e;}
           clearTimeout(timeoutTimer);
+          this._log('API 响应: HTTP '+resp.status+(resp.ok?' ✓':' ✗'));
           if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
           if(!resp.body){throw new Error('API 返回空响应体（可能是 CORS 或代理问题）');}
           const reader=resp.body.getReader(),dec=new TextDecoder();let buf='',content='',toolCalls=[];
@@ -1409,6 +1443,7 @@
               if(j.choices?.[0]?.finish_reason==='tool_calls'){for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}return{content,toolCalls};}
             }catch(e){}}}
           }
+          this._log('API 流结束 · 内容: '+(content.length||0)+'字 · 工具调用: '+(toolCalls.length||0));
           return toolCalls.length>0?{content,toolCalls}:{content};
         },
 

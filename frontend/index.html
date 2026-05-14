@@ -12,7 +12,7 @@
           colors: {
             surface: '#FFF8F0', 'surface-2': '#FFF1E3', 'surface-3': '#FFE8D0', 'surface-4': '#FFFDF9',
             'border-dim': '#F0D9C0',
-            'orange-accent': '#FF6A00', 'amber-accent': '#FF9500',
+            'orange-accent': '#FF6A00', 'amber-accent': '#FF9500', 'blue-accent': '#3B82F6',
             'txt': { 1: '#2C1810', 2: '#5C3D2E', 3: '#8B6B5A', 4: '#B89A88' },
           }
         }
@@ -57,7 +57,58 @@
     .typing-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:#B89A88; margin:0 2px; animation:typingBounce 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay:-.32s }
     .typing-dot:nth-child(2) { animation-delay:-.16s }
-    .glow-orange:focus-within { box-shadow: 0 0 0 2px #FF6A00, 0 0 20px rgba(255,106,0,0.1); }
+
+    /* ── 流式光标 ── */
+    @keyframes blink-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
+    .streaming-cursor::after {
+      content:'▊'; display:inline; color:#3B82F6; font-weight:400;
+      animation: blink-cursor .8s step-end infinite; margin-left:1px;
+    }
+    .streaming-cursor-right::after {
+      content:'▊'; display:inline; color:#FF9500; font-weight:400;
+      animation: blink-cursor .8s step-end infinite; margin-left:1px;
+    }
+
+    /* ── 角色正在输入指示 ── */
+    @keyframes typing-role-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-3px)} }
+    .typing-role-indicator .role-dot { display:inline-block; width:5px; height:5px; border-radius:50%; margin:0 1.5px; animation:typing-role-bounce 1.2s infinite ease-in-out both; }
+    .typing-role-indicator .role-dot:nth-child(2) { animation-delay:.15s }
+    .typing-role-indicator .role-dot:nth-child(3) { animation-delay:.3s }
+
+    /* ── 用户消息气泡 ── */
+    .user-msg-bubble {
+      background: linear-gradient(135deg, #3B82F6, #60A5FA);
+      color: white;
+      border-radius: 16px 16px 4px 16px;
+      max-width: 80%;
+      margin-left: auto;
+    }
+    .user-msg-bubble .md-content { color: rgba(255,255,255,0.95); }
+    .user-msg-bubble .md-content code { background: rgba(255,255,255,0.2); color: white; }
+    .user-msg-bubble .md-content pre { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.15); }
+    .user-msg-bubble .md-content pre code { color: rgba(255,255,255,0.9); }
+    .user-msg-bubble .md-content strong { color: white; }
+    .user-msg-bubble .md-content a { color: rgba(255,255,255,0.9); }
+    .user-msg-bubble .md-content blockquote { border-left-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); }
+
+    /* ── 聊天输入框 ── */
+    .chat-input-wrapper textarea {
+      max-height: 6rem; /* ~4 lines */
+      min-height: 2.25rem;
+      field-sizing: content;
+    }
+
+    /* ── 顶部进度时间线 ── */
+    .debate-timeline {
+      background: linear-gradient(90deg, rgba(255,106,0,0.08), rgba(255,149,0,0.08));
+      border-bottom: 1px solid rgba(240,217,192,0.6);
+    }
+    .timeline-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    .timeline-dot.active { box-shadow: 0 0 0 3px rgba(255,106,0,0.2); }
+    .glow-orange:focus-within { box-shadow: 0 0 0 2px #3B82F6, 0 0 20px rgba(59,130,246,0.1); }
     .glow-amber:focus-within { box-shadow: 0 0 0 2px #FF9500, 0 0 20px rgba(255,149,0,0.1); }
     textarea { resize: none; }
     textarea::-webkit-scrollbar { width: 3px; }
@@ -67,28 +118,54 @@
     .md-content p { margin-bottom:.5em; }
     .md-content ul,.md-content ol { margin-left:1.2em; margin-bottom:.5em }
     .md-content li { margin-bottom:.15em }
-    .md-content code { background:rgba(255,106,0,0.08); padding:.1em .3em; border-radius:4px; font-size:.82em; color:#E85D00; font-family:'JetBrains Mono',monospace; }
+    .md-content code { background:rgba(59,130,246,0.08); padding:.1em .3em; border-radius:4px; font-size:.82em; color:#2563EB; font-family:'JetBrains Mono',monospace; }
     .md-content pre { background:#FFF1E3; border:1px solid #F0D9C0; border-radius:8px; padding:.7em; overflow-x:auto; margin:.5em 0 }
     .md-content pre code { background:transparent; padding:0; font-size:.78em; line-height:1.6; color:#2C1810 }
-    .md-content blockquote { border-left:3px solid #FF6A00; padding-left:.7em; color:#8B6B5A; margin:.5em 0 }
+    .md-content blockquote { border-left:3px solid #3B82F6; padding-left:.7em; color:#8B6B5A; margin:.5em 0 }
     .md-content table { border-collapse:collapse; width:100%; margin:.5em 0 }
     .md-content th,.md-content td { border:1px solid #F0D9C0; padding:.3em .5em; text-align:left }
-    .md-content th { background:rgba(255,106,0,0.06); font-weight:600 }
+    .md-content th { background:rgba(59,130,246,0.06); font-weight:600 }
     .md-content strong { color:#2C1810; }
-    .md-content a { color:#FF6A00; text-decoration:underline }
+    .md-content a { color:#3B82F6; text-decoration:underline }
     .prompt-textarea { font-family:'JetBrains Mono',monospace; font-size:.75rem; line-height:1.5; }
 
     /* ── 磨砂玻璃面板 ── */
     .frosted { backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2); }
   </style>
 </head>
-<body x-data="app()" x-init="init()">
+<body x-data="app()" x-init="init()" @keydown.window="if($event.key==='Escape'&&showSettings){showSettings=false;$event.preventDefault();} if($event.key==='/'&&($event.metaKey||$event.ctrlKey)){showSettings=!showSettings;$event.preventDefault();}">
+
+  <!-- ═══ Onboarding Overlay ═══ -->
+  <div x-show="showOnboard" x-cloak
+    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-surface-4 rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden" @click.stop>
+      <div class="p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-blue-accent/15">
+          <span class="text-3xl">🥊</span>
+        </div>
+        <h2 class="text-lg font-bold text-txt-1 mb-2" x-text="onboardStep===0?'欢迎使用 DebateAI':onboardStep===1?'配置 AI 模型':'上传材料开始辩论'"></h2>
+        <p class="text-sm text-txt-3 mb-6 leading-relaxed" x-text="onboardStep===0?'多个 AI 角色围绕你的代码/论文互相审查，最终达成共识。':'点击右上角 ⚙️ 设置按钮，添加你的 API 密钥。支持 DeepSeek、OpenAI 等。':'点击右侧「上传文件」或直接在底部输入框粘贴文本，然后点击「开始辩论」。'"></p>
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <template x-for="i in 3" :key="'dot-'+i">
+            <div class="w-2 h-2 rounded-full transition-colors" :class="onboardStep>=i-1?'bg-blue-accent':'bg-black/10'"></div>
+          </template>
+        </div>
+        <div class="flex gap-2">
+          <button x-show="onboardStep>0" @click="onboardStep--" class="flex-1 px-4 py-2 text-sm text-txt-3 rounded-lg border border-border-dim hover:bg-black/5 transition-colors">上一步</button>
+          <button @click="onboardStep<2?onboardStep++:finishOnboard()" class="flex-1 px-4 py-2 text-sm font-medium bg-blue-accent text-white rounded-lg hover:bg-blue-accent/90 transition-colors" x-text="onboardStep<2?'下一步':'开始使用'"></button>
+        </div>
+        <button @click="finishOnboard()" class="mt-3 text-[10px] text-txt-4 hover:text-txt-2">跳过引导</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ═══ Header ═══ -->
   <header class="frosted flex items-center justify-between h-11 px-4 bg-surface-4/90 border-b border-border-dim select-none flex-shrink-0">
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-1.5">
-        <div class="w-2 h-2 rounded-full bg-orange-accent opacity-80"></div>
+        <div class="w-2 h-2 rounded-full bg-blue-accent opacity-80"></div>
         <span class="text-[11px] font-semibold text-txt-3 tracking-wider uppercase">Chat</span>
       </div>
       <div class="w-px h-3.5 bg-border-dim"></div>
@@ -103,7 +180,7 @@
         <span x-show="totalCost>0" class="text-[10px] text-amber-accent font-mono" x-text="'¥'+totalCost.toFixed(2)"></span>
       </div>
       <button @click="toggleLang()" class="px-2 py-1 rounded hover:bg-black/5 text-[10px] font-medium text-txt-3 hover:text-txt-1 transition-colors" x-text="lang==='zh'?'EN':'中文'"></button>
-      <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置">
+      <button @click="showSettings=!showSettings" class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors" title="设置 (⌘/,)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </button>
       <button class="p-1.5 rounded hover:bg-black/5 text-txt-4 hover:text-txt-1 transition-colors">
@@ -131,9 +208,22 @@
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <h3 class="text-[10px] font-bold text-txt-3 uppercase tracking-wider">模型管理</h3>
-            <button @click="addModel()" class="text-[10px] text-orange-accent hover:text-orange-accent/80 flex items-center gap-0.5">
+            <button @click="addModel()" class="text-[10px] text-blue-accent hover:text-blue-accent/80 flex items-center gap-0.5">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
               添加模型
+            </button>
+          </div>
+          <!-- Quick Presets -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-[9px] text-txt-4 mr-0.5">快速预设:</span>
+            <button @click="applyPreset('deepseek')" class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10 hover:bg-blue-accent/10 hover:text-blue-accent hover:border-blue-accent/30 transition-colors">
+              <span>🔮</span> DeepSeek
+            </button>
+            <button @click="applyPreset('openai')" class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10 hover:bg-blue-accent/10 hover:text-blue-accent hover:border-blue-accent/30 transition-colors">
+              <span>🤖</span> OpenAI
+            </button>
+            <button @click="applyPreset('moonshot')" class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10 hover:bg-blue-accent/10 hover:text-blue-accent hover:border-blue-accent/30 transition-colors">
+              <span>🌙</span> Moonshot
             </button>
           </div>
           <template x-for="(m, mi) in models" :key="m.id">
@@ -143,18 +233,18 @@
                 <button @click="rmModel(m.id)" class="text-txt-4 hover:text-red-400 text-xs p-0.5">&times;</button>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <input type="text" x-model="m.baseUrl" placeholder="Base URL" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
-                <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
+                <input type="text" x-model="m.baseUrl" placeholder="Base URL" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
+                <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
               </div>
-              <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
+              <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
               <div class="flex items-center gap-2">
-                <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-orange-accent/50">
+                <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
                   <option value="openai">OpenAI 兼容</option>
                   <option value="anthropic">Anthropic 兼容</option>
                 </select>
                 <button @click="testModel(m.id)" :disabled="m._testing"
                   class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border transition-colors"
-                  :class="m._testOk===true ? 'bg-orange-accent/15 text-orange-accent border-orange-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
+                  :class="m._testOk===true ? 'bg-blue-accent/15 text-blue-accent border-blue-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
                   <svg x-show="!m._testing" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                   <span x-show="m._testing" class="w-3 h-3 border border-txt-3 border-t-transparent rounded-full animate-spin"></span>
                   <span x-text="m._testing ? '测试中...' : m._testOk===true ? '✓ 连通 ('+m._testMs+'ms)' : m._testOk===false ? '✕ 失败' : '测试连接'"></span>
@@ -180,7 +270,7 @@
           <div class="flex flex-wrap gap-1.5 mb-2">
             <template x-for="tpl in templates" :key="tpl.id">
               <button @click="applyTemplate(tpl)" class="px-2 py-1 text-[10px] font-medium rounded border transition-colors"
-                :class="curTpl===tpl.id ? 'bg-orange-accent/15 text-orange-accent border-orange-accent/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
+                :class="curTpl===tpl.id ? 'bg-blue-accent/15 text-blue-accent border-blue-accent/30' : 'bg-black/[.03] text-txt-3 border-black/10 hover:bg-black/5'">
                 <span x-text="tpl.name"></span>
               </button>
             </template>
@@ -208,11 +298,11 @@
             </div>
           </template>
         </div>
-        <button @click="saveCfg()" class="w-full px-4 py-2.5 text-sm font-medium bg-orange-accent text-black rounded-lg hover:bg-orange-accent/90 transition-colors flex items-center justify-center gap-2">
+        <button @click="saveCfg()" class="w-full px-4 py-2.5 text-sm font-medium bg-blue-accent text-white rounded-lg hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           保存配置
         </button>
-        <span x-show="cfgSaved" x-transition class="block text-center text-orange-accent text-sm font-medium">✓ 已保存</span>
+        <span x-show="cfgSaved" x-transition class="block text-center text-blue-accent text-sm font-medium">✓ 已保存</span>
       </div>
     </div>
   </div>
@@ -224,29 +314,59 @@
     <div class="flex-1 min-w-0 flex flex-col border-r border-border-dim">
       <div class="flex items-center justify-between px-4 h-10 border-b border-border-dim bg-surface flex-shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-orange-accent/20 flex items-center justify-center">
-            <svg class="w-3 h-3 text-orange-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <div class="w-5 h-5 rounded bg-blue-accent/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-blue-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
           </div>
-          <span class="text-[11px] font-semibold text-orange-accent uppercase tracking-wide">建设方 · Builder</span>
+          <span class="text-[11px] font-semibold text-blue-accent uppercase tracking-wide">建设方 · Builder</span>
           <span class="text-[10px] text-txt-4" ></span>
         </div>
-        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-orange-accent/70">
-          <span class="w-1.5 h-1.5 rounded-full bg-orange-accent" style="animation:pulse 1.5s infinite"></span>
+        <span x-show="isDebating && typingGroup==='left'" class="flex items-center gap-1 text-[10px] text-blue-accent/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-accent" style="animation:pulse 1.5s infinite"></span>
           思考中...
         </span>
       </div>
 
       <!-- Messages -->
       <div class="flex-1 overflow-y-auto py-2" id="scroll-left">
-        <div x-show="leftMsgs.length===0" class="flex items-center justify-center h-full">
+        <!-- Debate Progress Timeline -->
+        <div x-show="isDebating || (msgs.length > 0 && curRound > 0)" class="debate-timeline px-4 py-2.5 mx-2 mb-2 rounded-lg sticky top-0 z-10">
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-txt-2">辩论进度</span>
+              <span x-show="isDebating" class="text-[9px] px-1.5 py-0.5 rounded bg-blue-accent/10 text-blue-accent font-medium"
+                x-text="'第 '+curRound+'/'+maxRounds+' 轮'"></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span x-show="isDebating && typingGroup" class="text-[9px] text-txt-3" x-text="typingGroup==='left'?'建设方发言中':'审查方发言中'"></span>
+              <span x-show="isDebating && debateStartTime" class="text-[9px] text-txt-4" x-text="fmtElapsed()"></span>
+              <span x-show="!isDebating && debateEndTime && debateStartTime" class="text-[9px] font-medium text-txt-3"
+                x-text="'总用时 '+fmtElapsed()"></span>
+            </div>
+          </div>
+          <!-- Progress bar -->
+          <div class="w-full h-1.5 bg-surface-3 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-accent to-amber-accent rounded-full transition-all duration-500"
+              :style="'width:'+pct+'%'"></div>
+          </div>
+          <!-- Role indicators -->
+          <div class="flex items-center gap-1 mt-1.5 overflow-x-auto">
+            <template x-for="(rid, ri) in roles" :key="'tl-'+ri">
+              <span class="text-[8px] px-1.5 py-0.5 rounded-full transition-all whitespace-nowrap"
+                :class="curRoleId===rid && isDebating ? (gr(rid).side==='left'?'bg-blue-accent text-white':'bg-amber-accent text-white') : 'bg-black/[.04] text-txt-4'"
+                x-text="gr(rid).name"></span>
+            </template>
+          </div>
+        </div>
+
+        <div x-show="leftMsgs.length===0 && !isDebating" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-orange-accent/10">
-              <span class="text-2xl opacity-50 text-orange-accent">●</span>
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-blue-accent/10">
+              <span class="text-2xl opacity-50 text-blue-accent">●</span>
             </div>
             <p class="text-xs text-txt-4">建设方的分析将在这里显示</p>
             <div class="flex justify-center gap-1 mt-2">
               <template x-for="id in leftRoles" :key="id">
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-accent/10 text-orange-accent/70" x-text="gr(id).name"></span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-accent/10 text-blue-accent/70" x-text="gr(id).name"></span>
               </template>
             </div>
           </div>
@@ -258,10 +378,10 @@
               <div class="flex gap-3 px-4 py-1.5 msg-in">
                 <div class="w-6 flex-shrink-0"></div>
                 <div class="flex-1 min-w-0 ml-0.5">
-                  <div class="rounded-lg border border-orange-accent/20 bg-orange-accent/5 overflow-hidden">
-                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-orange-accent/10">
+                  <div class="rounded-lg border border-blue-accent/20 bg-blue-accent/5 overflow-hidden">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-accent/10">
                       <span class="text-[11px]" x-text="tm.icon"></span>
-                      <span class="text-[10px] font-semibold text-orange-accent/80" x-text="tm.name"></span>
+                      <span class="text-[10px] font-semibold text-blue-accent/80" x-text="tm.name"></span>
                       <span class="text-[9px] text-txt-4 ml-auto">工具调用</span>
                     </div>
                     <div class="px-3 py-2">
@@ -272,18 +392,32 @@
               </div>
             </template>
             <!-- Message content -->
-            <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-orange-accent/[.04] transition-colors">
-              <div class="w-6 h-6 rounded-full bg-orange-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+            <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-blue-accent/[.04] transition-colors">
+              <div class="w-6 h-6 rounded-full bg-blue-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
                 <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
               </div>
-              <div class="flex-1 border-l-2 border-l-orange-accent/30 pl-3 min-w-0">
+              <div class="flex-1 border-l-2 border-l-blue-accent/30 pl-3 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-[10px] font-bold text-orange-accent/80" x-text="gr(msg.roleId).name"></span>
+                  <span class="text-[10px] font-bold text-blue-accent/80" x-text="gr(msg.roleId).name"></span>
                   <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+                  <span x-show="msg.isStreaming" class="text-[9px] text-blue-accent/60 flex items-center gap-1 ml-1">
+                    <span class="typing-role-indicator flex items-center">
+                      <span class="role-dot bg-blue-accent/60"></span><span class="role-dot bg-blue-accent/60"></span><span class="role-dot bg-blue-accent/60"></span>
+                    </span>
+                  </span>
                 </div>
-                <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+                <div class="md-content break-words" :class="msg.isStreaming && 'streaming-cursor'" x-html="rmd(msg.content)"></div>
               </div>
             </div>
+            <!-- User messages for this round -->
+            <template x-for="(um, ui) in userMsgs.filter(u=>u.round===msg.round && u.side==='left')" :key="'ul-'+idx+'-'+ui">
+              <div class="flex px-4 py-2">
+                <div class="user-msg-bubble px-3 py-2 text-[11px] shadow-sm">
+                  <div class="md-content text-[11px]" x-html="rmd(um.content)"></div>
+                  <div class="text-[8px] text-white/50 mt-1 text-right" x-text="um.time"></div>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
       </div>
@@ -295,7 +429,7 @@
           <!-- Model selector for left panel -->
           <div class="relative" x-data="{open:false}">
             <button @click="open=!open" class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border cursor-pointer transition-colors"
-              :class="leftModel ? 'bg-orange-accent/10 text-orange-accent border-orange-accent/20' : 'bg-black/[.03] text-txt-4 border-black/10 hover:border-black/15'">
+              :class="leftModel ? 'bg-blue-accent/10 text-blue-accent border-blue-accent/20' : 'bg-black/[.03] text-txt-4 border-black/10 hover:border-black/15'">
               <span x-text="leftModel ? leftModel.name : '未配置'"></span>
               <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
@@ -305,8 +439,8 @@
                 <template x-for="m in models" :key="m.id">
                   <button @click="leftModelId=m.id; open=false"
                     class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-left hover:bg-black/[.03] transition-colors"
-                    :class="leftModelId===m.id ? 'bg-orange-accent/10' : ''">
-                    <div class="w-1.5 h-1.5 rounded-full" :class="leftModelId===m.id ? 'bg-orange-accent' : 'bg-transparent'"></div>
+                    :class="leftModelId===m.id ? 'bg-blue-accent/10' : ''">
+                    <div class="w-1.5 h-1.5 rounded-full" :class="leftModelId===m.id ? 'bg-blue-accent' : 'bg-transparent'"></div>
                     <div class="min-w-0">
                       <div class="text-[10px] font-medium text-txt-2 truncate" x-text="m.name"></div>
                       <div class="text-[9px] text-txt-4 truncate" x-text="m.model"></div>
@@ -321,12 +455,24 @@
           </div>
           <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">工具</span>
         </div>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
             <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="'第 '+curRound+'/'+maxRounds+' 轮'"></span>
-            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-orange-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
+            <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-blue-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
           </div>
           <span class="text-[10px] text-txt-4" x-show="isDebating" x-text="pct+'%'"></span>
+        </div>
+        <!-- Chat Input -->
+        <div class="chat-input-wrapper flex items-end gap-2">
+          <textarea x-ref="chatInputLeft" x-model="chatText" rows="1" placeholder="输入评论... (⌘/Ctrl+Enter 发送)"
+            @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('left');}"
+            class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-blue-accent/50 transition-colors"
+            style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
+          <button @click="chatText.trim() && sendChat('left')" :disabled="!chatText.trim()"
+            class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+            :class="chatText.trim() ? 'bg-blue-accent text-white hover:bg-blue-accent/90' : 'bg-black/[.04] text-txt-4'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          </button>
         </div>
       </div>
     </div>
@@ -358,6 +504,34 @@
 
       <!-- Messages -->
       <div class="flex-1 overflow-y-auto py-2" id="scroll-right">
+        <!-- Debate Progress Timeline (right panel) -->
+        <div x-show="isDebating || (msgs.length > 0 && curRound > 0)" class="debate-timeline px-4 py-2.5 mx-2 mb-2 rounded-lg sticky top-0 z-10">
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-txt-2">辩论进度</span>
+              <span x-show="isDebating" class="text-[9px] px-1.5 py-0.5 rounded bg-amber-accent/10 text-amber-accent font-medium"
+                x-text="'第 '+curRound+'/'+maxRounds+' 轮'"></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span x-show="isDebating && typingGroup" class="text-[9px] text-txt-3" x-text="typingGroup==='left'?'建设方发言中':'审查方发言中'"></span>
+              <span x-show="isDebating && debateStartTime" class="text-[9px] text-txt-4" x-text="fmtElapsed()"></span>
+              <span x-show="!isDebating && debateEndTime && debateStartTime" class="text-[9px] font-medium text-txt-3"
+                x-text="'总用时 '+fmtElapsed()"></span>
+            </div>
+          </div>
+          <div class="w-full h-1.5 bg-surface-3 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-accent to-amber-accent rounded-full transition-all duration-500"
+              :style="'width:'+pct+'%'"></div>
+          </div>
+          <div class="flex items-center gap-1 mt-1.5 overflow-x-auto">
+            <template x-for="(rid, ri) in roles" :key="'tlr-'+ri">
+              <span class="text-[8px] px-1.5 py-0.5 rounded-full transition-all whitespace-nowrap"
+                :class="curRoleId===rid && isDebating ? (gr(rid).side==='left'?'bg-blue-accent text-white':'bg-amber-accent text-white') : 'bg-black/[.04] text-txt-4'"
+                x-text="gr(rid).name"></span>
+            </template>
+          </div>
+        </div>
+
         <div x-show="rightMsgs.length===0 && !isDebating" class="flex items-center justify-center h-full">
           <div class="text-center">
             <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-amber-accent/10">
@@ -400,10 +574,24 @@
                 <div class="flex items-center gap-2 mb-1">
                   <span class="text-[10px] font-bold text-amber-accent/80" x-text="gr(msg.roleId).name"></span>
                   <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+                  <span x-show="msg.isStreaming" class="text-[9px] text-amber-accent/60 flex items-center gap-1 ml-1">
+                    <span class="typing-role-indicator flex items-center">
+                      <span class="role-dot bg-amber-accent/60"></span><span class="role-dot bg-amber-accent/60"></span><span class="role-dot bg-amber-accent/60"></span>
+                    </span>
+                  </span>
                 </div>
-                <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+                <div class="md-content break-words" :class="msg.isStreaming && 'streaming-cursor-right'" x-html="rmd(msg.content)"></div>
               </div>
             </div>
+            <!-- User messages for this round -->
+            <template x-for="(um, ui) in userMsgs.filter(u=>u.round===msg.round && u.side==='right')" :key="'ur-'+idx+'-'+ui">
+              <div class="flex px-4 py-2">
+                <div class="user-msg-bubble px-3 py-2 text-[11px] shadow-sm">
+                  <div class="md-content text-[11px]" x-html="rmd(um.content)"></div>
+                  <div class="text-[8px] text-white/50 mt-1 text-right" x-text="um.time"></div>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
       </div>
@@ -441,7 +629,7 @@
           </div>
           <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-black/[.03] text-txt-3 border-black/10">工具</span>
         </div>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-2">
           <button x-show="isDebating" @click="abort()" class="px-3 py-1.5 text-[11px] font-medium bg-black/5 text-txt-2 rounded hover:bg-black/10 transition-colors">■ 停止</button>
           <button x-show="!isDebating && msgs.length>0" @click="exportCur()" class="px-3 py-1.5 text-[11px] font-medium bg-black/[.03] text-txt-3 rounded hover:bg-black/5 transition-colors flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -452,6 +640,18 @@
             <div x-show="isDebating" class="w-16 h-0.5 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-amber-accent rounded-full transition-all" :style="'width:'+pct+'%'"></div></div>
           </div>
         </div>
+        <!-- Chat Input -->
+        <div class="chat-input-wrapper flex items-end gap-2">
+          <textarea x-ref="chatInputRight" x-model="chatText" rows="1" placeholder="输入评论... (⌘/Ctrl+Enter 发送)"
+            @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('right');}"
+            class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-amber-accent/50 transition-colors"
+            style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
+          <button @click="chatText.trim() && sendChat('right')" :disabled="!chatText.trim()"
+            class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+            :class="chatText.trim() ? 'bg-amber-accent text-white hover:bg-amber-accent/90' : 'bg-black/[.04] text-txt-4'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -459,8 +659,8 @@
     <div class="frosted w-60 flex-shrink-0 flex flex-col bg-surface-4/90 border-l border-border-dim overflow-hidden">
 
       <div class="flex border-b border-border-dim">
-        <button @click="stab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='roles'?'text-txt-1 border-b-2 border-orange-accent':'text-txt-4 hover:text-txt-2'">角色</button>
-        <button @click="stab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='history'?'text-txt-1 border-b-2 border-orange-accent':'text-txt-4 hover:text-txt-2'">历史 <span x-show="hist.length>0" class="text-[9px] text-txt-4" x-text="'('+hist.length+')'"></span></button>
+        <button @click="stab='roles'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='roles'?'text-txt-1 border-b-2 border-blue-accent':'text-txt-4 hover:text-txt-2'">角色</button>
+        <button @click="stab='history'" class="flex-1 py-2 text-[11px] font-medium transition-colors" :class="stab==='history'?'text-txt-1 border-b-2 border-blue-accent':'text-txt-4 hover:text-txt-2'">历史 <span x-show="hist.length>0" class="text-[9px] text-txt-4" x-text="'('+hist.length+')'"></span></button>
       </div>
 
       <!-- Roles tab -->
@@ -468,7 +668,7 @@
         <!-- Actions -->
         <div class="space-y-1.5">
           <button @click="start()" :disabled="!canGo || isDebating"
-            class="w-full flex items-center gap-2 px-3 py-2 bg-orange-accent/15 text-orange-accent text-[11px] font-medium rounded-md hover:bg-orange-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            class="w-full flex items-center gap-2 px-3 py-2 bg-blue-accent/15 text-blue-accent text-[11px] font-medium rounded-md hover:bg-blue-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             开始辩论
           </button>
@@ -481,14 +681,14 @@
 
         <!-- Consensus -->
         <div x-show="showCns && cns" x-collapse>
-          <div class="bg-orange-accent/5 border border-orange-accent/20 rounded-lg p-3 max-h-48 overflow-y-auto">
+          <div class="bg-blue-accent/5 border border-blue-accent/20 rounded-lg p-3 max-h-48 overflow-y-auto">
             <div class="md-content text-[11px]" x-html="rmd(cns)"></div>
           </div>
         </div>
 
         <!-- Upload -->
         <div class="rounded-lg bg-surface-3 border border-border-dim glow-orange transition-all cursor-pointer"
-             @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-orange-accent/50')" @dragleave.prevent="$el.classList.remove('border-orange-accent/50')" @drop.prevent="$el.classList.remove('border-orange-accent/50'); handleDrop($event)">
+             @click="$refs.fi.click()" @dragover.prevent="$el.classList.add('border-blue-accent/50')" @dragleave.prevent="$el.classList.remove('border-blue-accent/50')" @drop.prevent="$el.classList.remove('border-blue-accent/50'); handleDrop($event)">
           <input type="file" x-ref="fi" class="hidden" multiple accept=".pdf,.py,.txt,.md,.csv,.json,.js,.ts,.java,.cpp,.c,.h,.go,.rs,.rb,.php,.html,.css,.yaml,.yml,.toml,.xml,.sh,.sql" @change="handleFile($event)">
           <div class="flex items-center gap-2 px-3 py-2.5">
             <svg class="w-4 h-4 text-txt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
@@ -507,26 +707,14 @@
           </template>
         </div>
 
-        <!-- Direct input -->
-        <div>
-          <button @click="showTI=!showTI" class="text-[10px] text-txt-4 hover:text-txt-2 flex items-center gap-1 mb-1.5">
-            <svg class="w-3 h-3 transition-transform" :class="showTI&&'rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            直接输入文本
-          </button>
-          <div x-show="showTI" x-collapse>
-            <textarea x-model="dtxt" rows="3" placeholder="粘贴论文摘要、代码片段..." class="w-full bg-surface-3 border border-border-dim rounded-md px-2 py-1.5 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-orange-accent/50 prompt-textarea"></textarea>
-            <button @click="applyTxt()" class="mt-1 px-3 py-1 text-[10px] font-medium bg-orange-accent/15 text-orange-accent rounded hover:bg-orange-accent/25">使用此文本</button>
-          </div>
-        </div>
-
         <!-- Groups -->
         <div class="space-y-2">
           <div>
-            <span class="text-[10px] font-semibold text-orange-accent/70 uppercase tracking-wider">建设方</span>
+            <span class="text-[10px] font-semibold text-blue-accent/70 uppercase tracking-wider">建设方</span>
             <template x-for="id in leftRoles" :key="id">
-              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-orange-accent/5">
+              <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-blue-accent/5">
                 
-                <span class="text-[10px] font-medium text-orange-accent/80" x-text="gr(id).name"></span>
+                <span class="text-[10px] font-medium text-blue-accent/80" x-text="gr(id).name"></span>
                 <span class="text-[8px] text-txt-4 ml-auto" x-show="toolMsgs.filter(t=>t.roleId===id).length>0" x-text="toolMsgs.filter(t=>t.roleId===id).length+'🔧'"></span>
                 <span class="text-[9px] text-txt-4" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
@@ -560,7 +748,7 @@
               <span class="text-[9px] text-txt-4 ml-auto" x-text="h.rounds+'轮'"></span>
             </div>
             <div class="flex items-center gap-1 text-[9px] text-txt-4">
-              <span x-show="h.leftModel" class="text-orange-accent/60" x-text="h.leftModel"></span>
+              <span x-show="h.leftModel" class="text-blue-accent/60" x-text="h.leftModel"></span>
               <span x-show="h.leftModel && h.rightModel" class="text-txt-4">vs</span>
               <span x-show="h.rightModel" class="text-amber-accent/60" x-text="h.rightModel"></span>
             </div>
@@ -892,6 +1080,7 @@
         lang:'zh', allRoles:ROLES, templates:TPLS, curTpl:'',
         roles:['developer','architect','reviewer','security','tester'],
         showSettings:false, showTI:false, showCns:false, stab:'roles',
+        showOnboard:false, onboardStep:0,
         fname:'', fsize:'', fcont:'', dtxt:'', files:[],
         // Model manager
         models:[],
@@ -899,6 +1088,12 @@
         get leftModel(){ return this.models.find(m=>m.id===this.leftModelId)||null; },
         get rightModel(){ return this.models.find(m=>m.id===this.rightModelId)||null; },
         addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0}; this.models.push(m); },
+        applyPreset(type){
+          const presets={deepseek:{name:'DeepSeek',baseUrl:'https://api.deepseek.com/v1',model:'deepseek-chat'},openai:{name:'OpenAI',baseUrl:'https://api.openai.com/v1',model:'gpt-4o-mini'},moonshot:{name:'Moonshot',baseUrl:'https://api.moonshot.cn/v1',model:'moonshot-v1-8k'}};
+          const p=presets[type];if(!p)return;
+          const m={id:++_id,name:p.name,baseUrl:p.baseUrl,apiKey:'',model:p.model,proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0};
+          this.models.push(m);
+        },
         rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; },
         async testModel(id){
           const m=this.models.find(x=>x.id===id); if(!m)return;
@@ -931,6 +1126,8 @@
         prompts:{}, isDebating:false, msgs:[], cns:'', curRound:0, err:'', ac:null,
         typingGroup:null, totalTokens:0, totalCost:0, hist:[],
         toolMsgs:[], curModelCfg:null, curRoleId:null,
+        // Chat & Progress
+        userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null,
 
         get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
@@ -944,11 +1141,38 @@
         fmtTok(n){ if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n; },
         fmtSize(n){ if(n>=1e6)return(n/1e6).toFixed(1)+' MB';if(n>=1e3)return(n/1e3).toFixed(1)+' KB';return n+' B'; },
         fd(iso){ if(!iso)return''; return new Date(iso).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); },
+        fmtElapsed(){
+          if(!this.debateStartTime)return'';
+          const end=this.debateEndTime||Date.now();
+          const sec=Math.round((end-this.debateStartTime)/1000);
+          if(sec<60)return sec+'秒';
+          const min=Math.floor(sec/60),s=sec%60;
+          return min+'分'+s+'秒';
+        },
+        sendChat(side){
+          const text=this.chatText.trim(); if(!text)return;
+          this.chatText='';
+          const round=this.isDebating?this.curRound:0;
+          const msg={content:text,round,side,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),id:Date.now()};
+          this.userMsgs.push(msg);
+          // Inject into debate context for next round
+          if(!this._userComments)this._userComments=[];
+          this._userComments.push({content:text,round,side,time:msg.time});
+          this.$nextTick(()=>{
+            ['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});
+          });
+          // If debate hasn't started and user has no file, use as direct text input
+          if(!this.isDebating && !this.fcont && !this.files.length){
+            this.fcont=text;this.fname='用户输入';this.fsize=text.length;this.dtxt='';
+          }
+        },
 
         init(){
           this.allRoles.forEach(r=>{this.prompts[r.id]=r.def;});
           this.loadCfg(); this.loadHist();
+          if(!localStorage.getItem('debateai_onboarded')&&!localStorage.getItem('debateai_cfg')){this.showOnboard=true;}
         },
+        finishOnboard(){this.showOnboard=false;localStorage.setItem('debateai_onboarded','1');},
 
         toggleRole(id){ const i=this.roles.indexOf(id); if(i>=0){if(this.roles.length>2)this.roles.splice(i,1);}else{this.roles.push(id);} this.curTpl=''; },
         applyTemplate(t){ this.roles=[...t.roles]; this.curTpl=t.id; },
@@ -979,6 +1203,7 @@
           const content=this.fcont||this.dtxt; if(!content)return;
           if(this.dtxt&&!this.fcont){this.fcont=this.dtxt.trim();this.fname='文本输入';}
           this.isDebating=true;this.msgs=[];this.cns='';this.curRound=0;this.err='';this.ac=new AbortController();this.totalTokens=0;this.totalCost=0;this.toolMsgs=[];
+          this.debateStartTime=Date.now();this.debateEndTime=null;this._userComments=[...this.userMsgs];
           const allRoleObjs=this.roles.map(id=>ROLES.find(r=>r.id===id)).filter(Boolean);
           try{
             for(let round=1;round<=this.maxRounds;round++){
@@ -991,6 +1216,7 @@
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.leftModel;this.curRoleId=role.id;
                 await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                m.isStreaming=false;
               }
               this.typingGroup=null;
               // Reviewer group — uses rightModel
@@ -1001,6 +1227,7 @@
                 const m=this.addMsg(role.id,'',round);
                 this.curModelCfg=this.rightModel;this.curRoleId=role.id;
                 await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                m.isStreaming=false;
                 if(this.consensusMode==='auto'&&round>=2&&this.detectCns(m.content)){this.cns=m.content;}
               }
               this.typingGroup=null;
@@ -1013,13 +1240,16 @@
             if(!this.cns)await this.extractCns();
             this.saveHist();
           }catch(e){this.err=e.name==='AbortError'?'辩论已中止':`Error: ${e.message}`;}
-          finally{this.isDebating=false;this.typingGroup=null;this.ac=null;}
+          finally{this.isDebating=false;this.typingGroup=null;this.ac=null;this.debateEndTime=Date.now();this.msgs.forEach(m=>m.isStreaming=false);}
         },
 
         buildCtx(roleId,content,round){
           const prev=this.msgs.filter(m=>m.round<round||(m.round===round&&m.roleId!==roleId));
           let ctx=`## 待分析材料\n\n${content}\n\n`;
           if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
+          // Inject user comments
+          const uComments=(this._userComments||[]).filter(u=>u.round<round||(u.round===round));
+          if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}
           ctx+=`\n请基于你的角色职责进行分析。要求：
 1. 用具体的代码行号或段落引用来支撑你的观点
 2. 区分"必须修复"和"建议优化"的优先级
@@ -1028,8 +1258,8 @@
           return ctx;
         },
 
-        addMsg(roleId,content,round){ const m={roleId,content,round,id:Date.now()+Math.random()};this.msgs.push(m);this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});return m; },
-        append(msg,ch){ msg.content+=ch; if(!this._s){this._s=true;requestAnimationFrame(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});this._s=false;});} },
+        addMsg(roleId,content,round){ const m={roleId,content,round,id:Date.now()+Math.random(),isStreaming:true};this.msgs.push(m);this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});return m; },
+        append(msg,ch){ msg.content+=ch; if(!this._s){this._s=true;requestAnimationFrame(()=>{this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});this._s=false;});});} },
 
         async call(modelCfg,messages,toolDefs,onChunk){
           if(!modelCfg)throw new Error('未配置模型');
@@ -1099,14 +1329,15 @@
           const summary=this.msgs.map(m=>{const r=this.gr(m.roleId);return `### ${r.name} (Round ${m.round})\n\n${m.content}`;}).join('\n\n---\n\n');
           const m=this.addMsg(this.roles[0],'',0);
           await this.call(this.leftModel,[{role:'system',content:'你是总结者。根据以下多角色讨论提炼共识，输出最终结论和改进代码。Markdown 格式。'},{role:'user',content:`## 讨论记录\n\n${summary}`}],ch=>this.append(m,ch));
+          m.isStreaming=false;
           this.cns=m.content;
         },
 
         abort(){if(this.ac)this.ac.abort();},
 
         loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
-        saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns,toolMsgs:JSON.parse(JSON.stringify(this.toolMsgs||[]))};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
-        loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';this.toolMsgs=h.toolMsgs||[];if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
+        saveHist(){const cleanMsgs=this.msgs.map(m=>({...m,isStreaming:false}));const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(cleanMsgs)),cns:this.cns,toolMsgs:JSON.parse(JSON.stringify(this.toolMsgs||[])),userMsgs:JSON.parse(JSON.stringify(this.userMsgs||[]))};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
+        loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';this.toolMsgs=h.toolMsgs||[];this.userMsgs=h.userMsgs||[];this.debateStartTime=null;this.debateEndTime=null;if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
         exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',msgs:this.msgs,cns:this.cns},'md');},

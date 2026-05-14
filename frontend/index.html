@@ -1226,7 +1226,7 @@
         init(){
           this.allRoles.forEach(r=>{this.prompts[r.id]=r.def;});
           this.loadCfg(); this.loadHist();
-          if(!localStorage.getItem('debateai_onboarded')&&!localStorage.getItem('debateai_cfg')){this.showOnboard=true;}
+          if(!localStorage.getItem('debateai_onboarded')){this.showOnboard=true;}
           // Auto-save models on any property change (debounced)
           let _saveTimer=null;
           this.$watch('models',()=>{ clearTimeout(_saveTimer); _saveTimer=setTimeout(()=>this.saveCfg(),500); },{deep:true});

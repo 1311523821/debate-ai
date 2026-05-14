@@ -130,6 +130,10 @@
               </div>
               <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
               <div class="flex items-center gap-2">
+                <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-green-accent/50">
+                  <option value="openai">OpenAI 兼容</option>
+                  <option value="anthropic">Anthropic 兼容</option>
+                </select>
                 <button @click="testModel(m.id)" :disabled="m._testing"
                   class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border transition-colors"
                   :class="m._testOk===true ? 'bg-green-accent/15 text-green-accent border-green-accent/30' : m._testOk===false ? 'bg-red-500/15 text-red-400 border-red-500/30' : 'bg-white/5 text-txt-3 border-white/10 hover:bg-white/10'">
@@ -710,7 +714,7 @@
         leftModelId:null, rightModelId:null,
         get leftModel(){ return this.models.find(m=>m.id===this.leftModelId)||null; },
         get rightModel(){ return this.models.find(m=>m.id===this.rightModelId)||null; },
-        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:''}; this.models.push(m); },
+        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai'}; this.models.push(m); },
         rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; },
         async testModel(id){
           const m=this.models.find(x=>x.id===id); if(!m)return;
@@ -718,15 +722,21 @@
           m._testing=true;m._testOk=null;m._testErr='';m._testMs=0;
           const t0=performance.now();
           try{
-            const resp=await fetch(m.baseUrl.replace(/\/+$/,'')+'/chat/completions',{
-              method:'POST',
-              headers:{'Content-Type':'application/json','Authorization':`Bearer ${m.apiKey}`},
-              body:JSON.stringify({model:m.model,messages:[{role:'user',content:'hi'}],max_tokens:5,stream:false})
-            });
+            const isAnt=(m.proto||'openai')==='anthropic';
+            const url=isAnt
+              ? m.baseUrl.replace(/\/+$/,'')+'/v1/messages'
+              : m.baseUrl.replace(/\/+$/,'')+'/chat/completions';
+            const headers={'Content-Type':'application/json'};
+            if(isAnt){headers['x-api-key']=m.apiKey;headers['anthropic-version']='2023-06-01';}
+            else{headers['Authorization']=`Bearer ${m.apiKey}`;}
+            const body=isAnt
+              ? JSON.stringify({model:m.model,max_tokens:5,messages:[{role:'user',content:'hi'}]})
+              : JSON.stringify({model:m.model,max_tokens:5,messages:[{role:'user',content:'hi'}],stream:false});
+            const resp=await fetch(url,{method:'POST',headers,body});
             const ms=Math.round(performance.now()-t0);
-            if(!resp.ok){const txt=await resp.text().catch(()=>'');m._testOk=false;m._testErr=`HTTP ${resp.status}: ${txt.slice(0,100)}`;}
-            else{const j=await resp.json();m._testOk=true;m._testMs=ms;}
-          }catch(e){m._testOk=false;m._testErr=e.message?.includes('fetch')?'网络错误或 CORS 限制':e.message.slice(0,100);}
+            if(!resp.ok){const txt=await resp.text().catch(()=>'');m._testOk=false;m._testErr=`HTTP ${resp.status}: ${txt.slice(0,120)}`;}
+            else{await resp.json();m._testOk=true;m._testMs=ms;}
+          }catch(e){m._testOk=false;m._testErr=e.message?.includes('fetch')?'网络错误或 CORS 限制':e.message.slice(0,120);}
           finally{m._testing=false;}
         },
         // Debate
@@ -774,7 +784,7 @@
         applyTxt(){ if(this.dtxt.trim()){this.fcont=this.dtxt.trim();this.fname='直接输入文本';this.fsize=this.fcont.length;this.files=[];} },
 
         saveCfg(){ localStorage.setItem('debateai_cfg',JSON.stringify({models:this.models,leftModelId:this.leftModelId,rightModelId:this.rightModelId,maxRounds:this.maxRounds,consensusMode:this.consensusMode,prompts:this.prompts,roles:this.roles})); this.cfgSaved=true;setTimeout(()=>this.cfgSaved=false,2000); },
-        loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.models&&d.models.length){this.models=d.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(d.leftModelId)this.leftModelId=d.leftModelId;if(d.rightModelId)this.rightModelId=d.rightModelId;if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },
+        loadCfg(){ try{const d=JSON.parse(localStorage.getItem('debateai_cfg'));if(!d)return;if(d.models&&d.models.length){d.models.forEach(m=>{if(!m.proto)m.proto='openai';});this.models=d.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(d.leftModelId)this.leftModelId=d.leftModelId;if(d.rightModelId)this.rightModelId=d.rightModelId;if(d.maxRounds)this.maxRounds=d.maxRounds;if(d.consensusMode)this.consensusMode=d.consensusMode;if(d.prompts)Object.assign(this.prompts,d.prompts);if(d.roles)this.roles=d.roles;}catch(e){} },
 
         async start(){
           if(!this.canGo)return;
@@ -834,10 +844,30 @@
         async call(modelCfg,messages,onChunk){
           if(!modelCfg)throw new Error('未配置模型');
           const signal=this.ac?.signal;
-          const resp=await fetch(modelCfg.baseUrl.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${modelCfg.apiKey}`},body:JSON.stringify({model:modelCfg.model,messages,stream:true}),signal});
+          const isAnt=(modelCfg.proto||'openai')==='anthropic';
+          let url,headers,body;
+          if(isAnt){
+            url=modelCfg.baseUrl.replace(/\/+$/,'')+'/v1/messages';
+            headers={'Content-Type':'application/json','x-api-key':modelCfg.apiKey,'anthropic-version':'2023-06-01'};
+            const sys=[];const msgs=[];
+            for(const m of messages){if(m.role==='system')sys.push(m.content);else msgs.push(m);}
+            body=JSON.stringify({model:modelCfg.model,system:sys.join('\n')||undefined,messages:msgs,max_tokens:4096,stream:true});
+          }else{
+            url=modelCfg.baseUrl.replace(/\/+$/,'')+'/chat/completions';
+            headers={'Content-Type':'application/json','Authorization':`Bearer ${modelCfg.apiKey}`};
+            body=JSON.stringify({model:modelCfg.model,messages,stream:true});
+          }
+          const resp=await fetch(url,{method:'POST',headers,body,signal});
           if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
           const reader=resp.body.getReader(),dec=new TextDecoder();let buf='';
-          while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]')return;try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;if(dt?.content)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}catch(e){}}}
+          if(isAnt){
+            // Anthropic SSE: event: content_block_delta\ndata: {"delta":{"text":"..."}}
+            let curEvent='';
+            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(tr.startsWith('event:')){curEvent=tr.slice(6).trim();continue;}if(!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();try{const j=JSON.parse(d);if(j.type==='content_block_delta'&&j.delta?.text)onChunk(j.delta.text,null);if(j.type==='message_delta'&&j.usage)onChunk('',{tokens:j.usage.input_tokens+j.usage.output_tokens});}catch(e){}}}
+          }else{
+            // OpenAI SSE: data: {"choices":[{"delta":{"content":"..."}}]}
+            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]')return;try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;if(dt?.content)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}catch(e){}}}
+          }
         },
 
         detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},
@@ -853,7 +883,7 @@
 
         loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
         saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
-        loadHist(h){this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
+        loadHist(h){this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
         exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',msgs:this.msgs,cns:this.cns},'md');},

@@ -252,16 +252,37 @@
           </div>
         </div>
         <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-orange-accent/[.04] transition-colors">
-            <div class="w-6 h-6 rounded-full bg-orange-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
-              <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
-            </div>
-            <div class="flex-1 border-l-2 border-l-orange-accent/30 pl-3 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-orange-accent/80" x-text="gr(msg.roleId).name"></span>
-                <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+          <div>
+            <!-- Tool call cards for this role+round -->
+            <template x-for="(tm, ti) in toolMsgs.filter(t=>t.roleId===msg.roleId&&t.round===msg.round)" :key="'lt-'+idx+'-'+ti">
+              <div class="flex gap-3 px-4 py-1.5 msg-in">
+                <div class="w-6 flex-shrink-0"></div>
+                <div class="flex-1 min-w-0 ml-0.5">
+                  <div class="rounded-lg border border-orange-accent/20 bg-orange-accent/5 overflow-hidden">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-orange-accent/10">
+                      <span class="text-[11px]" x-text="tm.icon"></span>
+                      <span class="text-[10px] font-semibold text-orange-accent/80" x-text="tm.name"></span>
+                      <span class="text-[9px] text-txt-4 ml-auto">工具调用</span>
+                    </div>
+                    <div class="px-3 py-2">
+                      <pre class="text-[9px] text-txt-3 whitespace-pre-wrap break-all leading-relaxed" x-text="fmtToolResult(tm.result).slice(0,500)"></pre>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+            </template>
+            <!-- Message content -->
+            <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-orange-accent/[.04] transition-colors">
+              <div class="w-6 h-6 rounded-full bg-orange-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+                <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
+              </div>
+              <div class="flex-1 border-l-2 border-l-orange-accent/30 pl-3 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] font-bold text-orange-accent/80" x-text="gr(msg.roleId).name"></span>
+                  <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+                </div>
+                <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+              </div>
             </div>
           </div>
         </template>
@@ -351,16 +372,37 @@
           </div>
         </div>
         <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
-          <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-amber-accent/[.04] transition-colors">
-            <div class="w-6 h-6 rounded-full bg-amber-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
-              <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
-            </div>
-            <div class="flex-1 border-l-2 border-l-amber-accent/30 pl-3 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-amber-accent/80" x-text="gr(msg.roleId).name"></span>
-                <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+          <div>
+            <!-- Tool call cards for this role+round -->
+            <template x-for="(tm, ti) in toolMsgs.filter(t=>t.roleId===msg.roleId&&t.round===msg.round)" :key="'rt-'+idx+'-'+ti">
+              <div class="flex gap-3 px-4 py-1.5 msg-in">
+                <div class="w-6 flex-shrink-0"></div>
+                <div class="flex-1 min-w-0 ml-0.5">
+                  <div class="rounded-lg border border-amber-accent/20 bg-amber-accent/5 overflow-hidden">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-accent/10">
+                      <span class="text-[11px]" x-text="tm.icon"></span>
+                      <span class="text-[10px] font-semibold text-amber-accent/80" x-text="tm.name"></span>
+                      <span class="text-[9px] text-txt-4 ml-auto">工具调用</span>
+                    </div>
+                    <div class="px-3 py-2">
+                      <pre class="text-[9px] text-txt-3 whitespace-pre-wrap break-all leading-relaxed" x-text="fmtToolResult(tm.result).slice(0,500)"></pre>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+            </template>
+            <!-- Message content -->
+            <div class="msg-in flex gap-3 px-4 py-2.5 hover:bg-amber-accent/[.04] transition-colors">
+              <div class="w-6 h-6 rounded-full bg-amber-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]">
+                <span class="w-2 h-2 rounded-full bg-current opacity-50"></span>
+              </div>
+              <div class="flex-1 border-l-2 border-l-amber-accent/30 pl-3 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] font-bold text-amber-accent/80" x-text="gr(msg.roleId).name"></span>
+                  <span class="text-[9px] text-txt-4" x-show="msg.round>0" x-text="'Round '+msg.round"></span>
+                </div>
+                <div class="md-content break-words" x-html="rmd(msg.content)"></div>
+              </div>
             </div>
           </div>
         </template>
@@ -485,7 +527,8 @@
               <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-orange-accent/5">
                 
                 <span class="text-[10px] font-medium text-orange-accent/80" x-text="gr(id).name"></span>
-                <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
+                <span class="text-[8px] text-txt-4 ml-auto" x-show="toolMsgs.filter(t=>t.roleId===id).length>0" x-text="toolMsgs.filter(t=>t.roleId===id).length+'🔧'"></span>
+                <span class="text-[9px] text-txt-4" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
             </template>
           </div>
@@ -495,7 +538,8 @@
               <div class="flex items-center gap-2 px-2 py-1 mt-1 rounded bg-amber-accent/5">
                 
                 <span class="text-[10px] font-medium text-amber-accent/80" x-text="gr(id).name"></span>
-                <span class="text-[9px] text-txt-4 ml-auto" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
+                <span class="text-[8px] text-txt-4 ml-auto" x-show="toolMsgs.filter(t=>t.roleId===id).length>0" x-text="toolMsgs.filter(t=>t.roleId===id).length+'🔧'"></span>
+                <span class="text-[9px] text-txt-4" x-text="msgs.filter(m=>m.roleId===id).length+' 条'"></span>
               </div>
             </template>
           </div>
@@ -717,6 +761,128 @@
       { id:'ml-pipeline', name:'ML 管道', roles:['ml','developer','tester','reviewer'] },
     ];
 
+    // ═══ 工具注册表 ═══
+    const TOOL_REGISTRY = {
+      grep_code: {
+        id:'grep_code', name:'代码搜索', icon:'🔍',
+        desc:'在材料中搜索指定模式，返回匹配行及上下文',
+        params:{ type:'object', properties:{ pattern:{type:'string',description:'正则表达式'}, context_lines:{type:'number',description:'上下文行数',default:2} }, required:['pattern'] },
+        run(p,ctx){
+          try{
+            const lines=ctx.material.split('\n');const rx=new RegExp(p.pattern,'gi');
+            const cl=Math.min(p.context_lines||2,10);const hits=[];
+            for(let i=0;i<lines.length;i++){if(rx.test(lines[i])){const s=Math.max(0,i-cl),e=Math.min(lines.length-1,i+cl);hits.push({line:i+1,match:lines[i].trim(),context:lines.slice(s,e+1).map((l,j)=>({num:s+j+1,text:l})));if(hits.length>=20)break;}}
+            return{total:hits.length,results:hits,pattern:p.pattern};
+          }catch(e){return{error:'正则表达式无效: '+e.message};}
+        }
+      },
+      code_stats: {
+        id:'code_stats', name:'代码统计', icon:'📊',
+        desc:'统计代码行数、函数数量、类数量、语言分布',
+        params:{ type:'object', properties:{}, required:[] },
+        run(p,ctx){
+          const lines=ctx.material.split('\n');
+          let code=0,blank=0,comment=0,funcs=0,classes=0;
+          const ext=(ctx.files[0]?.name||'').split('.').pop().toLowerCase();
+          const singleC=['py','js','ts','java','go','rs','rb','c','cpp','h','php'].includes(ext)?/^\s*(#|\/\/)/:null;
+          const blockS=/^\s*(\/\*|"""|''')/,blockE=/\*\/|"""|'''/;
+          let inBlock=false;
+          for(const l of lines){const t=l.trim();
+            if(!t){blank++;continue;}
+            if(inBlock){comment++;if(blockE.test(t))inBlock=false;continue;}
+            if(blockS.test(t)){comment++;if(!blockE.test(t))inBlock=true;continue;}
+            if(singleC&&singleC.test(t)){comment++;continue;}
+            code++;
+            if(/\b(def|function|func|fn|async\s+function)\s+\w/.test(t))funcs++;
+            if(/\bclass\s+\w/.test(t))classes++;
+          }
+          return{lines:lines.length,code,blank,comment,functions:funcs,classes,language:ext||'unknown'};
+        }
+      },
+      extract_code: {
+        id:'extract_code', name:'代码提取', icon:'📋',
+        desc:'从材料中提取所有代码块',
+        params:{ type:'object', properties:{ lang:{type:'string',description:'按语言过滤'} }, required:[] },
+        run(p,ctx){
+          const blocks=[];const re=/```(\w*)\n([\s\S]*?)```/g;let m;
+          while((m=re.exec(ctx.material))!==null){
+            if(!p.lang||m[1].toLowerCase()===p.lang.toLowerCase())blocks.push({lang:m[1]||'plain',code:m[2].trim(),lines:m[2].trim().split('\n').length});
+          }
+          return{total:blocks.length,blocks};
+        }
+      },
+      parse_deps: {
+        id:'parse_deps', name:'依赖解析', icon:'📦',
+        desc:'解析 Python/JS 依赖文件，返回依赖列表及版本',
+        params:{ type:'object', properties:{}, required:[] },
+        run(p,ctx){
+          const deps=[];const content=ctx.material;
+          const isPy=ctx.files.some(f=>f.name==='requirements.txt')||/^(flask|django|requests|numpy|pandas)/m.test(content);
+          if(isPy){for(const l of content.split('\n')){const t=l.trim();if(!t||t.startsWith('#'))continue;const m=t.match(/^([a-zA-Z0-9_.-]+)\s*([><=!~]+\s*[\d.]+)?/);if(m)deps.push({name:m[1],version:m[2]||'any',ecosystem:'pypi'});}}
+          else{try{const pkg=JSON.parse(content);for(const[n,v]of Object.entries(pkg.dependencies||{}))deps.push({name:n,version:v,ecosystem:'npm'});for(const[n,v]of Object.entries(pkg.devDependencies||{}))deps.push({name:n,version:v,ecosystem:'npm',dev:true});}catch(e){return{error:'无法解析依赖文件'};}}
+          return{total:deps.length,deps};
+        }
+      },
+      lint_code: {
+        id:'lint_code', name:'安全扫描', icon:'🛡️',
+        desc:'检查常见安全问题：eval、SQL注入、硬编码密钥等',
+        params:{ type:'object', properties:{}, required:[] },
+        run(p,ctx){
+          const lines=ctx.material.split('\n');const issues=[];
+          const checks=[
+            {re:/\beval\s*\(/,msg:'使用 eval() — 代码注入风险',sev:'high'},
+            {re:/\bexec\s*\(/,msg:'使用 exec() — 代码注入风险',sev:'high'},
+            {re:/(SELECT|INSERT|UPDATE|DELETE).*\+\s*['""]/,msg:'SQL 字符串拼接 — SQL 注入风险',sev:'high'},
+            {re:/\b(password|secret|api_key|token)\s*=\s*['""][^'""]+['""]/,msg:'硬编码凭据',sev:'high'},
+            {re:/\bhttp:\/\//,msg:'使用 HTTP 而非 HTTPS',sev:'medium'},
+            {re:/except\s*:/,msg:'裸 except 捕获所有异常',sev:'medium'},
+            {re:/\bconsole\.log\s*\(/,msg:'残留 console.log',sev:'low'},
+            {re:/catch\s*\(\s*\w*\s*\)\s*\{?\s*\}/,msg:'空 catch 块 — 吞掉异常',sev:'medium'},
+            {re:/innerHTML\s*=/,msg:'直接设置 innerHTML — XSS 风险',sev:'high'},
+            {re:/\bprocess\.env\.\w+/,msg:'直接读取环境变量',sev:'low'},
+          ];
+          for(let i=0;i<lines.length;i++){for(const c of checks){if(c.re.test(lines[i])){issues.push({line:i+1,text:lines[i].trim(),...c});if(issues.length>=30)break;}}}
+          const high=issues.filter(i=>i.sev==='high').length,med=issues.filter(i=>i.sev==='medium').length;
+          return{total:issues.length,high,medium:med,low:issues.length-high-med,issues};
+        }
+      },
+      check_versions: {
+        id:'check_versions', name:'版本检查', icon:'🔄',
+        desc:'检查 npm/PyPI 依赖的最新版本',
+        params:{ type:'object', properties:{ pkg:{type:'string',description:'包名'}, ecosystem:{type:'string',description:'npm 或 pypi'} }, required:['pkg','ecosystem'] },
+        async run(p){
+          try{
+            const url=p.ecosystem==='npm'?`https://registry.npmjs.org/${p.pkg}/latest`:`https://pypi.org/pypi/${p.pkg}/json`;
+            const r=await fetch(url);if(!r.ok)return{error:`HTTP ${r.status}`};
+            const d=await r.json();
+            return{pkg:p.pkg,latest:d.version||d.info?.version,ecosystem:p.ecosystem};
+          }catch(e){return{error:e.message};}
+        }
+      },
+    };
+    const ROLE_TOOLS = {
+      architect:['code_stats','grep_code','extract_code'],
+      developer:['code_stats','grep_code','extract_code','lint_code','parse_deps'],
+      ml:['code_stats','grep_code','parse_deps'],
+      docs:['grep_code','extract_code'],
+      i18n:['grep_code','extract_code'],
+      reviewer:['code_stats','grep_code','extract_code','lint_code','parse_deps'],
+      security:['grep_code','parse_deps','lint_code'],
+      debugger:['grep_code','extract_code'],
+      tester:['grep_code','extract_code','lint_code'],
+      migration:['grep_code','parse_deps','check_versions'],
+    };
+    function getToolDefs(roleId){
+      const ids=ROLE_TOOLS[roleId]||[];
+      return ids.map(id=>{const t=TOOL_REGISTRY[id];if(!t)return null;return{type:'function',function:{name:t.id,description:t.desc,parameters:t.params}};}).filter(Boolean);
+    }
+    function execTool(id,params,ctx){
+      const t=TOOL_REGISTRY[id];if(!t)return{error:'未知工具: '+id};
+      try{return t.run(params,ctx);}catch(e){return{error:e.message};}
+    }
+    function fmtToolResult(r){try{if(typeof r==='string')return r;return JSON.stringify(r,null,2);}catch(e){return String(r);}}
+    function fmtToolTitle(r){if(!r)return'';if(typeof r==='object'){if(r.total!==undefined)return r.total+' 条结果';if(r.error)return'错误: '+r.error;}return'';}
+
     if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     if(typeof marked!=='undefined') marked.setOptions({ highlight:(c,l)=>{if(typeof hljs!=='undefined'&&l&&hljs.getLanguage(l))return hljs.highlight(c,{language:l}).value;return typeof hljs!=='undefined'?hljs.highlightAuto(c).value:c;}, breaks:true, gfm:true });
 
@@ -764,6 +930,7 @@
         maxRounds:4, consensusMode:'auto', cfgSaved:false,
         prompts:{}, isDebating:false, msgs:[], cns:'', curRound:0, err:'', ac:null,
         typingGroup:null, totalTokens:0, totalCost:0, hist:[],
+        toolMsgs:[], curModelCfg:null, curRoleId:null,
 
         get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
@@ -811,7 +978,7 @@
           if(!this.canGo)return;
           const content=this.fcont||this.dtxt; if(!content)return;
           if(this.dtxt&&!this.fcont){this.fcont=this.dtxt.trim();this.fname='文本输入';}
-          this.isDebating=true;this.msgs=[];this.cns='';this.curRound=0;this.err='';this.ac=new AbortController();this.totalTokens=0;this.totalCost=0;
+          this.isDebating=true;this.msgs=[];this.cns='';this.curRound=0;this.err='';this.ac=new AbortController();this.totalTokens=0;this.totalCost=0;this.toolMsgs=[];
           const allRoleObjs=this.roles.map(id=>ROLES.find(r=>r.id===id)).filter(Boolean);
           try{
             for(let round=1;round<=this.maxRounds;round++){
@@ -822,7 +989,8 @@
                 const prompt=this.prompts[role.id]||role.def;
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
-                await this.call(this.leftModel,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                this.curModelCfg=this.leftModel;this.curRoleId=role.id;
+                await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
               }
               this.typingGroup=null;
               // Reviewer group — uses rightModel
@@ -831,7 +999,8 @@
                 const prompt=this.prompts[role.id]||role.def;
                 const ctx=this.buildCtx(role.id,content,round);
                 const m=this.addMsg(role.id,'',round);
-                await this.call(this.rightModel,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
+                this.curModelCfg=this.rightModel;this.curRoleId=role.id;
+                await this.callWithTools(role.id,[{role:'system',content:prompt},{role:'user',content:ctx}],(ch,meta)=>{this.append(m,ch);if(meta?.tokens){this.totalTokens+=meta.tokens;}});
                 if(this.consensusMode==='auto'&&round>=2&&this.detectCns(m.content)){this.cns=m.content;}
               }
               this.typingGroup=null;
@@ -862,7 +1031,7 @@
         addMsg(roleId,content,round){ const m={roleId,content,round,id:Date.now()+Math.random()};this.msgs.push(m);this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});return m; },
         append(msg,ch){ msg.content+=ch; if(!this._s){this._s=true;requestAnimationFrame(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});this._s=false;});} },
 
-        async call(modelCfg,messages,onChunk){
+        async call(modelCfg,messages,toolDefs,onChunk){
           if(!modelCfg)throw new Error('未配置模型');
           const signal=this.ac?.signal;
           const isAnt=(modelCfg.proto||'openai')==='anthropic';
@@ -873,23 +1042,55 @@
             headers={'Content-Type':'application/json','x-api-key':modelCfg.apiKey,'anthropic-version':'2023-06-01'};
             const sys=[];const msgs=[];
             for(const m of messages){if(m.role==='system')sys.push(m.content);else msgs.push(m);}
-            body=JSON.stringify({model:modelCfg.model,system:sys.join('\n')||undefined,messages:msgs,max_tokens:4096,stream:true});
+            const antTools=(toolDefs||[]).map(t=>({name:t.function.name,description:t.function.description,input_schema:t.function.parameters}));
+            const payload={model:modelCfg.model,system:sys.join('\n')||undefined,messages:msgs,max_tokens:4096,stream:true};
+            if(antTools.length>0)payload.tools=antTools;
+            body=JSON.stringify(payload);
           }else{
             url=modelCfg.baseUrl.replace(/\/+$/,'')+'/chat/completions';
             headers={'Content-Type':'application/json','Authorization':`Bearer ${modelCfg.apiKey}`};
-            body=JSON.stringify({model:modelCfg.model,messages,stream:true});
+            const payload={model:modelCfg.model,messages,stream:true};
+            if(toolDefs&&toolDefs.length>0){payload.tools=toolDefs;payload.tool_choice='auto';}
+            body=JSON.stringify(payload);
           }
           const resp=await fetch(url,{method:'POST',headers,body,signal});
           if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
-          const reader=resp.body.getReader(),dec=new TextDecoder();let buf='';
+          const reader=resp.body.getReader(),dec=new TextDecoder();let buf='',content='',toolCalls=[];
           if(isAnt){
-            // Anthropic SSE: event: content_block_delta\ndata: {"delta":{"text":"..."}}
-            let curEvent='';
-            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(tr.startsWith('event:')){curEvent=tr.slice(6).trim();continue;}if(!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();try{const j=JSON.parse(d);if(j.type==='content_block_delta'&&j.delta?.text)onChunk(j.delta.text,null);if(j.type==='message_delta'&&j.usage)onChunk('',{tokens:j.usage.input_tokens+j.usage.output_tokens});}catch(e){}}}
+            let curEvent='',tcBlocks={};
+            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(tr.startsWith('event:')){curEvent=tr.slice(6).trim();continue;}if(!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();try{const j=JSON.parse(d);
+              if(j.type==='content_block_start'&&j.content_block?.type==='tool_use'){tcBlocks[j.index]={id:j.content_block.id,name:j.content_block.name,input_json:''};}
+              else if(j.type==='content_block_delta'&&j.delta?.type==='input_json_delta'){if(tcBlocks[j.index])tcBlocks[j.index].input_json+=j.delta.partial_json;}
+              else if(j.type==='content_block_stop'&&tcBlocks[j.index]){const b=tcBlocks[j.index];try{const args=b.input_json?JSON.parse(b.input_json):{};toolCalls.push({id:b.id,type:'function',function:{name:b.name,arguments:JSON.stringify(args)}});}catch(e){toolCalls.push({id:b.id,type:'function',function:{name:b.name,arguments:b.input_json||'{}'}});}}
+              else if(j.type==='content_block_delta'&&j.delta?.text){content+=j.delta.text;if(onChunk)onChunk(j.delta.text,null);}
+              else if(j.type==='message_delta'&&j.usage&&onChunk)onChunk('',{tokens:j.usage.input_tokens+j.usage.output_tokens});
+            }catch(e){}}}
           }else{
-            // OpenAI SSE: data: {"choices":[{"delta":{"content":"..."}}]}
-            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]')return;try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;if(dt?.content)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}catch(e){}}}
+            const tcIdx={};
+            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]'){return toolCalls.length>0?{content,toolCalls}:{content};}try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;
+              if(dt?.content){content+=dt.content;if(onChunk)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}
+              if(dt?.tool_calls){for(const tc of dt.tool_calls){const i=tc.index;if(!tcIdx[i])tcIdx[i]={id:'',name:'',args:''};if(tc.id)tcIdx[i].id=tc.id;if(tc.function?.name)tcIdx[i].name=tc.function.name;if(tc.function?.arguments)tcIdx[i].args+=tc.function.arguments;}}
+              if(j.choices?.[0]?.finish_reason==='tool_calls'){for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}return{content,toolCalls};}
+            }catch(e){}}}
           }
+          return toolCalls.length>0?{content,toolCalls}:{content};
+        },
+
+        async callWithTools(roleId,messages,onChunk){
+          const toolDefs=getToolDefs(roleId);
+          const maxTR=3;let allMsgs=[...messages];
+          for(let tr=0;tr<maxTR;tr++){
+            const result=await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
+            if(!result.toolCalls||result.toolCalls.length===0)return;
+            allMsgs.push({role:'assistant',content:result.content||'',tool_calls:result.toolCalls});
+            for(const tc of result.toolCalls){
+              let toolResult;try{const args=JSON.parse(tc.function.arguments||'{}');toolResult=execTool(tc.function.name,args,{material:this.fcont,files:this.files});}catch(e){toolResult={error:e.message};}
+              const resultStr=fmtToolResult(toolResult);
+              allMsgs.push({role:'tool',tool_call_id:tc.id,content:resultStr});
+              this.toolMsgs.push({name:tc.function.name,icon:(TOOL_REGISTRY[tc.function.name]||{}).icon||'🔧',args:tc.function.arguments,result:toolResult,roleId:this.curRoleId,round:this.curRound});
+            }
+          }
+          await this.call(this.curModelCfg,allMsgs,toolDefs,onChunk);
         },
 
         detectCns(t){return['同意','认可','达成共识','没有异议','你说得对','有道理','agree','consensus','我同意','完全同意','基本同意','一致认为','无异议'].some(k=>t.toLowerCase().includes(k.toLowerCase()));},
@@ -904,15 +1105,15 @@
         abort(){if(this.ac)this.ac.abort();},
 
         loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
-        saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
-        loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
+        saveHist(){const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(this.msgs)),cns:this.cns,toolMsgs:JSON.parse(JSON.stringify(this.toolMsgs||[]))};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
+        loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';this.toolMsgs=h.toolMsgs||[];if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},
         exportCur(){if(!this.msgs.length)return;this.expH({fname:this.fname,ts:new Date().toISOString(),roles:this.roles,rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',msgs:this.msgs,cns:this.cns},'md');},
         expH(h,fmt){
           let c,m,e;
           if(fmt==='json'){c=JSON.stringify(h,null,2);m='application/json';e='json';}
-          else{c=`# DebateAI 辩论记录\n\n- **文件**: ${h.fname||'N/A'}\n- **日期**: ${new Date(h.ts).toLocaleString()}\n- **角色**: ${(h.roles||[]).map(id=>this.gr(id).name).join(', ')}\n- **建设方模型**: ${h.leftModel||'N/A'}\n- **审查方模型**: ${h.rightModel||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;for(const msg of(h.msgs||[])){const r=this.gr(msg.roleId);c+=`## ${r.name} — Round ${msg.round}\n\n${msg.content}\n\n---\n\n`;}if(h.cns)c+=`## 共识结论\n\n${h.cns}\n`;m='text/markdown';e='md';}
+          else{c=`# DebateAI 辩论记录\n\n- **文件**: ${h.fname||'N/A'}\n- **日期**: ${new Date(h.ts).toLocaleString()}\n- **角色**: ${(h.roles||[]).map(id=>this.gr(id).name).join(', ')}\n- **建设方模型**: ${h.leftModel||'N/A'}\n- **审查方模型**: ${h.rightModel||'N/A'}\n- **轮次**: ${h.rounds}\n\n---\n\n`;const toolMsgs=h.toolMsgs||[];for(const msg of(h.msgs||[])){const r=this.gr(msg.roleId);c+=`## ${r.name} — Round ${msg.round}\n\n`;const tTools=toolMsgs.filter(t=>t.roleId===msg.roleId&&t.round===msg.round);if(tTools.length>0){for(const t of tTools){c+=`> 🔧 **${t.name}** \`${JSON.stringify(t.args||{})}\`\n> \`\`\`\n> ${fmtToolResult(t.result).split('\n').slice(0,10).join('\n> ')}\n> \`\`\`\n\n`;}c+=`\n`;}c+=`${msg.content}\n\n---\n\n`;}if(h.cns)c+=`## 共识结论\n\n${h.cns}\n`;m='text/markdown';e='md';}
           const blob=new Blob([c],{type:m});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`debate-${h.fname||'text'}-${h.id||Date.now()}.${e}`;a.click();URL.revokeObjectURL(url);
         },
       };

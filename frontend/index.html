@@ -372,6 +372,21 @@
             </div>
           </div>
         </div>
+        <!-- Active debate loading state -->
+        <div x-show="isDebating && leftMsgs.length===0" class="flex items-center justify-center h-full">
+          <div class="text-center fade-up">
+            <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-blue-accent/15">
+              <span class="typing-role-indicator">
+                <span class="role-dot bg-blue-accent" style="width:6px;height:6px"></span>
+                <span class="role-dot bg-blue-accent" style="width:6px;height:6px"></span>
+                <span class="role-dot bg-blue-accent" style="width:6px;height:6px"></span>
+              </span>
+            </div>
+            <p class="text-sm font-semibold text-txt-2 mb-1">正在生成分析...</p>
+            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在思考' : '准备中...'"></p>
+            <p class="text-[9px] text-txt-4 mt-1" x-text="'第 '+curRound+'/'+maxRounds+' 轮 · '+fmtElapsed()"></p>
+          </div>
+        </div>
         <template x-for="(msg, idx) in leftMsgs" :key="'l-'+idx">
           <div>
             <!-- Tool call cards for this role+round -->
@@ -546,6 +561,20 @@
             </div>
           </div>
         </div>
+        <!-- Active debate loading state (reviewer) -->
+        <div x-show="isDebating && rightMsgs.length===0 && typingGroup==='right'" class="flex items-center justify-center h-full">
+          <div class="text-center fade-up">
+            <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-amber-accent/15">
+              <span class="typing-role-indicator">
+                <span class="role-dot bg-amber-accent" style="width:6px;height:6px"></span>
+                <span class="role-dot bg-amber-accent" style="width:6px;height:6px"></span>
+                <span class="role-dot bg-amber-accent" style="width:6px;height:6px"></span>
+              </span>
+            </div>
+            <p class="text-sm font-semibold text-txt-2 mb-1">审查方准备发言...</p>
+            <p class="text-[10px] text-txt-4" x-text="curRoleId ? gr(curRoleId).name + ' 正在思考' : '等待建设方完成...'"></p>
+          </div>
+        </div>
         <template x-for="(msg, idx) in rightMsgs" :key="'r-'+idx">
           <div>
             <!-- Tool call cards for this role+round -->
@@ -675,8 +704,17 @@
           <button @click="start()" :disabled="!canGo || isDebating" aria-label="开始辩论"
             class="w-full flex items-center gap-2 px-3 py-2 bg-blue-accent/15 text-blue-accent text-[11px] font-medium rounded-md hover:bg-blue-accent/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            开始辩论
+            <span x-text="isDebating?'辩论进行中...':'开始辩论'"></span>
           </button>
+          <!-- Missing requirements hint -->
+          <div x-show="!canGo && !isDebating" class="space-y-0.5">
+            <p x-show="!leftModel || !rightModel" class="text-[9px] text-red-400/80 flex items-center gap-1">
+              <span>⚠</span> 请先在设置中配置模型
+            </p>
+            <p x-show="leftModel && rightModel && !fcont && !files.length && !dtxt && !chatText.trim()" class="text-[9px] text-amber-accent/80 flex items-center gap-1">
+              <span>⚠</span> 请上传文件或输入文本
+            </p>
+          </div>
           <button x-show="msgs.length>0 && cns" @click="showCns=!showCns"
             class="w-full flex items-center gap-2 px-3 py-2 bg-amber-accent/15 text-amber-accent text-[11px] font-medium rounded-md hover:bg-amber-accent/25 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -1101,14 +1139,14 @@
         leftModelId:null, rightModelId:null,
         get leftModel(){ return this.models.find(m=>m.id===this.leftModelId)||null; },
         get rightModel(){ return this.models.find(m=>m.id===this.rightModelId)||null; },
-        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0}; this.models.push(m); },
+        addModel(){ const m={id:++_id,name:'',baseUrl:'',apiKey:'',model:'',proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0}; this.models.push(m); if(!this.leftModelId)this.leftModelId=m.id; if(!this.rightModelId)this.rightModelId=m.id; this.saveCfg(); },
         applyPreset(type){
           const presets={deepseek:{name:'DeepSeek',baseUrl:'https://api.deepseek.com/v1',model:'deepseek-chat'},openai:{name:'OpenAI',baseUrl:'https://api.openai.com/v1',model:'gpt-4o-mini'},moonshot:{name:'Moonshot',baseUrl:'https://api.moonshot.cn/v1',model:'moonshot-v1-8k'}};
           const p=presets[type];if(!p)return;
           const m={id:++_id,name:p.name,baseUrl:p.baseUrl,apiKey:'',model:p.model,proto:'openai',_testing:false,_testOk:null,_testErr:'',_testMs:0};
-          this.models.push(m);
+          this.models.push(m); if(!this.leftModelId)this.leftModelId=m.id; if(!this.rightModelId)this.rightModelId=m.id; this.saveCfg();
         },
-        rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; },
+        rmModel(id){ this.models=this.models.filter(m=>m.id!==id); if(this.leftModelId===id)this.leftModelId=this.models[0]?.id||null; if(this.rightModelId===id)this.rightModelId=this.models[0]?.id||null; this.saveCfg(); },
         async testModel(id){
           const m=this.models.find(x=>x.id===id); if(!m)return;
           if(!m.baseUrl||!m.apiKey||!m.model){m._testOk=false;m._testErr='请填写完整配置';return;}
@@ -1189,6 +1227,13 @@
           this.allRoles.forEach(r=>{this.prompts[r.id]=r.def;});
           this.loadCfg(); this.loadHist();
           if(!localStorage.getItem('debateai_onboarded')&&!localStorage.getItem('debateai_cfg')){this.showOnboard=true;}
+          // Auto-save models on any property change (debounced)
+          let _saveTimer=null;
+          this.$watch('models',()=>{ clearTimeout(_saveTimer); _saveTimer=setTimeout(()=>this.saveCfg(),500); },{deep:true});
+          this.$watch('leftModelId',()=>this.saveCfg());
+          this.$watch('rightModelId',()=>this.saveCfg());
+          this.$watch('roles',()=>this.saveCfg(),{deep:true});
+          this.$watch('prompts',()=>{ clearTimeout(_saveTimer); _saveTimer=setTimeout(()=>this.saveCfg(),500); },{deep:true});
         },
         finishOnboard(){this.showOnboard=false;localStorage.setItem('debateai_onboarded','1');},
 

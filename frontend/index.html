@@ -23,6 +23,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -146,7 +147,7 @@
           <span class="text-3xl">🥊</span>
         </div>
         <h2 class="text-lg font-bold text-txt-1 mb-2" x-text="onboardStep===0?'欢迎使用 DebateAI':onboardStep===1?'配置 AI 模型':'上传材料开始辩论'"></h2>
-        <p class="text-sm text-txt-3 mb-6 leading-relaxed" x-text="onboardStep===0?'多个 AI 角色围绕你的代码/论文互相审查，最终达成共识。':'点击右上角 ⚙️ 设置按钮，添加你的 API 密钥。支持 DeepSeek、OpenAI 等。':'点击右侧「上传文件」或直接在底部输入框粘贴文本，然后点击「开始辩论」。'"></p>
+        <p class="text-sm text-txt-3 mb-6 leading-relaxed" x-text="onboardStep===0?'多个 AI 角色围绕你的代码/论文互相审查，最终达成共识。':onboardStep===1?'点击右上角 ⚙️ 设置按钮，添加你的 API 密钥。支持 DeepSeek、OpenAI 等。':'点击右侧「上传文件」或直接在底部输入框粘贴文本，然后点击「开始辩论」。'"></p>
         <div class="flex items-center justify-center gap-2 mb-4">
           <template x-for="i in 3" :key="'dot-'+i">
             <div class="w-2 h-2 rounded-full transition-colors" :class="onboardStep>=i-1?'bg-blue-accent':'bg-black/10'"></div>
@@ -232,10 +233,10 @@
                 <input type="text" x-model="m.name" placeholder="模型名称 (如 DeepSeek V4)" class="bg-transparent text-[11px] font-semibold text-txt-1 outline-none w-40">
                 <button @click="rmModel(m.id)" class="text-txt-4 hover:text-red-400 text-xs p-0.5">&times;</button>
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" x-model="m.baseUrl" placeholder="Base URL" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
-                <input type="password" x-model="m.apiKey" placeholder="API Key" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
-              </div>
+              <form onsubmit="return false" class="grid grid-cols-2 gap-2">
+                <input type="text" x-model="m.baseUrl" placeholder="Base URL" autocomplete="off" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
+                <input type="password" x-model="m.apiKey" placeholder="API Key" autocomplete="off" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
+              </form>
               <input type="text" x-model="m.model" placeholder="模型 ID (如 deepseek-v4-flash)" class="w-full bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">
               <div class="flex items-center gap-2">
                 <select x-model="m.proto" class="bg-surface-2 border border-border-dim rounded px-2 py-1.5 text-[10px] text-txt-2 outline-none focus:border-blue-accent/50">

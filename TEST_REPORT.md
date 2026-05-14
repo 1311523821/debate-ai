@@ -11,7 +11,8 @@
 | 阶段 | 通过 | 失败 | 总计 |
 |------|------|------|------|
 | 修复前测试 | 33 | 2 | 35 |
-| 修复后测试 | **37** | **0** | **37** |
+| 第一轮修复后 | 37 | 0 | 37 |
+| 最终验证 | **37** | **0** | **37** |
 
 ---
 
@@ -117,34 +118,16 @@ if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice
 
 ## ⚠️ 修复后残留问题
 
-### 1. Alpine.js 表达式解析警告
-```
-Alpine Expression Error: Unexpected token ':'
-Expression: "onboardStep===0?'多个 AI...':'点击右上角...':'点击右侧...'"
-```
-**原因**: 嵌套三元表达式超出 Alpine.js 的解析能力  
-**建议**: 拆分为 computed 属性或使用 `x-text` 绑定方法
-
-### 2. Alpine.js 插件缺失
-```
-Alpine Warning: You can't use [x-collapse] without first installing the "Collapse" plugin
-```
-**建议**: 在 `<head>` 中添加 Collapse 插件:
-```html
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3/dist/cdn.min.js"></script>
-```
-
-### 3. 表单无障碍性
-```
-[DOM] Password field is not contained in a form
-```
-**建议**: 将 API Key 输入框包裹在 `<form>` 标签中
-
-### 4. Tailwind CSS 生产环境警告
+### 1. Tailwind CSS 生产环境警告
 ```
 cdn.tailwindcss.com should not be used in production
 ```
 **建议**: 生产环境使用 PostCSS 插件或 Tailwind CLI 构建
+
+### 2. UX 层面待改进项
+- 双输入框逻辑不直观（合并或添加标签）
+- 中英文混杂（统一语言切换范围）
+- 全局进度指示器缺失（添加状态栏）
 
 ---
 
@@ -161,8 +144,8 @@ cdn.tailwindcss.com should not be used in production
 | UX-04 | 交互问题 | 语言切换按钮无文本 | 🟡 Medium | ✅ 已修复 |
 | UX-05 | 配置缺失 | 角色和模型配置区域为空 | 🟠 High | ✅ 已修复 |
 | UX-06 | 状态反馈 | 全局进度指示器缺失 | 🟡 Medium | 🔲 待改进 |
-| UX-07 | 引导流程 | 引导弹窗嵌套三元表达式错误 | 🟡 Medium | 🔲 待改进 |
-| UX-08 | 无障碍性 | Password 输入框不在 form 中 | 🟢 Low | 🔲 待改进 |
+| UX-07 | 引导流程 | 引导弹窗嵌套三元表达式错误 | 🟡 Medium | ✅ 已修复 |
+| UX-08 | 无障碍性 | Password 输入框不在 form 中 | 🟢 Low | ✅ 已修复 |
 
 ---
 
@@ -172,14 +155,14 @@ cdn.tailwindcss.com should not be used in production
 1. ✅ **已修复**: 第 1273 行多余 `}` 导致整个应用无法初始化
 
 ### P1 (建议尽快修复)
-2. 嵌套三元表达式拆分，消除 Alpine.js 解析警告
-3. 添加 Alpine.js Collapse 插件
+2. ✅ **已修复**: 嵌套三元表达式拆分，消除 Alpine.js 解析警告
+3. ✅ **已修复**: 添加 Alpine.js Collapse 插件
 
 ### P2 (体验优化)
 4. 合并双输入框或添加明确标签
 5. 统一语言切换范围
 6. 添加全局状态指示器
-7. Password 输入框包裹 `<form>` 标签
+7. ✅ **已修复**: Password 输入框包裹 `<form>` 标签
 
 ---
 

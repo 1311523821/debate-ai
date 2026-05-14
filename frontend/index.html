@@ -1425,10 +1425,26 @@
           this._log('API 响应: HTTP '+resp.status+(resp.ok?' ✓':' ✗'));
           if(!resp.ok){const t=await resp.text().catch(()=>`API ${resp.status}`);throw new Error(t.slice(0,200));}
           if(!resp.body){throw new Error('API 返回空响应体（可能是 CORS 或代理问题）');}
+          // Check Content-Type — if not streaming, parse as regular JSON fallback
+          const ct=resp.headers.get('content-type')||'';
+          if(!ct.includes('text/event-stream')&&!ct.includes('stream')){
+            this._log('非流式响应 ('+ct.slice(0,50)+')，尝试 JSON 解析...');
+            try{
+              const j=await resp.json();
+              const text=j.choices?.[0]?.message?.content||'';
+              if(onChunk&&text)onChunk(text,j.usage?{tokens:j.usage.total_tokens}:null);
+              this._log('JSON 解析成功 · 内容: '+text.length+'字');
+              return{text,toolCalls:[]};
+            }catch(e){throw new Error('API 返回非 JSON 响应: '+ct.slice(0,80));}
+          }
           const reader=resp.body.getReader(),dec=new TextDecoder();let buf='',content='',toolCalls=[];
+          // Stream read timeout: 30s without data → abort
+          const streamTimeoutMs=30000;let streamTimer=null;
+          const resetStreamTimer=()=>{if(streamTimer)clearTimeout(streamTimer);streamTimer=setTimeout(()=>{this._log('⚠ 流式读取超时 ('+streamTimeoutMs/1000+'s 无数据)');try{reader.cancel();}catch(e){}},streamTimeoutMs);};
+          resetStreamTimer();
           if(isAnt){
             let curEvent='',tcBlocks={};
-            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(tr.startsWith('event:')){curEvent=tr.slice(6).trim();continue;}if(!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();try{const j=JSON.parse(d);
+            while(true){const{done,value}=await reader.read();if(done)break;resetStreamTimer();buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(tr.startsWith('event:')){curEvent=tr.slice(6).trim();continue;}if(!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();try{const j=JSON.parse(d);
               if(j.type==='content_block_start'&&j.content_block?.type==='tool_use'){tcBlocks[j.index]={id:j.content_block.id,name:j.content_block.name,input_json:''};}
               else if(j.type==='content_block_delta'&&j.delta?.type==='input_json_delta'){if(tcBlocks[j.index])tcBlocks[j.index].input_json+=j.delta.partial_json;}
               else if(j.type==='content_block_stop'&&tcBlocks[j.index]){const b=tcBlocks[j.index];try{const args=b.input_json?JSON.parse(b.input_json):{};toolCalls.push({id:b.id,type:'function',function:{name:b.name,arguments:JSON.stringify(args)}});}catch(e){toolCalls.push({id:b.id,type:'function',function:{name:b.name,arguments:b.input_json||'{}'}});}}
@@ -1437,12 +1453,14 @@
             }catch(e){}}}
           }else{
             const tcIdx={};
-            while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]'){return toolCalls.length>0?{content,toolCalls}:{content};}try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;
+            while(true){const{done,value}=await reader.read();if(done)break;resetStreamTimer();buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const l of lines){const tr=l.trim();if(!tr||!tr.startsWith('data:'))continue;const d=tr.slice(5).trim();if(d==='[DONE]'){if(streamTimer)clearTimeout(streamTimer);return toolCalls.length>0?{content,toolCalls}:{content};}try{const j=JSON.parse(d);const dt=j.choices?.[0]?.delta;
               if(dt?.content){content+=dt.content;if(onChunk)onChunk(dt.content,j.usage?{tokens:j.usage.total_tokens}:null);}
               if(dt?.tool_calls){for(const tc of dt.tool_calls){const i=tc.index;if(!tcIdx[i])tcIdx[i]={id:'',name:'',args:''};if(tc.id)tcIdx[i].id=tc.id;if(tc.function?.name)tcIdx[i].name=tc.function.name;if(tc.function?.arguments)tcIdx[i].args+=tc.function.arguments;}}
-              if(j.choices?.[0]?.finish_reason==='tool_calls'){for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}return{content,toolCalls};}
+              if(j.choices?.[0]?.finish_reason==='tool_calls'){for(const[i,t]of Object.entries(tcIdx)){toolCalls.push({id:t.id,type:'function',function:{name:t.name,arguments:t.args}});}if(streamTimer)clearTimeout(streamTimer);return{content,toolCalls};}
             }catch(e){}}}
           }
+          if(streamTimer)clearTimeout(streamTimer);
+          if(!content&&!toolCalls.length){this._log('⚠ 流式读取结束但无内容，可能是 API 不支持流式返回');throw new Error('API 返回空内容（流式读取无数据）。请检查 API 是否支持 SSE 流式返回，或尝试更换 Base URL。');}
           this._log('API 流结束 · 内容: '+(content.length||0)+'字 · 工具调用: '+(toolCalls.length||0));
           return toolCalls.length>0?{content,toolCalls}:{content};
         },

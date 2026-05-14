@@ -464,7 +464,7 @@
         </div>
         <!-- Chat Input -->
         <div class="chat-input-wrapper flex items-end gap-2">
-          <textarea x-ref="chatInputLeft" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'补充说明...':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
+          <textarea x-ref="chatInputLeft" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'说明你想让 AI 做什么... (⌘/Ctrl+Enter 或直接点开始)':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
             @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('left');}"
             class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-blue-accent/50 transition-colors"
             style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
@@ -646,7 +646,7 @@
         </div>
         <!-- Chat Input -->
         <div class="chat-input-wrapper flex items-end gap-2">
-          <textarea x-ref="chatInputRight" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'补充说明...':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
+          <textarea x-ref="chatInputRight" x-model="chatText" rows="1" :placeholder="isDebating?'引导辩论方向... (⌘/Ctrl+Enter 发送)':fcont||files.length?'说明你想让 AI 做什么... (⌘/Ctrl+Enter 或直接点开始)':'输入要分析的文本... (⌘/Ctrl+Enter 发送)'" aria-label="输入评论"
             @keydown.enter.prevent="if(($event.metaKey||$event.ctrlKey)&&chatText.trim()){sendChat('right');}"
             class="flex-1 bg-surface-3 border border-border-dim rounded-lg px-3 py-2 text-[11px] text-txt-2 placeholder-txt-4 outline-none focus:border-amber-accent/50 transition-colors"
             style="resize:none; max-height:6rem; min-height:2.25rem;"></textarea>
@@ -1140,13 +1140,13 @@
         typingGroup:null, totalTokens:0, totalCost:0, hist:[],
         toolMsgs:[], curModelCfg:null, curRoleId:null,
         // Chat & Progress
-        userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null, toast:'',
+        userMsgs:[], chatText:'', debateStartTime:null, debateEndTime:null, toast:'', userGoal:'',
 
         get leftRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='left'); },
         get rightRoles(){ return this.roles.filter(id=>ROLES.find(r=>r.id===id)?.side==='right'); },
         get leftMsgs(){ return this.msgs.filter(m=>this.leftRoles.includes(m.roleId)); },
         get rightMsgs(){ return this.msgs.filter(m=>this.rightRoles.includes(m.roleId)); },
-        get canGo(){ return (this.fcont||this.files.length||this.dtxt) && this.leftModel && this.rightModel && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
+        get canGo(){ return (this.fcont||this.files.length||this.dtxt||this.chatText.trim()) && this.leftModel && this.rightModel && this.leftRoles.length>=1 && this.rightRoles.length>=1; },
         get pct(){ return Math.min(Math.round(this.curRound/this.maxRounds*100),100); },
 
         gr(id){ return ROLES.find(r=>r.id===id)||{id:'?',name:'未知',side:'left',desc:'',def:''}; },
@@ -1174,9 +1174,13 @@
           this.$nextTick(()=>{
             ['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});
           });
-          // If debate hasn't started and user has no file, use as direct text input
-          if(!this.isDebating && !this.fcont && !this.files.length){
-            this.fcont=text;this.fname='用户输入';this.fsize=text.length;this.dtxt='';
+          // Before debate starts: if files loaded, treat as goal/instruction; else as direct text
+          if(!this.isDebating){
+            if(this.fcont||this.files.length){
+              this.userGoal=text;
+            }else{
+              this.fcont=text;this.fname='用户输入';this.fsize=text.length;this.dtxt='';
+            }
           }
         },
 
@@ -1215,6 +1219,8 @@
           if(!this.canGo)return;
           const content=this.fcont||this.dtxt; if(!content)return;
           if(this.dtxt&&!this.fcont){this.fcont=this.dtxt.trim();this.fname='文本输入';}
+          // Pick up unsent chat text as goal if files are loaded
+          if(this.chatText.trim()&&(this.fcont||this.files.length)){this.userGoal=this.chatText.trim();this.chatText='';}
           this.isDebating=true;this.msgs=[];this.cns='';this.curRound=0;this.err='';this.ac=new AbortController();this.totalTokens=0;this.totalCost=0;this.toolMsgs=[];
           this.debateStartTime=Date.now();this.debateEndTime=null;this._userComments=[...this.userMsgs];
           const allRoleObjs=this.roles.map(id=>ROLES.find(r=>r.id===id)).filter(Boolean);
@@ -1259,10 +1265,12 @@
         buildCtx(roleId,content,round){
           const prev=this.msgs.filter(m=>m.round<round||(m.round===round&&m.roleId!==roleId));
           let ctx=`## 待分析材料\n\n${content}\n\n`;
+          // Inject user goal (first round only)
+          if(round===1&&this.userGoal){ctx+=`## 用户目标说明\n\n用户希望你重点关注以下方面：\n\n> ${this.userGoal}\n\n`;}
           if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
           // Inject user comments
           const uComments=(this._userComments||[]).filter(u=>u.round<round||(u.round===round));
-          if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}
+          if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}}
           ctx+=`\n请基于你的角色职责进行分析。要求：
 1. 用具体的代码行号或段落引用来支撑你的观点
 2. 区分"必须修复"和"建议优化"的优先级
@@ -1349,7 +1357,7 @@
         abort(){if(this.ac)this.ac.abort();},
 
         loadHist(){try{this.hist=JSON.parse(localStorage.getItem('debateai_hist'))||[];}catch(e){this.hist=[];}},
-        saveHist(){const cleanMsgs=this.msgs.map(m=>({...m,isStreaming:false}));const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(cleanMsgs)),cns:this.cns,toolMsgs:JSON.parse(JSON.stringify(this.toolMsgs||[])),userMsgs:JSON.parse(JSON.stringify(this.userMsgs||[]))};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
+        saveHist(){const cleanMsgs=this.msgs.map(m=>({...m,isStreaming:false}));const r={id:Date.now(),ts:new Date().toISOString(),fname:this.fname,fsize:this.fsize,roles:[...this.roles],rounds:this.curRound,leftModel:this.leftModel?.name||'',rightModel:this.rightModel?.name||'',models:JSON.parse(JSON.stringify(this.models)),leftModelId:this.leftModelId,rightModelId:this.rightModelId,msgs:JSON.parse(JSON.stringify(cleanMsgs)),cns:this.cns,toolMsgs:JSON.parse(JSON.stringify(this.toolMsgs||[])),userMsgs:JSON.parse(JSON.stringify(this.userMsgs||[])),userGoal:this.userGoal||''};this.hist.unshift(r);if(this.hist.length>50)this.hist=this.hist.slice(0,50);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         loadHist(h){if(!h)return;this.msgs=h.msgs||[];this.cns=h.cns||'';this.curRound=h.rounds||0;this.fname=h.fname||'';this.toolMsgs=h.toolMsgs||[];this.userMsgs=h.userMsgs||[];this.debateStartTime=null;this.debateEndTime=null;if(h.roles)this.roles=h.roles;if(h.models&&h.models.length){h.models.forEach(m=>{if(!m.proto)m.proto='openai';if(m._testing===undefined)m._testing=false;if(m._testOk===undefined)m._testOk=null;if(m._testErr===undefined)m._testErr='';if(m._testMs===undefined)m._testMs=0;});this.models=h.models;_id=Math.max(...this.models.map(m=>m.id),0);}if(h.leftModelId)this.leftModelId=h.leftModelId;if(h.rightModelId)this.rightModelId=h.rightModelId;this.stab='roles';this.$nextTick(()=>{['scroll-left','scroll-right'].forEach(id=>{const el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});});},
         delH(id){this.hist=this.hist.filter(h=>h.id!==id);localStorage.setItem('debateai_hist',JSON.stringify(this.hist));},
         clearH(){this.hist=[];localStorage.removeItem('debateai_hist');},

@@ -1270,7 +1270,7 @@
           if(prev.length>0){ctx+=`## 之前角色的分析\n\n`;for(const m of prev.slice(-8)){const r=this.gr(m.roleId);ctx+=`### ${r.name} (Round ${m.round})\n\n${m.content}\n\n---\n\n`;}}
           // Inject user comments
           const uComments=(this._userComments||[]).filter(u=>u.round<round||(u.round===round));
-          if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}}
+          if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}
           ctx+=`\n请基于你的角色职责进行分析。要求：
 1. 用具体的代码行号或段落引用来支撑你的观点
 2. 区分"必须修复"和"建议优化"的优先级

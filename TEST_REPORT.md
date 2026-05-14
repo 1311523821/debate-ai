@@ -1,0 +1,191 @@
+# DebateAI 浏览器自动化测试报告
+
+**测试时间**: 2026-05-14 15:11 GMT+8  
+**测试目标**: https://github.com/1311523821/debate-ai  
+**测试方法**: 浏览器自动化 (Playwright) + 人工审查  
+
+---
+
+## 📊 测试总览
+
+| 阶段 | 通过 | 失败 | 总计 |
+|------|------|------|------|
+| 修复前测试 | 33 | 2 | 35 |
+| 修复后测试 | **37** | **0** | **37** |
+
+---
+
+## 🔴 关键发现：根因 Bug
+
+### CRITICAL-01: 内联脚本语法错误导致 Alpine.js 初始化失败
+
+**位置**: `frontend/index.html` 第 1273 行  
+**严重程度**: 🔴 Critical (阻断性)
+
+**问题描述**:  
+`buildCtx` 函数中，`if` 语句末尾多了一个 `}`，导致函数提前关闭，后续代码（包括 `ROLES`、`TPLS`、`app()` 等关键定义）脱离函数作用域，无法执行。
+
+**错误代码**:
+```javascript
+// 第 1273 行 - 多余的 }
+if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}}
+//                                                                                                                                                                       ^^ 这个 } 是多余的
+```
+
+**修复方案**:
+```javascript
+if(uComments.length>0){ctx+=`## 用户评论\n\n`;for(const u of uComments.slice(-5)){ctx+=`> ${u.content}\n\n`;}ctx+=`\n`;}
+```
+
+**影响范围**: 
+- ❌ 所有 Alpine.js 数据绑定失效
+- ❌ 角色配置无法加载
+- ❌ 辩论流程无法启动
+- ❌ 语言切换不可用
+- ❌ 模型配置为空
+- ❌ 设置面板功能失效
+
+---
+
+## ✅ 修复后测试结果 (37/37 通过)
+
+### 1. 基础资源加载 (6/6)
+| 测试项 | 结果 |
+|--------|------|
+| 页面标题包含 DebateAI | ✅ |
+| Alpine.js 已加载 | ✅ |
+| Tailwind CSS 已加载 | ✅ |
+| Marked.js 已加载 | ✅ |
+| PDF.js 已加载 | ✅ |
+| highlight.js 已加载 | ✅ |
+
+### 2. Alpine.js 数据绑定 (7/7)
+| 测试项 | 结果 |
+|--------|------|
+| app() 数据初始化 (91 个属性) | ✅ |
+| ROLES 常量已定义 (10个角色) | ✅ |
+| TPLS 常量已定义 (5个模板) | ✅ |
+| app.lang 默认值 zh | ✅ |
+| app.roles 默认包含5个角色 | ✅ |
+| app.models 初始为空数组 | ✅ |
+| app.isDebating 初始为 false | ✅ |
+
+### 3. UI 布局结构 (3/3)
+| 测试项 | 结果 |
+|--------|------|
+| 建设方消息区域 (#scroll-left) | ✅ |
+| 审查方消息区域 (#scroll-right) | ✅ |
+| Header 导航栏 | ✅ |
+
+### 4. 交互功能 (3/3)
+| 测试项 | 结果 |
+|--------|------|
+| 语言切换按钮可见且有文本 | ✅ |
+| 输入框存在 (2个) | ✅ |
+| 输入框可写入文本 | ✅ |
+
+### 5. 设置面板 (12/12)
+| 测试项 | 结果 |
+|--------|------|
+| 设置面板可打开 | ✅ |
+| 模型管理区域存在 | ✅ |
+| 添加模型按钮存在 | ✅ |
+| 快速预设 (DeepSeek/OpenAI/Moonshot) | ✅ |
+| 参与角色区域存在 | ✅ |
+| 最大轮次配置存在 | ✅ |
+| 共识模式配置存在 | ✅ |
+| 保存配置按钮存在 | ✅ |
+| Prompt 编辑区域存在 | ✅ |
+| 角色按钮已渲染 (10个) | ✅ |
+| 添加模型后出现配置输入框 | ✅ |
+| Alpine 数据绑定完整 (91 属性) | ✅ |
+
+### 6. 样式与布局 (3/3)
+| 测试项 | 结果 |
+|--------|------|
+| 背景色已应用 | ✅ |
+| 样式表已加载 | ✅ |
+| 左右面板 flex 布局 | ✅ |
+
+### 7. 底部操作区 (2/2)
+| 测试项 | 结果 |
+|--------|------|
+| 角色按钮存在 | ✅ |
+| 历史按钮存在 | ✅ |
+
+---
+
+## ⚠️ 修复后残留问题
+
+### 1. Alpine.js 表达式解析警告
+```
+Alpine Expression Error: Unexpected token ':'
+Expression: "onboardStep===0?'多个 AI...':'点击右上角...':'点击右侧...'"
+```
+**原因**: 嵌套三元表达式超出 Alpine.js 的解析能力  
+**建议**: 拆分为 computed 属性或使用 `x-text` 绑定方法
+
+### 2. Alpine.js 插件缺失
+```
+Alpine Warning: You can't use [x-collapse] without first installing the "Collapse" plugin
+```
+**建议**: 在 `<head>` 中添加 Collapse 插件:
+```html
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3/dist/cdn.min.js"></script>
+```
+
+### 3. 表单无障碍性
+```
+[DOM] Password field is not contained in a form
+```
+**建议**: 将 API Key 输入框包裹在 `<form>` 标签中
+
+### 4. Tailwind CSS 生产环境警告
+```
+cdn.tailwindcss.com should not be used in production
+```
+**建议**: 生产环境使用 PostCSS 插件或 Tailwind CLI 构建
+
+---
+
+## 🎨 UX 审查问题汇总
+
+基于自动化测试 + 人工观察，以下为 UX 层面的改进建议：
+
+| ID | 类别 | 问题 | 严重程度 | 状态 |
+|----|------|------|----------|------|
+| CRITICAL-01 | 关键Bug | Alpine.js 初始化失败 (语法错误) | 🔴 Critical | ✅ 已修复 |
+| UX-01 | 内容缺失 | 对话区域空内容 (级联效应) | 🟠 High | ✅ 已修复 |
+| UX-02 | 布局问题 | 双输入框逻辑不直观 | 🟡 Medium | 🔲 待改进 |
+| UX-03 | 国际化 | 中英文混杂 | 🟢 Low | 🔲 待改进 |
+| UX-04 | 交互问题 | 语言切换按钮无文本 | 🟡 Medium | ✅ 已修复 |
+| UX-05 | 配置缺失 | 角色和模型配置区域为空 | 🟠 High | ✅ 已修复 |
+| UX-06 | 状态反馈 | 全局进度指示器缺失 | 🟡 Medium | 🔲 待改进 |
+| UX-07 | 引导流程 | 引导弹窗嵌套三元表达式错误 | 🟡 Medium | 🔲 待改进 |
+| UX-08 | 无障碍性 | Password 输入框不在 form 中 | 🟢 Low | 🔲 待改进 |
+
+---
+
+## 🔧 修复建议优先级
+
+### P0 (必须修复)
+1. ✅ **已修复**: 第 1273 行多余 `}` 导致整个应用无法初始化
+
+### P1 (建议尽快修复)
+2. 嵌套三元表达式拆分，消除 Alpine.js 解析警告
+3. 添加 Alpine.js Collapse 插件
+
+### P2 (体验优化)
+4. 合并双输入框或添加明确标签
+5. 统一语言切换范围
+6. 添加全局状态指示器
+7. Password 输入框包裹 `<form>` 标签
+
+---
+
+## 📝 测试环境
+
+- **浏览器**: Chromium (Host)
+- **服务**: python3 -m http.server 8080 (localhost)
+- **操作系统**: Linux 6.8.0-100-generic (x64)
+- **Node.js**: v22.22.1
